@@ -1,0 +1,19 @@
+16
+
+7 1         (8 2)
+            (4 2 2)
+            (2 2 2 2)
+
+
+15
+
+4 2         (5 3)
+
+find non-1 factors of number
+factorize those to primes
+recursive factor
+
+38
+
+2 5
+
