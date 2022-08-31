@@ -1,6 +1,5 @@
-gcc $1;
+gcc -Wall -Wextra $1;
 returnCode=$(($?+0));
-echo "returnCode is $returnCode";
 if [ $returnCode != 0 ]
 	then
 	echo "Compilation failed";
