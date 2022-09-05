@@ -1,5 +1,7 @@
 import sys
 
+isVerbose = False
+
 def prettyPrintCipher(cipherTable):
     count = 0
     for letter in cipherTable:
@@ -36,15 +38,12 @@ def newIndexSameRow(index):
     return index
 
 
-isVerbose = False
 
 keyPhrase = sys.stdin.readline().rstrip("\n")
 keyPhrase = [letter for letter in keyPhrase if (letter != "q" and letter != " ")]
+keyPhrase = keyPhrase + list("abcdefghijklmnoprstuvwxyz")
 cipherTable = []
 for letter in keyPhrase:
-    if (not letter in cipherTable):
-        cipherTable.append(letter)
-for letter in "abcdefghijklmnoprstuvwxyz":
     if (not letter in cipherTable):
         cipherTable.append(letter)
 if (isVerbose):
@@ -59,7 +58,7 @@ for letter in message:
         if (len(cleanedMessage) > 0):
             if (cleanedMessage[-1] == letter):
                 cleanedMessage = cleanedMessage + 'x'
-                isSecond = False
+                isSecond = False    # want it to be True, but will be reversed below
     isSecond = not isSecond
     cleanedMessage = cleanedMessage + letter
 if (isSecond):
@@ -88,6 +87,7 @@ while(i < (len(cleanedMessage) - 1)):
         encryptedMessage += cipherTable[secondRow * 5 + firstCol]
 
     i += 2
-# prettyPrintCleanedMessage(encryptedMessage)
 encryptedMessage =  encryptedMessage.upper()
+if (isVerbose):
+    prettyPrintCleanedMessage(encryptedMessage)
 print(encryptedMessage)
