@@ -1,0 +1,288 @@
+#include <stdio.h>
+#include <stdbool.h>
+//#include <search.h>
+#include <string.h>
+
+// #define KEYPHRASE_MAX_LENGTH 26
+// #define VERBOSE false
+
+static int KEYPHRASE_MAX_LENGTH = 1001;
+static bool VERBOSE = false;
+
+void playfairPrettyPrint(char* cipherTable);
+bool areSameColumn(char firstChar, char secondChar, char* cipherTable);
+bool areSameRow(char firstChar, char secondChar, char* cipherTable);
+int newIndexCol(int oldIndex);
+int newIndexRow(int oldIndex);
+int newIndexNoMatch(int ownRow, int otherCol);
+int getCol(char* cipherTable, char keyChar);
+int getRow(char* cipherTable, char keyChar);
+
+int main() {
+    char cipherTable[26];
+    memset(cipherTable, '\0', 26);
+
+    char keyPhrase[KEYPHRASE_MAX_LENGTH];
+
+    int buffer;
+    int i = 0;
+    char convertedChar;
+    while (true) {
+        buffer = getc(stdin);
+        if (buffer == -1) { break; }
+        convertedChar = (char) buffer;
+        if (convertedChar == '\n') {
+            keyPhrase[i] = '\0';
+            break;
+        }
+        keyPhrase[i] = convertedChar;
+        i++;
+    }
+
+    if (VERBOSE) {
+        printf("Parsed key phrase is %s\n", keyPhrase);
+    }
+
+    char* searchReturn;
+    int cipherIndex = 0;
+    for (int i = 0; i < KEYPHRASE_MAX_LENGTH; i++) {
+        char potentialChar = keyPhrase[i];
+        if (potentialChar == '\0') { break ; }
+        if (potentialChar == ' ' || potentialChar == 'q') { continue; }
+        // printf("%c\n", potentialChar);
+        searchReturn = strchr(cipherTable, potentialChar);
+        if (searchReturn == NULL) {
+            cipherTable[cipherIndex] = potentialChar;
+            cipherIndex++;
+        }
+    }
+
+    // printf("%.25s\n", cipherTable);
+    char* limitedAlpha = "abcdefghijklmnoprstuvwxyz";
+
+    cipherTable[cipherIndex] = '\0';
+
+    // printf("%s\n", limitedAlpha);
+    char lettersToAdd[26] = "";
+    int letterIndex = 0;
+    for (int i = 0; i < 25; i++) {
+        char potentialChar = limitedAlpha[i];
+        searchReturn = strchr(cipherTable, potentialChar);
+        if (searchReturn == NULL) {
+            lettersToAdd[letterIndex] = potentialChar;
+            letterIndex++;
+        }
+    }
+
+    for (int i = 0; i < letterIndex; i++) {
+        cipherTable[cipherIndex] = lettersToAdd[i];
+        cipherIndex++;
+    }
+
+    // printf("%.25s\n", cipherTable);
+    if (VERBOSE) {
+        playfairPrettyPrint(cipherTable);
+    }
+
+    cipherTable[cipherIndex] = '\0';
+
+    char message[1001];
+    // KATTIS WAS POSSIBLY HAVING ISSUES WITH USING THIS
+    // getline(&message, &len, stdin);
+    // char* statusCode = fgets(message, 1000, stdin);
+    // if (statusCode == NULL) {
+    //     printf("Error null character\n");
+    // }
+    scanf("%[^\n]s",message);
+    // printf("%s\n", message);
+    char cleanedString[2001];
+    int cleanIndex = 0;
+    int count = 0;
+    for (int i =0; i < 1001; i++) {
+        if (message[i] == '\0') {
+            break;
+        }
+        char potentialChar = message[i];
+        if (potentialChar != ' ') {
+            if (count == 0) {
+                count = 1;
+            } else {
+                if (cleanIndex > 0) {
+                    if (cleanedString[cleanIndex - 1] == potentialChar) {
+                        cleanedString[cleanIndex] = 'x';
+                        cleanIndex++;
+                    } else {
+                        count = 0;
+                    }
+                }
+                // count = 0;
+            }
+            cleanedString[cleanIndex] = potentialChar;
+            cleanIndex++;
+        }
+    }
+    if (cleanIndex % 2 == 1) {
+        cleanedString[cleanIndex] = 'x';
+        cleanIndex++;
+    } else {
+        if (VERBOSE) {
+            printf("%s\n", "no need to add extra, length of string is even");
+        }
+    }
+    cleanedString[cleanIndex] = '\0';
+
+    if (VERBOSE) {
+        printf("%s\n", cleanedString);
+    }
+
+    i = 0;
+    char resultString[2001];
+    int resultStringIndex = 0;
+    int tempIndex;
+    while (true) {
+        char firstChar = cleanedString[i];
+        if (firstChar == '\0') {
+            break;
+        }
+        char secondChar = cleanedString[i+1];
+        if (areSameColumn(firstChar, secondChar, cipherTable)) {
+            searchReturn = strchr(cipherTable, (int) firstChar);
+            tempIndex = searchReturn - cipherTable;
+            resultString[resultStringIndex] = cipherTable[newIndexCol(tempIndex)] - 32;
+            searchReturn = strchr(cipherTable, (int) secondChar);
+            tempIndex = searchReturn - cipherTable;
+            resultString[resultStringIndex + 1] = cipherTable[newIndexCol(tempIndex)] - 32;
+        } else if (areSameRow(firstChar, secondChar, cipherTable)) {
+            searchReturn = strchr(cipherTable, (int) firstChar);
+            tempIndex = searchReturn - cipherTable;
+            resultString[resultStringIndex] = cipherTable[newIndexRow(tempIndex)] - 32;
+            searchReturn = strchr(cipherTable, (int) secondChar);
+            tempIndex = searchReturn - cipherTable;
+            resultString[resultStringIndex + 1] = cipherTable[newIndexRow(tempIndex)] - 32;
+        } else {
+            searchReturn = strchr(cipherTable, (int) firstChar);
+            // tempIndex = searchReturn - cipherTable;
+            resultString[resultStringIndex] = cipherTable[newIndexNoMatch(getRow(cipherTable, firstChar), getCol(cipherTable, secondChar))] - 32;
+            searchReturn = strchr(cipherTable, (int) secondChar);
+            // tempIndex = searchReturn - cipherTable;
+            resultString[resultStringIndex + 1] = cipherTable[newIndexNoMatch(getRow(cipherTable, secondChar), getCol(cipherTable, firstChar))] - 32;
+
+        }
+        resultStringIndex += 2;
+        i += 2;
+    }
+
+    if (false) {
+    // if (VERBOSE) {
+        printf("Solution keys: \n");
+        printf("%s\n", "BMNDZBXDKYBEJVDMUIXMMNUVIF");
+        printf("%s\n", "YDVHCWSPKNTAHKUBIPERMHGHDVRU");
+        printf("End solution keys\n");
+    }
+    resultString[resultStringIndex] = '\0';
+    printf("%s\n", resultString);
+
+    return 0;
+}
+
+void playfairPrettyPrint(char* cipherTable) {
+    for (int i = 0; i < 25; i++) {
+        printf("%c", cipherTable[i]);
+        if ((i + 1) % 5 == 0) { printf("%c", '\n'); }
+    }
+}
+
+bool areSameColumn(char firstChar, char secondChar, char* cipherTable) {
+    // char *searchReturn;
+    int firstCol;
+    int secondCol;
+    // searchReturn = strchr(cipherTable, (int) firstChar);
+    // firstCol = (searchReturn - cipherTable) % 5;
+    firstCol = getCol(cipherTable, firstChar);
+    // searchReturn = strchr(cipherTable, (int) secondChar);
+    // secondCol = (searchReturn - cipherTable) % 5;
+    secondCol = getCol(cipherTable, secondChar);
+    // if (VERBOSE) {
+    if (false) {
+        printf("First char: %c\n", firstChar);
+        printf("First col: %d\n", firstCol + 1);
+        printf("Second char: %c\n", secondChar);
+        printf("Second col: %d\n", secondCol + 1);
+    }
+    return firstCol == secondCol;
+}
+
+int getCol(char* cipherTable, char keyChar) {
+    int col;
+    char* searchReturn = strchr(cipherTable, (int) keyChar);
+    col = (searchReturn - cipherTable) % 5;
+    return col;
+}
+
+int getRow(char* cipherTable, char keyChar) {
+    int row;
+    char* searchReturn = strchr(cipherTable, (int) keyChar);
+    row = (searchReturn - cipherTable) / 5;
+    return row;
+}
+
+bool areSameRow(char firstChar, char secondChar, char* cipherTable) {
+    // char *searchReturn;
+    int firstRow;
+    int secondRow;
+    firstRow = getRow(cipherTable, firstChar);
+    secondRow = getRow(cipherTable, secondChar);
+    // searchReturn = strchr(cipherTable, (int) firstChar);
+    // firstRow = (searchReturn - cipherTable) / 5;
+    // searchReturn = strchr(cipherTable, (int) secondChar);
+    // secondRow = (searchReturn - cipherTable) / 5;
+
+    // if (VERBOSE) {
+    if (false) {
+        printf("ASDADSDSDA\n");
+        printf("First char: %c\n", firstChar);
+        printf("First row: %d\n", firstRow + 1);
+        printf("Second char: %c\n", secondChar);
+        printf("Second row: %d\n", secondRow + 1);
+    }
+    return firstRow == secondRow;
+}
+
+int newIndexCol(int oldIndex) {
+    int newIndex = oldIndex + 5;
+    if (newIndex > 24) {
+        newIndex = newIndex % 25;
+    }
+    return newIndex;
+}
+ int newIndexRow(int oldIndex) {
+    int newIndex;
+    if ((oldIndex + 1) % 5 != 0) {
+        newIndex = oldIndex + 1;
+    } else {
+        newIndex = oldIndex - 4;
+    }
+    return newIndex;
+ }
+
+int newIndexNoMatch(int ownRow, int otherCol) {
+    int newIndex = ownRow * 5 + otherCol;
+    return newIndex;
+}
+
+/*
+TEST CASES
+DONE single character message
+DONE odd length
+DONE extreme values for same row
+DONE extreme values for same column
+extreme values for none same row/column
+DONE key code has q in it
+DONE 1 letter key code
+key phrase longer than 26
+DONE duplicate letters in key phrase
+DONE three in a row duplicates all needing an added X
+DONE many duplicate letters
+DONE smallest box
+DONE largest box
+*/
