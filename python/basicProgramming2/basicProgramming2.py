@@ -2,6 +2,15 @@ import sys
 from functools import wraps
 from time import time
 
+'''
+Time complexity of functionCode1basic
+    Sort: O(n*log(n))
+    Linear search and prune: O(n)
+    New Length  k
+    Total: n + n*log(n)
+    Reduced -> n*log(n)
+'''
+
 verbose = False
 
 def makeCountDict(intList):

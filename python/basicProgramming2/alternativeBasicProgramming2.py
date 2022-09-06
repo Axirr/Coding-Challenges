@@ -2,6 +2,16 @@ import sys
 from functools import wraps
 from time import time
 
+'''
+Time complexity of functionCode1
+    Linear search and prune: O(n)
+    New Length  k
+    Sort: k*log(k)
+    Total: n + k*log(k)     k <= n
+    Reduced:    n           where n > k*log(k)
+                k*log(k)    where n < k*log(k)
+'''
+
 verbose = False
 
 def makeCountDict(intList):
