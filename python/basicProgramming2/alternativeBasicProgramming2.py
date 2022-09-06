@@ -26,16 +26,10 @@ def timing(f):
     return wrap
 
 @timing
-def functionCode1basic(intList):
+def functionCode1(intList):
     isNum = False
+    intList = [num for num in intList if num < 7777]
     intList.sort()
-    stopIndex = -1
-    for i in range(len(intList)):
-        if (intList[i] > 7776):
-            stopIndex = i
-            break
-    if (not stopIndex == -1):
-        intList = intList[:stopIndex]
     if (verbose):
         print("Shortened intList", end='')
         print(intList)
@@ -54,6 +48,8 @@ def functionCode1basic(intList):
     else:
         print("No")
 
+
+
 inputList = sys.stdin.readline().rstrip('\n').split(" ")
 listLength = int(inputList[0])
 actionCode = int(inputList[1])
@@ -65,7 +61,7 @@ intList = [int(num) for num in intList]
 if (verbose):
     print(intList)
 if (actionCode == 1):
-    functionCode1basic(intList)
+    functionCode1(intList)
 elif (actionCode == 2):
     isUnique = True
     countDict = makeCountDict(intList)

@@ -1,0 +1,14 @@
+echo "Starting original test runs";
+python3 basicProgramming2.py < 9input.txt;
+python3 basicProgramming2.py < 9input.txt;
+python3 basicProgramming2.py < 9input.txt;
+python3 basicProgramming2.py < 9input.txt;
+python3 basicProgramming2.py < 9input.txt;
+python3 basicProgramming2.py < 9input.txt;
+echo "Starting alternative test runs";
+python3 alternativeBasicProgramming2.py < 9input.txt;
+python3 alternativeBasicProgramming2.py < 9input.txt;
+python3 alternativeBasicProgramming2.py < 9input.txt;
+python3 alternativeBasicProgramming2.py < 9input.txt;
+python3 alternativeBasicProgramming2.py < 9input.txt;
+python3 alternativeBasicProgramming2.py < 9input.txt;
