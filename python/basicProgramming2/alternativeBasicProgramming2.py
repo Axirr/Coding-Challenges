@@ -14,6 +14,19 @@ Time complexity of functionCode1
 
 verbose = False
 
+def timing(f):
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        if (verbose):
+            print('func:%r took: %2.4f sec' % \
+            (f.__name__, te-ts))
+        return result
+    return wrap
+
+@wraps
 def makeCountDict(intList):
     countDict = {}
     for num in intList:
