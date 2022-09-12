@@ -17,7 +17,7 @@ int main() {
         }
     }
     int maxCount = 0;
-    int* maxArray = malloc(numCombinations);
+    int* maxArray = malloc(numCombinations * sizeof(int));
     int indexMaxArray = 0;
     int count = 0;
     int currentNumber;
@@ -43,6 +43,9 @@ int main() {
     for (int i = 0; i < indexMaxArray; i++) {
         printf("%d\n", maxArray[i]);
     }
+
+    free(sums);
+    free(maxArray);
 
     return 0;
 }
