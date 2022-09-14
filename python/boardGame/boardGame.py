@@ -3,6 +3,7 @@ import sys
 '''
 IT's ABOUT PAIRS, not all possible combos
     Find a split pair that the opponent can't win on either of (since they get their choice)
+
 Algorithm:
 Decision tree
 Collapse single own decisions to one that only has guaranteed wins?
