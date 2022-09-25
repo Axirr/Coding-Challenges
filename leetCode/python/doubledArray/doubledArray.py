@@ -35,58 +35,78 @@ class Solution:
             1 to orignal, and remove it's half
             [2, 4, 4]
         '''
+
         resultList = []
-        wasFound = True
         if (len(changed) % 2 != 0):
             return []
 
-        while (wasFound and len(changed) >= 2):
-            wasFound = False
-            for num in changed:
-                if (num % 2 == 1):
-                    resultList.append(num)
-                    wasFound = True
-                    changed.remove(num)
-                    try:
-                        changed.remove(num * 2)
-                    except ValueError:
-                        return []
-                    break
+        # Remove odd as originals
+        usedIndices = []
+        for i in range(len(changed)):
+            num = changed[i]
+            if i in usedIndices:
+                continue
+            if (num % 2 == 1):
+                resultList.append(num)
+                usedIndices.append(i)
+                searchIndex = self.findNotUsedIndices(changed, num * 2, usedIndices)
+                if (searchIndex == -1):
+                    return []
+                else:
+                    usedIndices.append(searchIndex)
+        tempChanged = [changed[i] for i in range(len(changed)) if i not in usedIndices]
+        changed = tempChanged
 
-        wasFound = True
-        while (wasFound and len(changed) >= 2):
-            wasFound = False
-            for num in changed:
-                doubleNum = num * 2
-                if (not doubleNum in changed):
-                    wasFound = True
-                    halfNum = num // 2
+        # Remove half of no doubles as originals
+        usedIndices = []
+        for i in range(len(changed)):
+            if (i in usedIndices):
+                continue
+            num = changed[i]
+            doubleNum = num * 2
+            searchIndex = self.findNotUsedIndices(changed, doubleNum, usedIndices)
+            if (searchIndex == -1):
+                halfNum = num // 2
+                searchIndex = self.findNotUsedIndices(changed, halfNum, usedIndices)
+                if (searchIndex == -1):
+                    return []
+                else:
                     resultList.append(halfNum)
-                    try:
-                        changed.remove(halfNum)
-                    except ValueError:
-                        return []
-                    changed.remove(num)
-                    break
+                    usedIndices += [i, searchIndex]
+
+        tempChanged = [changed[i] for i in range(len(changed)) if i not in usedIndices]
+        changed = tempChanged
 
         changed.sort()
-        while(len(changed) >= 2):
-            num = changed[0]
+        usedIndices = []
+        for i in range(len(changed)):
+            if (i in usedIndices):
+                continue
+            num = changed[i]
             doubleNum = num * 2
-            try:
-                changed.remove(doubleNum)
+            usedIndices += [i]
+            searchIndex = self.findNotUsedIndices(changed, doubleNum, usedIndices)
+            if (searchIndex == -1):
+                return []
+            else:
                 resultList.append(num)
-            except ValueError:
-                return []
-            try:
-                changed.remove(num)
-            except ValueError:
-                return []
+                usedIndices += [searchIndex]
+            if len(usedIndices) == len(changed):
+                break
 
-        if (len(changed) > 0):
-            return []
+        # tempChanged = [changed[i] for i in range(len(changed)) if i not in usedIndices]
+        # if (len(tempChanged) != len(changed)):
+        #     return []
+        # changed = tempChanged
 
+        resultList.sort()
         return resultList
+    
+    def findNotUsedIndices(self, myList, value, usedIndices):
+        for i in range(len(myList)):
+            if (myList[i] == value and i not in usedIndices):
+                return i
+        return -1
     
     #     usedIndices = []
     #     resultOriginal = []
@@ -139,6 +159,7 @@ def main():
     print("[2,1,6,12,1,6,2,12] passed.")
     myList = [2, 4, 4, 4, 8, 8]
     solutionList = sorted(mySolution.findOriginalArray(myList))
+    print(solutionList)
     assert [2, 4, 4] == solutionList
     print("[2, 4, 4, 4, 8, 8] passed")
     myList = [6, 3, 0, 1]
@@ -149,8 +170,10 @@ def main():
     solutionList = sorted(mySolution.findOriginalArray(myList))
     assert [0,0] == solutionList
     print("[0,0,0,0] passed.")
+    myList = [4,2]
+    solutionList = sorted(mySolution.findOriginalArray(myList))
+    assert [2] == solutionList
     myList = [19432,47200,5651,18136,3130,35588,14947,47380,40219,28932,44486,18110,26558,45476,85988,37859,51306,78912,4783,22374,21642,67574,276,43498,32572,16033,79698,27665,3762,16074,30992,25632,13106,30000,19256,11992,4183,644,70128,91980,50472,83142,42312,26945,65348,38707,1302,98256,46699,12748,45734,73628,76048,48578,37112,29789,5624,6441,28508,87524,23529,48468,98092,35151,29870,48984,8140,94658,64420,53178,86142,55346,73254,43543,43916,40684,46615,8518,38443,31230,28858,701,44612,33743,21004,17019,38464,8780,25574,28973,30319,38336,49970,87464,6492,87982,95170,39331,28098,24508,4971,47633,75634,40552,12726,44765,80102,1424,11819,12462,30228,14356,40940,48780,32073,31408,96554,90482,96354,2246,4684,22655,11308,72308,45798,7217,11195,61726,29315,40320,11457,45289,4603,2813,70250,45060,45916,21757,47720,1959,27312,48882,47196,45106,43941,25636,39024,81872,26202,58622,93668,25132,41056,14476,46076,26271,2274,7428,57384,60752,3584,64448,19760,1661,53440,15009,19098,3038,33450,37700,3313,3179]
-    print(len(myList))
     solutionList = sorted(mySolution.findOriginalArray(myList))
     print(solutionList)
 
