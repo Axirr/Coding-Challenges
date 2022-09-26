@@ -14,20 +14,31 @@ class Solution:
             if (isEqual):
                 existingVariables.add(var1)
                 existingVariables.add(var2)
-                eqSet1 = [i for (i, eqSet) in enumerate(equalitySets) if var1 in eqSet]
-                eqSet2 = [i for (i, eqSet) in enumerate(equalitySets) if var2 in eqSet]
-                if (len(eqSet1) > 0 and len(eqSet2) > 0):
-                    actualSet1 = equalitySets[eqSet1[0]]
-                    actualSet2 = equalitySets[eqSet2[0]]
-                    if (actualSet1 != actualSet2):
-                        equalitySets[eqSet1[0]] = list(set(actualSet1 + actualSet2))
-                        equalitySets.pop(eqSet2[0])
+                equalitySetIndex1 = -1
+                equalitySetIndex2 = -1
+                for i in range(len(equalitySets)):
+                    checkSet = equalitySets[i]
+                    if var1 in checkSet:
+                        equalitySetIndex1 = i
+                        break
+                for i in range(len(equalitySets)):
+                    checkSet = equalitySets[i]
+                    if var2 in checkSet:
+                        equalitySetIndex2 = i
+                        break
+                # eqSet1 = [i for (i, eqSet) in enumerate(equalitySets) if var1 in eqSet]
+                # eqSet2 = [i for (i, eqSet) in enumerate(equalitySets) if var2 in eqSet]
+                if (equalitySetIndex1 >= 0 and equalitySetIndex2 >= 0):
+                    if (equalitySetIndex1 != equalitySetIndex2):
+                        # equalitySets[equalitySetIndex1] = list(set(equalitySets[equalitySetIndex1] + equalitySets[equalitySetIndex2]))
+                        equalitySets[equalitySetIndex1] = list(set(equalitySets[equalitySetIndex1] + equalitySets[equalitySetIndex2]))
+                        equalitySets.pop(equalitySetIndex2)
                     else:
                         continue
-                elif (len(eqSet1) > 0):
-                    equalitySets[eqSet1[0]].append(var2)
-                elif (len(eqSet2) > 0):
-                    equalitySets[eqSet2[0]].append(var1)
+                elif (equalitySetIndex1 >= 0):
+                    equalitySets[equalitySetIndex1].append(var2)
+                elif (equalitySetIndex2 >= 0):
+                    equalitySets[equalitySetIndex2].append(var1)
                 else:
                     equalitySets.append([var1, var2])
 
@@ -55,8 +66,18 @@ class Solution:
             letter1 = pair[0]
             letter2 = pair[1]
             if (letter1 in existingVariables and letter2 in existingVariables):
-                eqSet1 = [eqSet for eqSet in equalitySets if letter1 in eqSet][0]
-                eqSet2 = [eqSet for eqSet in equalitySets if letter2 in eqSet][0]
+                eqSet1 = []
+                eqSet2 = []
+                for eqSet in equalitySets:
+                    if letter1 in eqSet:
+                        eqSet1 = eqSet
+                        break
+                for eqSet in equalitySets:
+                    if letter2 in eqSet:
+                        eqSet2 = eqSet
+                        break
+                # eqSet1 = [eqSet for eqSet in equalitySets if letter1 in eqSet][0]
+                # eqSet2 = [eqSet for eqSet in equalitySets if letter2 in eqSet][0]
                 if (eqSet1 == eqSet2):
                     return False
 
@@ -130,6 +151,7 @@ def main():
     assert returnBool
     returnBool = mySolution.equationsPossible(["a==b","e==c","b==c","a!=e"])
     assert not returnBool
+    print("All passed.")
 
 
 main()
