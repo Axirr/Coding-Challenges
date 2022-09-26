@@ -1,0 +1,68 @@
+
+
+int removeElement(int* nums, int numsSize, int val){
+    if (numsSize == 0) {  return 0; }
+    int currentPosition = 0;
+
+    // Doesn't handle the last element, since swap from the end wouldn't work
+    while (currentPosition < (numsSize - 1)) {
+        if (nums[currentPosition] == val) {
+            nums[currentPosition] = nums[numsSize - 1];
+            numsSize -= 1;
+        } else {
+            currentPosition += 1;
+        }
+    }
+
+    if (nums[numsSize - 1] == val) {
+        numsSize -= 1;
+    }
+
+    return numsSize;
+}
+
+/*
+Simple manual test case
+[1,2,3], 2
+currentPosition = 0
+removed 0
+0 < 2
+    no equal to value
+    current 1
+1 < 2
+    equal
+    nums[1] = nums[3 - 1]
+    [1,3,3]
+    numSize 2
+    removed 1
+    current 2
+2 !< 2
+if nums[2 - 1] != val
+return 2, correct
+*/
+
+/*
+Data range/assumptions:
+    Can be 0 length
+    Length small
+    Values small
+    Can be in different order, since checker sorts
+*/
+
+/*
+Important test cases:
+    Empty
+    All elements matched and removed
+    Head element matched and removed
+    Last element removed
+*/
+
+/*
+Plain language
+Traverse array, finding matching elements
+Naive:
+    Move all elements up by 1, subtract one from size
+Better:
+    If list length greather than 2:
+    Move last element to current spot, subtract one from size
+*/

@@ -100,6 +100,8 @@ class Solution:
         Given n
 
         Only add mod for anything over base?
+        base: 7
+        101110 % 7
         mod(8) = 1 + 
         I think there's something here
         '''
