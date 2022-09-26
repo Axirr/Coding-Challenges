@@ -3,7 +3,9 @@ class Solution:
     # def equationsPossible(self, equations: List[str]) -> bool:
         freeVariables = set("abcdefghijklmnopqrstuvwxyz")
         existingVariables = set()
-        equalitySets = []
+        equalitySets = {}
+        for letter in 'abcdefghijklmnopqrstuvwxyz':
+            equalitySets[letter] = []
         inequalityPairs = []
         for eqn in equations:
             var1 = eqn[0]
@@ -14,33 +16,27 @@ class Solution:
             if (isEqual):
                 existingVariables.add(var1)
                 existingVariables.add(var2)
-                equalitySetIndex1 = -1
-                equalitySetIndex2 = -1
-                for i in range(len(equalitySets)):
-                    checkSet = equalitySets[i]
-                    if var1 in checkSet:
-                        equalitySetIndex1 = i
-                        break
-                for i in range(len(equalitySets)):
-                    checkSet = equalitySets[i]
-                    if var2 in checkSet:
-                        equalitySetIndex2 = i
-                        break
-                # eqSet1 = [i for (i, eqSet) in enumerate(equalitySets) if var1 in eqSet]
-                # eqSet2 = [i for (i, eqSet) in enumerate(equalitySets) if var2 in eqSet]
-                if (equalitySetIndex1 >= 0 and equalitySetIndex2 >= 0):
-                    if (equalitySetIndex1 != equalitySetIndex2):
-                        # equalitySets[equalitySetIndex1] = list(set(equalitySets[equalitySetIndex1] + equalitySets[equalitySetIndex2]))
-                        equalitySets[equalitySetIndex1] = list(set(equalitySets[equalitySetIndex1] + equalitySets[equalitySetIndex2]))
-                        equalitySets.pop(equalitySetIndex2)
+                equalitySet1 = equalitySets[var1]
+                equalitySet2 = equalitySets[var2]
+                if (len(equalitySet1) > 0 and len(equalitySet2) > 0):
+                    if (equalitySet1 != equalitySet2):
+                        newEqualitySet = list(set(equalitySet1 + equalitySet2))
+                        for letter in newEqualitySet:
+                            equalitySets[letter] = newEqualitySet
                     else:
                         continue
-                elif (equalitySetIndex1 >= 0):
-                    equalitySets[equalitySetIndex1].append(var2)
-                elif (equalitySetIndex2 >= 0):
-                    equalitySets[equalitySetIndex2].append(var1)
+                elif (len(equalitySet1) > 0):
+                    equalitySet1.append(var2)
+                    equalitySets[var1] = equalitySet1
+                    equalitySets[var2] = equalitySet1
+                elif (len(equalitySet2) > 0):
+                    equalitySet2.append(var1)
+                    equalitySets[var1] = equalitySet2
+                    equalitySets[var2] = equalitySet2
                 else:
-                    equalitySets.append([var1, var2])
+                    newEqualitySet = [var1, var2]
+                    equalitySets[var1] = newEqualitySet
+                    equalitySets[var2] = newEqualitySet
 
                 if (var1 not in freeVariables or var2 not in freeVariables):
                     if (not self.isConditionsValid(equalitySets, inequalityPairs, existingVariables)):
@@ -66,19 +62,7 @@ class Solution:
             letter1 = pair[0]
             letter2 = pair[1]
             if (letter1 in existingVariables and letter2 in existingVariables):
-                eqSet1 = []
-                eqSet2 = []
-                for eqSet in equalitySets:
-                    if letter1 in eqSet:
-                        eqSet1 = eqSet
-                        break
-                for eqSet in equalitySets:
-                    if letter2 in eqSet:
-                        eqSet2 = eqSet
-                        break
-                # eqSet1 = [eqSet for eqSet in equalitySets if letter1 in eqSet][0]
-                # eqSet2 = [eqSet for eqSet in equalitySets if letter2 in eqSet][0]
-                if (eqSet1 == eqSet2):
+                if (equalitySets[letter1] == equalitySets[letter2]):
                     return False
 
         return True
@@ -150,6 +134,8 @@ def main():
     returnBool = mySolution.equationsPossible(["b==a","a==b"])
     assert returnBool
     returnBool = mySolution.equationsPossible(["a==b","e==c","b==c","a!=e"])
+    assert not returnBool
+    returnBool = mySolution.equationsPossible(["a==b","b!=c","c==a"])
     assert not returnBool
     print("All passed.")
 
