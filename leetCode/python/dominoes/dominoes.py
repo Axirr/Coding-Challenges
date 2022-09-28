@@ -23,12 +23,9 @@ class Solution:
         if dominoes[-1] == '.':
             subProblems.append((leftEnd, '.', count - 2))
 
-        for problem in subProblems:
-            print(problem)
+        # for problem in subProblems:
+        #     print(problem)
 
-        # if (len(subProblems) <= 1):
-        #     return dominoes
-        
         firstLetter = subProblems[0][0]
         firstEnd = subProblems[0][1]
         if firstLetter == "." and firstEnd == "L":
@@ -54,29 +51,22 @@ class Solution:
             left == '.' and right == 'R' or \
             left == 'L' and right == '.' or \
             left == 'L' and right == 'R'):
-            # resultString = left + '.' * interiorLength + right
             resultString = '.' * interiorLength + right
         else:
             if (left == right):
                 resultString = right * (interiorLength + 1)
             elif (left == "R" and right == "."):
-                # resultString = left + "R" * interiorLength + right
-                # resultString = "R" * (interiorLength + 1) + right
                 resultString = "R" * (interiorLength + 1) 
             elif (left == '.' and right == 'L'):
-                # resultString = left + "L" * interiorLength + right
-                # resultString = "L" * interiorLength + right
                 resultString = "L" * (interiorLength + 2)
             else:
                 middle = ''
                 if (interiorLength % 2 != 0):
                     middle = '.'
-                # resultString = left + "R" * (interiorLength // 2) + middle + "L" * (interiorLength // 2) + right
                 resultString = "R" * (interiorLength // 2) + middle + "L" * (interiorLength // 2) + right
 
 
         solutionCache[problem] = resultString
-        # print(resultString)
         return resultString
 
 def main():
