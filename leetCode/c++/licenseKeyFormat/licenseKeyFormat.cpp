@@ -5,25 +5,31 @@ using namespace std;
 class Solution {
 public:
     string licenseKeyFormatting(string s, int k) {
-        string resultString = "";
+        int dashCount = 0;
         char letter; 
         for (unsigned int i = 0; i < s.length(); i++) {
             letter = s[i];
-            if (islower(letter)) {  letter = toupper(letter);  }
-            if (letter != '-') {
+            if (letter == '-') {  dashCount++;  }
+        }
+
+        int letterStrLength = s.length() - dashCount;
+        int firstGroupSize = letterStrLength % k; 
+        int count = firstGroupSize;
+        if (count == 0) {  count = k;  }
+
+        string resultString = "";
+        for (unsigned int i = 0; i < s.length(); i++) {
+            letter = s[i];
+            if (letter == '-') {  continue;  }
+            else {
+                if (resultString.length() == count) {
+                    resultString += "-";
+                    // + 1 because string has a dash addded to it each time
+                    count += k + 1;
+                }
+                if (islower(letter)) {  letter = toupper(letter);  }
                 resultString += letter;
             }
-        }
-        // cout << resultString << '\n';
-
-        // int groupSize = resultString.length() / k;
-        int count = resultString.length() % k;
-        if (count == 0) {  count = k;  }
-        string dash = "-";
-        while (count < resultString.length()) {
-            resultString.insert(count, dash);
-            // cout << resultString << '\n';
-            count += k + 1;
         }
 
         return resultString;
@@ -34,6 +40,9 @@ int main() {
     Solution mySolution = Solution();
     string myString = "1ad-76-v3nmlw";
     string resultString;
+    resultString = mySolution.licenseKeyFormatting(myString, 3);
+    cout << resultString << '\n';
+    myString = "abcdef";
     resultString = mySolution.licenseKeyFormatting(myString, 3);
     cout << resultString << '\n';
 
