@@ -1,16 +1,16 @@
 #include <iostream>
 #include <string>
+#include <cmath>
 
 class Solution {
 public:
     bool isPalindrome(int x) {
         if (x < 0) {  return false;  }
-        long int largeDivisor = 10;
-        while (x - largeDivisor >= 0) {
-            largeDivisor *= 10;
-        }
+        if (x == 0) {  return true;  }
 
-        largeDivisor /= 10;
+        int numDigits = floor(log10(x) + 1);
+        int largeDivisor = pow(10, numDigits - 1);
+
         int smallDivisor = 1;
         int largeDigit;
         int smallDigit;
