@@ -10,19 +10,20 @@ class Solution:
             currentBalloon = colors[i]
             currentTime = neededTime[i]
             if (currentBalloon != prevBalloon):
-                # Add sum - min only if run is longer than 1
-                if ((i - startIndex) > 1):
-                    timeCount += currentSum - currentMax
+                # Add sum - max only if run is longer than 1
+                timeCount += currentSum - currentMax
 
-                # Reset running sum and min
+                # Reset running sum and max
                 startIndex = i
                 currentSum = currentTime
                 currentMax = currentTime
             else:
-                # Update running sum and min
+                # Update running sum and max
                 currentSum += currentTime
                 currentMax = max(currentMax, currentTime)
             prevBalloon = currentBalloon
+
+        # Add last sequence if went to end
         if (startIndex != len(colors) - 1):
             timeCount += currentSum - currentMax
 
@@ -32,7 +33,7 @@ def main():
     mySolution = Solution()
     testColors = "abaac"
     testNeededTime = [1,2,3,4,5]
-    mySolution.minCost(testColors, testNeededTime)
+    mySolution.maxCost(testColors, testNeededTime)
 
 main()
 
@@ -46,16 +47,16 @@ timeCount 0
 start 0
 prev a
 current 1
-min 1
+max 1
 
 curr == prev
     sum 6
-    min 1
+    max 1
     prev a
 curr != prev
     timeCount 5
     sum 3
-    min 3
+    max 3
 curr != prev
     3 - 2 !> 1
         no add time
@@ -81,7 +82,7 @@ All same color
 Two options to remove, with one being quicker
 Rope already colourful
     Remove none
-Last element in a run and is minimum
+Last element in a run and is maximum
 '''
 
 '''
