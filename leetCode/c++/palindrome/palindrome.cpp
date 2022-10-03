@@ -5,6 +5,28 @@ class Solution {
 public:
     bool isPalindrome(int x) {
         if (x < 0) {  return false;  }
+        long int largeDivisor = 10;
+        while (x - largeDivisor >= 0) {
+            largeDivisor *= 10;
+        }
+
+        largeDivisor /= 10;
+        int smallDivisor = 1;
+        int largeDigit;
+        int smallDigit;
+        while (smallDivisor < largeDivisor) {
+            largeDigit = (x / largeDivisor) % 10;
+            smallDigit = (x / smallDivisor) % 10;
+            if (largeDigit != smallDigit) {  return false;  }
+            largeDivisor /= 10;
+            smallDivisor *= 10;
+        }
+
+        return true;
+    }
+
+    bool isPalindromeNaive(int x) {
+        if (x < 0) {  return false;  }
         std::string convertedString = std::to_string(x);
         int front = 0;
         int back = convertedString.length() - 1;
@@ -29,6 +51,7 @@ Negative but otherwise valid palindrome
     Reject
 Even length
 Odd length
+Max value
 */
 
 /*
