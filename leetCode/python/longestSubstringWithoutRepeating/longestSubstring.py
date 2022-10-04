@@ -9,19 +9,23 @@ class Solution:
         numSymbols = 191
         maxSubstringLen = 1
         count = 1
-        for i in range(len(s)):
+        i = 0
+        while (i < len(s)):
             letterString = s[i]
             count = 1
             didBreak = False
+            j = i + 1
             for j in range(i + 1, min(i + 1 + numSymbols, len(s))):
                 if s[j] in letterString:
                     maxSubstringLen = max(count, maxSubstringLen)
                     didBreak = True
+                    i += 1
                     break
                 letterString += s[j]
                 count += 1
             if (not didBreak):
                 maxSubstringLen = max(count, maxSubstringLen)
+                i = j
             if (maxSubstringLen >= numSymbols): return maxSubstringLen
         # maxSubstringLen = max(count, maxSubstringLen)
         return maxSubstringLen
@@ -48,6 +52,10 @@ def main():
     resultCount = mySolution.lengthOfLongestSubstring(myString)
     print(resultCount)
     assert resultCount == 2
+    myString = "dvdf"
+    resultCount = mySolution.lengthOfLongestSubstring(myString)
+    print(resultCount)
+    assert resultCount == 3
 
 main()
 
@@ -136,6 +144,11 @@ Plain language:
             Will test all possible valid substrings
             Will break early if found theoretical max
 
-
+Better solution:
+    Repeating work
+        Move one letter over, most of the duplicates are the same
+        Also:
+            Should start at the j that broke the loop
+                Since anything before that has been disqualified/counted
 '''
 
