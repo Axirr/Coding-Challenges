@@ -1,4 +1,5 @@
 import string
+from collections import Counter
 
 class Solution:
     def lengthOfLongestSubstring(self, s: str) -> int:
@@ -6,28 +7,23 @@ class Solution:
 
         # validLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \n"
         # print(len(validLetters))
-        numSymbols = 191
+        # numSymbols = 191
         maxSubstringLen = 1
-        count = 1
-        i = 0
-        while (i < len(s)):
-            letterString = s[i]
-            count = 1
-            didBreak = False
-            j = i + 1
-            for j in range(i + 1, min(i + 1 + numSymbols, len(s))):
-                if s[j] in letterString:
-                    maxSubstringLen = max(count, maxSubstringLen)
-                    didBreak = True
-                    i += 1
-                    break
-                letterString += s[j]
-                count += 1
-            if (not didBreak):
-                maxSubstringLen = max(count, maxSubstringLen)
-                i = j
-            if (maxSubstringLen >= numSymbols): return maxSubstringLen
-        # maxSubstringLen = max(count, maxSubstringLen)
+        myCount = Counter()
+        left = right = 0
+        while (right < len(s)):
+            rightLetter = s[right]
+            myCount[rightLetter] += 1
+
+            # While duplciate, shrink left
+            while (myCount[rightLetter] > 1):
+                myCount[s[left]] -= 1
+                left += 1
+
+            maxSubstringLen = max(maxSubstringLen, right - left + 1)
+
+            right += 1
+
         return maxSubstringLen
 
 def main():
@@ -130,10 +126,10 @@ Letter by letter span isn't worst case of n ^ 2
 Plain language:
     maxSubstringLen = 1
     for i in range(len(myStr)):
-        letterString = myStr[i]
+        letterSet = myStr[i]
         count = 0
         for j in range(i + 1, min(i + 40, len(myStr)):
-            if myStr(j) in letterString:
+            if myStr(j) in letterSet:
                 maxSubstringLen = max(count, maxSubstringLen)
                 break
         if (maxSubstringLen >= 40): return maxSubstringLen
