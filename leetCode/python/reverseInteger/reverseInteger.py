@@ -29,6 +29,7 @@ class Solution:
                 currentDigit = (x // currentDigitDivisor) % 10
                 if (currentDigit > checkDigitList[i]):
                     return 0
+                # Only continue if digit = checkDigit, otherwise less significant digits don't matter
                 if (currentDigit < checkDigitList[i]):
                     break
                 currentSum += currentDigit * (maxPowerValue // currentDigitDivisor)
@@ -59,6 +60,7 @@ def main():
     myInt = 2147483602
     myReverseInt = mySol.reverse(myInt)
     print(myReverseInt)
+    assert myReverseInt == 2063847412
     myInt = 8463847412
     myReverseInt = mySol.reverse(myInt)
     print(myReverseInt)
