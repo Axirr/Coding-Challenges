@@ -1,18 +1,12 @@
 #include <vector>
+#include <iostream>
 
 class Solution {
 public:
     std::vector<int> plusOne(std::vector<int>& digits) {
-        if (digits.size() == 1) {
-            if (digits[0] == 9) {
-                digits = {1,0};
-            } else {
-                digits[0] += 1;
-            }
-            return digits;
-        }
-        
-        int originalSecondLastDigit = digits[1];
+        int originalSecondLastDigit = -1;
+        if (digits.size() > 1) {  originalSecondLastDigit = digits[1];  }
+
         for (int i = digits.size() - 1; i > 0; i--) {
             if (digits[i] != 9) {
                 digits[i] += 1;
@@ -21,8 +15,8 @@ public:
             digits[i] = 0;
         }
 
-        // Rollover in last digit
-        if (digits[1] == 0 && digits[1] != originalSecondLastDigit) {
+        // Safely increment last digit if required
+        if (digits.size() == 1 || (digits[1] == 0 && digits[1] != originalSecondLastDigit)) {
             if (digits[0] == 9) {
                 digits[0] = 0;
                 digits.insert(digits.begin(), 1);
@@ -34,6 +28,16 @@ public:
         return digits;
     }
 };
+
+int main() {
+    Solution mySol = Solution();
+    std::vector<int> myVector = {9};
+    mySol.plusOne(myVector);
+    for (unsigned int i = 0; i < myVector.size(); i++) {
+        std::cout << myVector[i] << '\n';
+    }
+    return 0;
+}
 
 /*
 Data range/assumptions:
