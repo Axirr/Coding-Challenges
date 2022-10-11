@@ -19,6 +19,8 @@ public:
                     }
                 }
             } else {
+                // Second pass done backwards, in back half, because b should be as far back as possible for lexographical minimum
+                // Either has to be 'a' or 'b' as replacement letter, since if 'a' doesn't work then 'b' must
                 for (stringIndex = palindrome.length() - 1; stringIndex >= (palindrome.length() / 2 + palindrome.length() % 2); stringIndex++) {
                     if (palindrome[stringIndex] != replaceLetter) {
                         palindrome[stringIndex] = replaceLetter;
