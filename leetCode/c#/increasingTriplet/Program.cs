@@ -8,37 +8,40 @@ class Program {
         int[] myArray2 = {5,1,5,5,2,5,4};
         resultBool = mySol.IncreasingTriplet(myArray2);
         Console.WriteLine(resultBool);
+        int[] myArray3 = {20,100,10,12,5,13};
+        resultBool = mySol.IncreasingTriplet(myArray3);
+        Console.WriteLine(resultBool);
     }
 
     public class Solution {
         public bool IncreasingTriplet(int[] nums) {
             if (nums.Length < 3) {  return false;  }
 
-            // Console.WriteLine("Hello world");
             int runningMin = nums[0];
             int lowAboveMin = nums[1];
-            int prev = nums[1];
             int currentNum;
+            int prev = nums[1];
 
-            // int potentialNewMin;
             for (int i = 2; i < nums.Length; i++) {
                 currentNum = nums[i];
-                if (lowAboveMin > runningMin & currentNum > lowAboveMin) {  return true;  }
+
+                // This seems like it should be at the end, but needs to be here to pass the tests with this structure
+                // Possibly buggy for some inputs? Maybe not though
                 runningMin = Math.Min(runningMin, prev);
 
-                // Invalid lowAboveMin that isn't below runningMin, so at least try and replace
                 if (lowAboveMin <= runningMin) {
                     lowAboveMin = currentNum;
-                } else if (currentNum < lowAboveMin & currentNum > runningMin) {  lowAboveMin = currentNum;  }
-                // potentialNewMin = Math.min(lowAboveMin, currentNum);
-                // if (potentialNewMin > runningMin) {
-                //     lowAboveMin = Math.Max(lowAboveMin, Math.Min())
-                // }
+                } else {
+                    if (lowAboveMin > runningMin & currentNum > lowAboveMin) {  return true;  }
+
+                    if (currentNum < lowAboveMin & currentNum > runningMin) {  lowAboveMin = currentNum;  }
+                }
+
                 prev = currentNum;
             }
             return false;
         }
-}
+    }
 }
 
 /*
