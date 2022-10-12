@@ -15,12 +15,9 @@ public class Solution {
     public int LargestPerimeter(int[] nums) {
         int resultInt = 0;
         Array.Sort(nums, (x, y) => y.CompareTo(x));
-        for (int i = 0; i < nums.Length; i++) {
-            for (int j = i + 1; j < nums.Length; j++) {
-                for (int k = j + 1; k < nums.Length; k++) {
-                    if ( (nums[j] + nums[k]) > nums[i]) {  return nums[i] + nums[j] + nums[k]; }
-                }
-            }
+        // Don't require exhaustive search because if the new two largest are two small, all others will be too (since sorted)
+        for (int i = 0; i < (nums.Length - 2); i++) {
+            if ( (nums[i+1] + nums[i+2]) > nums[i]) {  return nums[i] + nums[i + 1] + nums[i + 2]; }
         }
         return resultInt;
     }
