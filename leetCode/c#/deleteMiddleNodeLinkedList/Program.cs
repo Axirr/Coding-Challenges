@@ -34,15 +34,40 @@ public class ListNode {
 public class Solution {
     public ListNode DeleteMiddle(ListNode head) {
         if (head.next == null) { return null; }
+
         int count = 0;
+        int batchSize = 100;
         ListNode currentNode = head;
+        ListNode oldShortcut = null;
+        ListNode currentShortcut = null;
+        int currentShortcutCount = Int32.MaxValue;
+        int oldShortcutCount = Int32.MaxValue;
+
+
         while (currentNode != null) {
-            count += 1;
-            currentNode = currentNode.next;
+            for (int i = 0; i < batchSize; i++) {
+                if (currentNode == null) { break;  }
+                count += 1;
+                currentNode = currentNode.next;
+            }
+            if (currentNode == null) { break;  }
+            oldShortcut = currentShortcut;
+            oldShortcutCount = currentShortcutCount;
+            currentShortcut = currentNode;
+
+            // Unsure about batchsize
+            // Should it even change? By how much
+            batchSize *= 4;
         }
+
         int middleIndex = count / 2;
         count = 0;
-        currentNode = head;
+        if (currentShortcut != null & currentShortcutCount < middleIndex) {
+            currentNode = currentShortcut;
+        } else if (oldShortcut != null & oldShortcutCount < middleIndex) {
+            currentNode = oldShortcut;
+        } else {  currentNode = head;  }
+
         ListNode prevNode = new ListNode(-1);
         while (currentNode != null) {
             if (count == middleIndex) {
