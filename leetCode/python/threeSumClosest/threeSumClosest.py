@@ -99,4 +99,26 @@ Calculate pair sums:
 Simpler problem: sum of two entires closest to target
     Anyway to not do this n^2?
     Feels like your best case is an educated search process
+
+
+Solution learned from discussion pages:
+Why does it work?
+    Not clear that condition should guarantee accuracy
+        If too big, reduce larger number
+        If too small, increase smaller number
+    But what if we needed one of the numbers we just changed
+        Note: only about needing it for the current nums[i]
+            Can still be used for other i
+        So nums[i] is fixed
+            If currentSum too big, need to reduce somehow
+            Right can only every increase
+                Or return to an evaluated triplet, which is useless
+            So must reduce left
+                And minimum reduction is moving decrementing by one
+    If the one we moved past will be in the solution, it will be with a different nums[i]
+
+More simply:
+    greater -> reduce to potentially improve -> reduce high value
+        Increasing sum nonsensical
+    lesser -> increase to potentially improve -> increase low value
 '''
