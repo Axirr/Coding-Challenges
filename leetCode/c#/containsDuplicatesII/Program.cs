@@ -1,4 +1,5 @@
-﻿class Program {
+﻿
+class Program {
     public static void Main(string[] args) {
         Solution mySol = new Solution();
         int[] intArray = {1,2,3,1,2,3};
@@ -17,14 +18,19 @@
 
 public class Solution {
     public bool ContainsNearbyDuplicate(int[] nums, int k) {
-        List<int> numsSlice = new List<int>();
-        foreach (int num in nums) {
-            if (numsSlice.IndexOf(num) != -1) {
-                return true;
+        Dictionary<int, int> numsDict = new Dictionary<int, int>();
+        for (int i = 0; i < nums.Length; i++) {
+            int num = nums[i];
+            if (numsDict.ContainsKey(num)) {
+                if (numsDict[num] > 0) {  return true;  }
+            } else {
+                numsDict.Add(num, 0);
             }
-            numsSlice.Add(num);
-            if (numsSlice.Count > k) {
-                numsSlice.RemoveAt(0);
+
+            numsDict[num] += 1;
+            int deleteIndex = i - k;
+            if (deleteIndex >= 0) {
+                numsDict[nums[deleteIndex]] -= 1;
             }
         }
         return false;
