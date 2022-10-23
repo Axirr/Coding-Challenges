@@ -3,28 +3,27 @@
 
 public class Solution {
     public int[] FindErrorNums(int[] nums) {
-        Array.Sort(nums);
+        Dictionary<int, int> countDict = new Dictionary<int, int>();
         int correctSum = (int)(nums.Length / 2.0 * (1 + nums.Length));
-        int actualSum = nums.Sum();
-        int missing;
+        int actualSum = 0;
+        int end = nums.Length;
         int duplicate = 0;
-        if (nums[0] != 1) {
-            missing = 1;
-            duplicate = (actualSum + missing) - correctSum;
-        } else if (nums[nums.Length - 1] != nums.Length) {
-            missing = nums.Length;
-            duplicate = (actualSum + missing) - correctSum;
-        } else {
-            int prev = nums[0];
-            int currentIndex = 1;
-            while (currentIndex <= (nums.Length - 1)) {
-                if (prev == nums[currentIndex]) {
-                    duplicate = prev;
-                    break;
-                }
-                prev = nums[currentIndex];
-                currentIndex += 1;
+        int num;
+        for (int i = 0; i < nums.Length; i++) {
+            num = nums[i];
+            actualSum += num;
+            if (countDict.ContainsKey(num)) {
+                duplicate = num;
+            } else {
+                countDict.Add(num,1);
             }
+        }
+        int missing;
+        if (!countDict.ContainsKey(1)) {
+            missing = 1;
+        } else if (!countDict.ContainsKey(end)) {
+            missing = end;
+        } else {
             missing = correctSum - (actualSum - duplicate);
         }
         int[] resultArray = {duplicate, missing};
@@ -56,6 +55,12 @@ class Program {
         int[] fourthArray = {1,5,3,2,2,7,6,4,8,9};
         int[] fourthResultIntArray = mySol.FindErrorNums(fourthArray);
         foreach (var num in fourthResultIntArray) {
+            Console.WriteLine(num);
+        }
+        Console.WriteLine();
+        int[] fifthArray = {8,7,3,5,3,6,1,4};
+        int[] fifthResultIntArray = mySol.FindErrorNums(fifthArray);
+        foreach (var num in fifthResultIntArray) {
             Console.WriteLine(num);
         }
         Console.WriteLine();
