@@ -8,15 +8,21 @@ public class Solution {
         }
         int currentMax;
         int runningMax = 0;
-        List<string> tempStringList = new List<string>();
         string stringForLength = "";
         for (int i = 0; i < arr.Count; i++) {
-            tempStringList = HelperMaxLength(arr, i);
-            stringForLength = "";
-            foreach (string mySubstring in tempStringList) {
-                stringForLength += mySubstring;
+            currentMax = 0;
+            List<List<string>> result = HelperMaxLength(arr, i);
+            List<string> currentMaxList = new List<string>();
+            foreach (List<string> tempStringList in result) {
+                stringForLength = "";
+                foreach (string mySubstring in tempStringList) {
+                    stringForLength += mySubstring;
+                }
+                if (stringForLength.Length > currentMax) {
+                    currentMax = stringForLength.Length;
+                    // currentMaxList = tempStringList;
+                }
             }
-            currentMax = stringForLength.Length;
             // Console.WriteLine("Current Max");
             // Console.WriteLine(currentMax);
             // Console.WriteLine();
@@ -25,61 +31,71 @@ public class Solution {
         return runningMax;
     }
 
-    public List<string> HelperMaxLength(IList<string> arr, int startIndex) {
-        List<string> letterMaskList = new List<string>();
+    public List<List<string>> HelperMaxLength(IList<string> arr, int startIndex) {
+        List<List<string>> letterMaskList = new List<List<string>>();
         if (startIndex == arr.Count - 1) {
-            letterMaskList.Add(arr[startIndex]);
+            List<string> tmpStringList = new List<string>();
+            tmpStringList.Add(arr[startIndex]);
+            letterMaskList.Add(tmpStringList);
         } else {
-            List<string> subcaseMaskList = HelperMaxLength(arr, startIndex + 1);
-            string subcaseMask = "";
-            foreach (string myStr in subcaseMaskList) {
-                subcaseMask += myStr;
-            }
-            // Console.WriteLine(subcaseMask);
-            string currentWord = arr[startIndex];
-            Dictionary<char, int> subcaseCount = new Dictionary<char, int>();
-            foreach (char letter in subcaseMask) {
-                if (!subcaseCount.ContainsKey(letter)) {
-                    subcaseCount.Add(letter, 1);
+            List<List<string>> tempDoubleList = HelperMaxLength(arr, startIndex + 1);
+            foreach (List<string> subcaseMaskList in tempDoubleList) {
+                string subcaseMask = "";
+                foreach (string myStr in subcaseMaskList) {
+                    subcaseMask += myStr;
                 }
-            }
-
-            bool hasDuplicates = false;
-            foreach (char letter in currentWord) {
-                if (subcaseCount.ContainsKey(letter)) {
-                    hasDuplicates = true;
-                    break;
-                }
-            }
-            int alternateValue = currentWord.Length;
-            if (!hasDuplicates) {
-                letterMaskList = subcaseMaskList;
-                letterMaskList.Add(currentWord);
-            } else {
-                int currentCount = currentWord.Length;
-                List<string> currentList = new List<string>();
-                currentList.Add(currentWord);
-                for (int i = subcaseMaskList.Count - 1; i >= 0; i--) {
-                    string subcaseWord = subcaseMaskList[i];
-                    if (!DoubleStringsHaveDuplicates(currentWord, subcaseWord)) {
-                        currentCount += subcaseWord.Length;
-                        currentList.Add(subcaseWord);
+                // Console.WriteLine(subcaseMask);
+                string currentWord = arr[startIndex];
+                Dictionary<char, int> subcaseCount = new Dictionary<char, int>();
+                foreach (char letter in subcaseMask) {
+                    if (!subcaseCount.ContainsKey(letter)) {
+                        subcaseCount.Add(letter, 1);
                     }
                 }
-                if (currentCount > subcaseMask.Length) {
-                    letterMaskList = currentList;
-                } else if (currentCount < subcaseMask.Length) {
-                    letterMaskList = subcaseMaskList;
+
+                bool hasDuplicates = false;
+                foreach (char letter in currentWord) {
+                    if (subcaseCount.ContainsKey(letter)) {
+                        hasDuplicates = true;
+                        break;
+                    }
+                }
+                int alternateValue = currentWord.Length;
+                if (!hasDuplicates) {
+                    subcaseMaskList.Add(currentWord);
+                    letterMaskList.Add(subcaseMaskList);
                 } else {
-                    Console.WriteLine("EQUAL");
-                    letterMaskList = subcaseMaskList;
+                    int currentCount = currentWord.Length;
+                    List<string> currentList = new List<string>();
+                    currentList.Add(currentWord);
+                    for (int i = subcaseMaskList.Count - 1; i >= 0; i--) {
+                        string subcaseWord = subcaseMaskList[i];
+                        if (!DoubleStringsHaveDuplicates(currentWord, subcaseWord)) {
+                            currentCount += subcaseWord.Length;
+                            currentList.Add(subcaseWord);
+                        }
+                    }
+                    letterMaskList.Add(subcaseMaskList);
+                    letterMaskList.Add(currentList);
+                    // if (currentCount > subcaseMask.Length) {
+                    //     letterMaskList.Add(currentList);
+                    // } else if (currentCount < subcaseMask.Length) {
+                    //     letterMaskList.Add(subcaseMaskList);
+                    // } else {
+                    //     letterMaskList.Add(subcaseMaskList);
+                    //     letterMaskList.Add(currentList);
+                    // }
                 }
             }
         }
-        // foreach (string myStr in letterMaskList) {
-        //     Console.Write(myStr);
-        // }
-        // Console.WriteLine();
+        if (false) {
+            foreach (List<string> myStrList in letterMaskList) {
+                foreach (string myStr in myStrList) {
+                    Console.Write(myStr);
+                }
+            }
+            Console.WriteLine();
+        }
         return letterMaskList;
     }
 
