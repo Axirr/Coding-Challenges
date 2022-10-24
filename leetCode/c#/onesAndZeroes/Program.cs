@@ -7,7 +7,6 @@ class Program {
         int m = 5;
         int n = 3;
         int resultInt = mySol.FindMaxForm(stringArray, m, n);
-        Console.WriteLine(resultBool);
         Console.WriteLine("Should be 4");
     }
 
@@ -15,7 +14,7 @@ class Program {
 
 public class Solution {
     public int FindMaxForm(string[] strs, int m, int n) {
-        resultInt = 0;
+        int resultInt = 0;
 
         return resultInt;
     }
