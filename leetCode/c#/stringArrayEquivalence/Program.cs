@@ -6,8 +6,11 @@
         int currentLetterIndex2 = 0;
         int currentWordIndex1 = 0; 
         int currentWordIndex2 = 0;
+
         while (true) {
             if (currentLetter1 != currentLetter2) {  return false;  }
+            
+            //Traverse next letter in word1
             currentLetterIndex1++;
             if (currentLetterIndex1 >= word1[currentWordIndex1].Length) {
                 currentWordIndex1++;
@@ -18,6 +21,7 @@
             }
             currentLetter1 = word1[currentWordIndex1][currentLetterIndex1];
 
+            // Traverse next letter in word2
             currentLetterIndex2++;
             if (currentLetterIndex2 >= word2[currentWordIndex2].Length) {
                 currentWordIndex2++;
@@ -27,8 +31,6 @@
                 currentLetterIndex2 = 0;
             }
             currentLetter2 = word2[currentWordIndex2][currentLetterIndex2];
-
-            // DO SECOND TOO
         }
         if (currentWordIndex1 == word1.Length && currentWordIndex2 == (word2.Length - 1) && currentLetterIndex2 == word2[currentWordIndex2].Length - 1) {
             return true;
