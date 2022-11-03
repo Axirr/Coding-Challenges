@@ -10,16 +10,28 @@ class Solution:
                 countDict[word] = 1
         wordCount = 0
         countedSingleValue = 0
-        for key in countDict:
+        countKeys = iter(countDict.keys())
+        key = next(countKeys)
+        while (key):
             reverseKey = key[::-1]
             if key == reverseKey:
-                equalCount = countDict[key]
-                wordCount += equalCount // 2
+                wordCount += countDict[key] // 2
                 if countedSingleValue == 0 and countDict[key] % 2 == 1:
                     countedSingleValue = 2
+                    key = next(countKeys, None)
+                    break
             elif reverseKey in countDict:
                 wordCount += min(countDict[key], countDict[reverseKey])
                 countDict[reverseKey] = 0
+            key = next(countKeys, None)
+        while (key):
+            reverseKey = key[::-1]
+            if key == reverseKey:
+                wordCount += countDict[key] // 2
+            elif reverseKey in countDict:
+                wordCount += min(countDict[key], countDict[reverseKey])
+                countDict[reverseKey] = 0
+            key = next(countKeys, None)
         return 4 * wordCount + countedSingleValue
 
 def main():
