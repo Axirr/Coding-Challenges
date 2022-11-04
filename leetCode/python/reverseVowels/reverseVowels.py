@@ -3,13 +3,12 @@ class Solution:
         left = -1
         right = len(s)
         vowelList = 'aeiouAEIOU'
-        resultList = list(s)
+        resultList = []
         while (True):
             # move left until vowel or end
             oldLeft = left
             for i in range(left+1, right):
-                currentLetter = s[i]
-                if currentLetter in vowelList:
+                if s[i] in vowelList:
                     left = i
                     break
             if oldLeft == left:
@@ -18,8 +17,7 @@ class Solution:
             # move right until vowel or start
             oldRight = right
             for i in range(right-1, left, -1):
-                currentLetter = s[i]
-                if currentLetter in vowelList:
+                if s[i] in vowelList:
                     right = i
                     break
             if oldRight == right:
