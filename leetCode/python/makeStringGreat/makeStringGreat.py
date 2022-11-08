@@ -3,11 +3,13 @@ class Solution:
         i = 0
         while (i < len(s) - 1):
             first = s[i]
+            isFirstUpper = first.isupper()
             second = s[i+1]
+            isSecondUpper = second.isupper()
             if first.lower() == second.lower():
-                if (first.isupper() and second.islower()) or (first.islower() and second.isupper()):
+                if (isFirstUpper and not isSecondUpper) or (not isFirstUpper and isSecondUpper):
                     s = s[:i] + s[i+2:]
-                    i = 0
+                    i = max(0, i - 1)
                     continue
             i += 1
         return s
