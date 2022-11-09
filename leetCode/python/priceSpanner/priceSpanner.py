@@ -5,12 +5,11 @@ class StockSpanner:
         self.runningMax = None
         self.runningMaxCount = 0
         self.maxInRangeList = []
-        self.numsInRange = 131
+        self.numsInRange = 300
         
 
     def next(self, price: int) -> int:
         self.priceHistory.append(price)
-        self.runningMaxCount += 1
         if (not self.runningMax):
             self.runningMax = price
         else:
@@ -19,15 +18,16 @@ class StockSpanner:
             self.maxInRangeList.append(self.runningMax)
             self.runningMax = None
             self.runningMaxCount = 0
+        # Moving this below the count check seemed to fix the bug
+        self.runningMaxCount += 1
+
         i = len(self.priceHistory) - 1
         count = 0
         foundBreak = False
         while (i >= 0):
             if not foundBreak and i % self.numsInRange == 0 and i != 0:
-                # j = len(self.maxInRangeList) - 1
                 j = (i // self.numsInRange) - 1
                 while (j >= 0):
-                    # if self.maxInRangeList[j] > price and (i - self.numsInRange) >= 0:
                     if self.maxInRangeList[j] > price:
                         foundBreak = True
                         break
@@ -36,7 +36,12 @@ class StockSpanner:
                         count += self.numsInRange
                         i -= self.numsInRange
                     j -= 1
-                continue
+                break
+            if self.priceHistory[i] <= price:
+                count += 1
+            else:  break
+            i -= 1
+        while (i >= 0):
             if self.priceHistory[i] <= price:
                 count += 1
             else:  break
