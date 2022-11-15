@@ -3,7 +3,7 @@ class Solution:
         left = -1
         right = len(s)
         vowelList = 'aeiouAEIOU'
-        resultList = []
+        resultList = list(s)
         while (True):
             # move left until vowel or end
             oldLeft = left
