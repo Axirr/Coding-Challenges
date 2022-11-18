@@ -10,11 +10,11 @@ class Solution:
             while (n % num == 0):
                 n = n // num
         
-        factor = 6
-        maxFactor = math.sqrt(n)
-        while (factor <= maxFactor):
-            if (n % factor == 0):  return False
-            factor += 2
+        # factor = 6
+        # maxFactor = math.sqrt(n)
+        # while (factor <= maxFactor):
+        #     if (n % factor == 0):  return False
+        #     factor += 2
 
         if n not in [1,2,3,5]:
             return False
