@@ -11,3 +11,13 @@ select id, student from Seat where id in (select max(id) from Seat) and mod(id, 
 -- select S1.id as id, S2.student as student from Seat S1 left join Seat S2 on S1.id + 1 = S2.id where mod(S1.id, 2) = 1 and S1.id not in (select max(id) from Seat)
 -- union
 -- select * from (select id, student from Seat order by id desc limit 1) as B where mod(id, 2) = 1) as A order by id;
+
+-- select 
+--     (case
+--         when id%2 = 0 then id - 1
+--         when id%2 = 1 and not id = MaxId then id + 1
+--         else id
+--     end) as id,
+--     student
+-- from Seat, (select count(id) as MaxId from Seat) as X
+-- order by id asc
