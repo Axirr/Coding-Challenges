@@ -1,19 +1,20 @@
 from typing import List
 from copy import copy
+from collections import deque
 
 class Solution:
     def nearestExit(self, maze: List[List[str]], entrance: List[int]) -> int:
         # frontier = [[entrance], []]
-        frontier = [[entrance]]
-        frontier.append([])
+        frontier = [entrance]
+        nextFrontier = []
         directions = ['n','e','s','w']
         visited = dict()
         visited[(entrance[0],entrance[1])] = True
         steps = 0
         mazeYmaxIndex = len(maze) - 1
         mazeXmaxIndex = len(maze[0]) - 1
-        while (len(frontier[0]) != 0):
-            cells = frontier[0]
+        while (len(frontier) != 0):
+            cells = frontier
             for i in range(len(cells)):
                 cell = copy(cells[i])
                 for direction in directions:
@@ -28,9 +29,9 @@ class Solution:
                                 cellTup = (newCellCoor[0], newCellCoor[1])
                                 if cellTup not in visited:
                                     visited[cellTup] = True
-                                    frontier[1].append(newCellCoor)
-            del frontier[0]
-            frontier.append([])
+                                    nextFrontier.append(newCellCoor)
+            frontier = nextFrontier
+            nextFrontier = []
             steps += 1
         return -1
     
