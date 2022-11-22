@@ -4,59 +4,43 @@ from queue import PriorityQueue
 class Solution:
     def __init__(self):
         self.resultCache = dict()
-        self.perfectSquareDict = dict()
+        self.perfectSquareSet = set()
 
-    # TODO: make dict a set if only using key
     def numSquares(self, n: int) -> int:
         self.constructSquaresToN(n)
-        if n in self.perfectSquareDict:
-            # if not n in self.resultCache:
-            #     self.resultCache[n] = 1
-            return 1
 
-        floorSN = math.floor(math.sqrt(n))
-        addCount = 1
+        queueDict = dict()
         pQueue = PriorityQueue()
-        pQueue.put((0, n, 0))
-        solution = None
-        currentNode = pQueue.get()
-        # didFindSolution = False
+        pQueue.put((0, n))
+        queueDict[0] = pQueue
+        queueDict[1] = PriorityQueue()
+        currentSteps = 0
+        currentNode = queueDict[currentSteps].get()
         while True:
             currentN = currentNode[1]
-            currentSteps = currentNode[2]
-            if currentN in self.perfectSquareDict:
-                newSolution = currentSteps + 1
-                if solution:
-                    solution = min(solution, newSolution)
-                else:
-                    solution = newSolution
+            if currentN in self.perfectSquareSet:
+                return currentSteps + 1
             
             floorSqrt = math.floor(math.sqrt(currentN))
             for root in range(floorSqrt, 0, -1):
                 innerNewN = currentN - root * root
-                if innerNewN in self.perfectSquareDict:
-                    newSolution = currentSteps + 2
-                    if solution:
-                        solution = min(solution, newSolution)
-                    else:
-                        solution = newSolution
-                    break
-                # if not solution:
-                if not solution or not currentSteps + 1 >= solution - 1:
-                # if not didFindSolution:
-                    innerSqrt = math.sqrt(innerNewN)
-                    sqrtDiff = abs(innerSqrt - round(innerSqrt))
-                    pQueue.put((sqrtDiff, innerNewN, currentSteps + 1))
+                if innerNewN in self.perfectSquareSet:
+                    return currentSteps + 2
+                innerSqrt = math.sqrt(innerNewN)
+                sqrtDiff = abs(innerSqrt - round(innerSqrt))
+                queueDict[currentSteps + 1].put((sqrtDiff, innerNewN))
             
 
-            if pQueue.empty():  break
-            currentNode = pQueue.get()
+            if queueDict[currentSteps].empty():
+                currentSteps += 1
+                queueDict[currentSteps + 1] = PriorityQueue()
+                if queueDict[currentSteps].empty():  break
+            currentNode = queueDict[currentSteps].get()
         
-        return solution
     
     def constructSquaresToN(self, n):
         for i in range(1, math.floor(math.sqrt(n) + 1)):
-            self.perfectSquareDict[i * i] = i
+            self.perfectSquareSet.add(i * i)
         return
 
 
@@ -77,6 +61,7 @@ def main():
     n = 3428
     resultInt = mySol.numSquares(n)
     print(resultInt)
+    assert resultInt == 2
     n = 5812
     resultInt = mySol.numSquares(n)
     print(resultInt)
