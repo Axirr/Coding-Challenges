@@ -9,33 +9,25 @@ class Solution:
     def numSquares(self, n: int) -> int:
         self.constructSquaresToN(n)
 
-        queueDict = dict()
         pQueue = PriorityQueue()
-        pQueue.put((0, n))
-        queueDict[0] = pQueue
-        queueDict[1] = PriorityQueue()
-        currentSteps = 0
-        currentNode = queueDict[currentSteps].get()
+        pQueue.put(((0,0), n))
+        currentNode = pQueue.get()
         while True:
             currentN = currentNode[1]
             if currentN in self.perfectSquareSet:
-                return currentSteps + 1
+                return currentNode[0][0] + 1
             
             floorSqrt = math.floor(math.sqrt(currentN))
             for root in range(floorSqrt, 0, -1):
                 innerNewN = currentN - root * root
                 if innerNewN in self.perfectSquareSet:
-                    return currentSteps + 2
+                    return currentNode[0][0] + 2
                 innerSqrt = math.sqrt(innerNewN)
                 sqrtDiff = abs(innerSqrt - round(innerSqrt))
-                queueDict[currentSteps + 1].put((sqrtDiff, innerNewN))
-            
+                pQueue.put(((currentNode[0][0] + 1, sqrtDiff), innerNewN))
 
-            if queueDict[currentSteps].empty():
-                currentSteps += 1
-                queueDict[currentSteps + 1] = PriorityQueue()
-                if queueDict[currentSteps].empty():  break
-            currentNode = queueDict[currentSteps].get()
+            if pQueue.empty():  break
+            currentNode = pQueue.get()
         
     
     def constructSquaresToN(self, n):
