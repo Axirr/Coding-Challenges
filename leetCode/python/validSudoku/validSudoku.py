@@ -3,30 +3,24 @@ from copy import copy
 
 class Solution:
     def isValidSudoku(self, board: List[List[str]]) -> bool:
-        # May be faster with list.remove() rather than dictionaries from observation
-        #      Though not sure why. Posisbly dictionary overhead for small n
         dictNumSets = dict()
-        allNums = ['1','2','3','4','5','6','7','8','9']
-        dictForNums = dict()
-        for num in allNums:
-            dictForNums[num] = 0
         for i in range(0, 9):
-            dictNumSets['x' + str(i)] = copy(dictForNums)
-            dictNumSets['y' + str(i)] = copy(dictForNums)
+            dictNumSets[str(i)] = dict()
+            dictNumSets['y' + str(i)] = dict()
 
         gridIndexRanges = [0,2], [3,5], [6, 8]
         for xRange in gridIndexRanges:
             for yRange in gridIndexRanges:
-                myNumSet = copy(dictForNums)
+                dictForGrid = dict()
                 for xCoor in range(xRange[0], xRange[1] + 1):
                     for yCoor in range(yRange[0], yRange[1] + 1):
                         cellValue = board[yCoor][xCoor]
                         if cellValue == '.':  continue
-                        myNumSet[cellValue] += 1
-                        dictNumSets['x' + str(xCoor)][cellValue] += 1
-                        dictNumSets['y' + str(yCoor)][cellValue] += 1
-                        if myNumSet[cellValue] >= 2 or dictNumSets['x' + str(xCoor)][cellValue] >= 2 or dictNumSets['y' + str(yCoor)][cellValue] >= 2:
+                        if cellValue in dictForGrid or cellValue in dictNumSets[str(xCoor)] or cellValue in dictNumSets['y' + str(yCoor)]:
                             return False
+                        dictForGrid[cellValue] = True
+                        dictNumSets[str(xCoor)][cellValue] = True
+                        dictNumSets['y' + str(yCoor)][cellValue] = True
         return True
 
 def main():
@@ -105,19 +99,19 @@ Ideas:
 Naive:
     numSet = [1,2,3,4,5,6,7,8,9]
     for each x value (i.e. column):
-        myNumSet = copy(numSet)
+        dictForGrid = copy(numSet)
         for each y value:
             numSet.remove(board[x][y])
             if not found, return False
     for each y value (i.e. row):
-        myNumSet = copy(numSet)
+        dictForGrid = copy(numSet)
         for each x value:
             numSet.remove(board[x][y])
             if not found, return False
     gridIndexRanges = [0,2], [3,5], [6, 8]
     for xRange in gridIndexRanges:
         for yRange in gridIndexRanges:
-            myNumSet = copy(numSet)
+            dictForGrid = copy(numSet)
             numSet.remove(board[x][y])
             if not found, return False
     
