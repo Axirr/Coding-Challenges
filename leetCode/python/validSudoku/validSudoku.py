@@ -3,36 +3,29 @@ from copy import copy
 
 class Solution:
     def isValidSudoku(self, board: List[List[str]]) -> bool:
-        numSet = ['1','2','3','4','5','6','7','8','9']
-        for xCoor in range(0, 9):
-            myNumSet = copy(numSet)
-            for yCoor in range(0, 9):
-                cellValue = board[yCoor][xCoor]
-                if cellValue == '.':  continue
-                try:
-                    myNumSet.remove(cellValue)
-                except ValueError:
-                    return False
-        for yCoor in range(0, 9):
-            myNumSet = copy(numSet)
-            for xCoor in range(0, 9):
-                cellValue = board[yCoor][xCoor]
-                if cellValue == '.':  continue
-                try:
-                    myNumSet.remove(cellValue)
-                except ValueError:
-                    return False
+        # May be faster with list.remove() rather than dictionaries from observation
+        #      Though not sure why. Posisbly dictionary overhead for small n
+        dictNumSets = dict()
+        allNums = ['1','2','3','4','5','6','7','8','9']
+        dictForNums = dict()
+        for num in allNums:
+            dictForNums[num] = 0
+        for i in range(0, 9):
+            dictNumSets['x' + str(i)] = copy(dictForNums)
+            dictNumSets['y' + str(i)] = copy(dictForNums)
+
         gridIndexRanges = [0,2], [3,5], [6, 8]
         for xRange in gridIndexRanges:
             for yRange in gridIndexRanges:
-                myNumSet = copy(numSet)
+                myNumSet = copy(dictForNums)
                 for xCoor in range(xRange[0], xRange[1] + 1):
                     for yCoor in range(yRange[0], yRange[1] + 1):
                         cellValue = board[yCoor][xCoor]
                         if cellValue == '.':  continue
-                        try:
-                            myNumSet.remove(cellValue)
-                        except ValueError:
+                        myNumSet[cellValue] += 1
+                        dictNumSets['x' + str(xCoor)][cellValue] += 1
+                        dictNumSets['y' + str(yCoor)][cellValue] += 1
+                        if myNumSet[cellValue] >= 2 or dictNumSets['x' + str(xCoor)][cellValue] >= 2 or dictNumSets['y' + str(yCoor)][cellValue] >= 2:
                             return False
         return True
 
