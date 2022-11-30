@@ -7,12 +7,11 @@ class Solution:
         for num in arr:
             occurenceCounter[num] += 1
         uniqueValuesSet = set()
+        keyCount = 0
         for key in occurenceCounter:
-            originalLen = len(uniqueValuesSet)
+            keyCount += 1
             uniqueValuesSet.add(occurenceCounter[key])
-            newLen = len(uniqueValuesSet)
-            if originalLen == newLen:  return False
-        return True
+        return len(uniqueValuesSet) == keyCount
 
 def main():
     mySol = Solution()
@@ -53,6 +52,9 @@ Naive:
         n for checking values (in worst case)
 
 Better:
-    Keep set of values:
-        If value
+    Keys are occurence number
+    Append value to key
+    If count increases, move value
+        How to find value efficiently though
+    
 '''
