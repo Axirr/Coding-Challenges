@@ -8,9 +8,11 @@ class Solution:
         # Count occurences of letters for each string
         countDictOriginal = Counter()
         countDictDestination = Counter()
-        for i in range(len(word1)):
-            countDictOriginal[word1[i]] += 1
-            countDictDestination[word2[i]] += 1
+
+        for letter in word1:
+            countDictOriginal[letter] += 1
+        for letter in word2:
+            countDictDestination[letter] += 1
 
         # Check have at least one instance of all the same letters
         # Since swaps can only be between two existing letters
@@ -23,31 +25,16 @@ class Solution:
 
         # Check collective count values are the same, since need the correct value to swap to if wrong
         valuesOriginal = list(countDictOriginal.values())
-        valuesOriginal.sort()
-        valuesDestination = list(countDictDestination.values())
-        valuesDestination.sort()
-        if valuesOriginal != valuesDestination:  return False
-
-        letterList = list("abcdefghijklmnopqrstuvwxyz")
-        sharedButWrong = []
-        for letter in letterList:
-            if countDictOriginal[letter] != countDictDestination[letter]:
-                sharedButWrong.append(letter)
-
-        sharedCountsOriginal = [countDictOriginal[letter] for letter in sharedButWrong]
-        for letter in sharedButWrong:
+        for value in countDictDestination.values():
             try:
-                sharedCountsOriginal.remove(countDictDestination[letter])
+                index = valuesOriginal.index(value)
+                valuesOriginal[index] = valuesOriginal[-1]
+                valuesOriginal.pop()
             except ValueError:
                 return False
-        # Not sure if try/except is faster than just sorting each and comparing
-        # sharedCountsOriginal = [countDictOriginal[letter] for letter in sharedButWrong]
-        # sharedCountsOriginal.sort()
-        # sharedCountsDestination = [countDictDestination[letter] for letter in sharedButWrong]
-        # sharedCountsDestination.sort()
-        # if sharedCountsOriginal != sharedCountsDestination:  return False
+        # Possible that sort each and compare is better than try/except
 
-        return len(sharedCountsOriginal) == 0
+        return len(valuesOriginal) == 0
 
 def main():
     mySol = Solution()
