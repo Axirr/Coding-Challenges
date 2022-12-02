@@ -2,73 +2,75 @@ from collections import Counter
 
 class Solution:
     def closeStrings(self, word1: str, word2: str) -> bool:
+        # Since operations can't change length
         if len(word1) != len(word2):  return False
-        if set(word1) != set(word2):  return False
+        
+        # Count occurences of letters for each string
         countDictOriginal = Counter()
         countDictDestination = Counter()
-        for letter in word1:
-            countDictOriginal[letter] += 1
-        for letter in word2:
-            countDictDestination[letter] += 1
+        for i in range(len(word1)):
+            countDictOriginal[word1[i]] += 1
+            countDictDestination[word2[i]] += 1
 
-        # if len(keysOriginal) != len(keysDestination):  return False
+        # Check have at least one instance of all the same letters
+        # Since swaps can only be between two existing letters
+        originalKeys = list(countDictOriginal.keys())
+        destinationKeys = list(countDictDestination.keys())
+        if len(originalKeys) != len(destinationKeys):  return False
+        destinationKeys.sort()
+        originalKeys.sort()
+        if originalKeys != destinationKeys:  return False
+
+        # Check collective count values are the same, since need the correct value to swap to if wrong
         valuesOriginal = list(countDictOriginal.values())
         valuesOriginal.sort()
         valuesDestination = list(countDictDestination.values())
         valuesDestination.sort()
-
-        # Necessary condition: number of letter types must be equal between
         if valuesOriginal != valuesDestination:  return False
+
         letterList = list("abcdefghijklmnopqrstuvwxyz")
-        exclusiveOriginal = []
-        exclusiveDestination = []
         sharedButWrong = []
         for letter in letterList:
-            inOriginal = letter in countDictOriginal
-            inDestination = letter in countDictDestination
-            if inOriginal and not inDestination:
-                exclusiveOriginal.append(letter)
-            elif not inOriginal and inDestination:
-                exclusiveDestination.append(letter)
-            elif inOriginal and inDestination:
-                if countDictOriginal[letter] != countDictDestination[letter]:
-                    sharedButWrong.append(letter)
-        exclusiveCountsOriginal = [countDictOriginal[letter] for letter in exclusiveOriginal]
-        exclusiveCountsOriginal.sort()
-        exclusiveCountsDestination = [countDictDestination[letter] for letter in exclusiveDestination]
-        exclusiveCountsDestination.sort()
-        if exclusiveCountsOriginal != exclusiveCountsDestination:  return False
-        
-        sharedCountsOriginal = [countDictOriginal[letter] for letter in sharedButWrong]
-        sharedCountsOriginal.sort()
-        sharedCountsDestination = [countDictDestination[letter] for letter in sharedButWrong]
-        sharedCountsDestination.sort()
-        if sharedCountsOriginal != sharedCountsDestination:  return False
+            if countDictOriginal[letter] != countDictDestination[letter]:
+                sharedButWrong.append(letter)
 
-        return True
+        sharedCountsOriginal = [countDictOriginal[letter] for letter in sharedButWrong]
+        for letter in sharedButWrong:
+            try:
+                sharedCountsOriginal.remove(countDictDestination[letter])
+            except ValueError:
+                return False
+        # Not sure if try/except is faster than just sorting each and comparing
+        # sharedCountsOriginal = [countDictOriginal[letter] for letter in sharedButWrong]
+        # sharedCountsOriginal.sort()
+        # sharedCountsDestination = [countDictDestination[letter] for letter in sharedButWrong]
+        # sharedCountsDestination.sort()
+        # if sharedCountsOriginal != sharedCountsDestination:  return False
+
+        return len(sharedCountsOriginal) == 0
 
 def main():
     mySol = Solution()
-    # word1 = "abc"
-    # word2 = "bca"
-    # areClose = mySol.closeStrings(word1, word2)
-    # print(areClose)
-    # assert areClose
-    # word1 = "a"
-    # word2 = "aa"
-    # areClose = mySol.closeStrings(word1, word2)
-    # print(areClose)
-    # assert not areClose
-    # word1 = "cabbba"
-    # word2 = "abbccc"
-    # areClose = mySol.closeStrings(word1, word2)
-    # print(areClose)
-    # assert areClose
+    word1 = "abc"
+    word2 = "bca"
+    areClose = mySol.closeStrings(word1, word2)
+    print(areClose)
+    assert areClose
+    word1 = "a"
+    word2 = "aa"
+    areClose = mySol.closeStrings(word1, word2)
+    print(areClose)
+    assert not areClose
+    word1 = "cabbba"
+    word2 = "abbccc"
+    areClose = mySol.closeStrings(word1, word2)
+    print(areClose)
+    assert areClose
     word1 = "uau"
     word2 = 'ssx'
     areClose = mySol.closeStrings(word1, word2)
     print(areClose)
-    # assert not areClose
+    assert not areClose
     
 
 main()
