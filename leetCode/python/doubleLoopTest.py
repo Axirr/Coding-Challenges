@@ -21,7 +21,6 @@ def doubleLoop(list1, list2):
         sum += num
     for num in list2:
         sum += num
-    # print(sum)
 
 @timeit
 def singleLoop(list1, list2):
@@ -29,7 +28,18 @@ def singleLoop(list1, list2):
     for i in range(len(list1)):
         sum += list1[i]
         sum += list2[i]
-    # print(sum)
+
+@timeit
+def indexSum(list1):
+    sum = 0
+    for i in range(len(list1)):
+        sum += list1[i]
+
+@timeit
+def forEachSum(list1):
+    sum = 0
+    for num in list1:
+        sum += num
 
 list1 = []
 list2 = []
@@ -41,20 +51,23 @@ for i in range(100000):
 numTries = 100
 sumTime1 = 0
 for i in range(numTries):
-    sumTime1 += singleLoop(list1, list2)
-print("AVERAGE %f" % (sumTime1/numTries))
+    sumTime1 += indexSum(list1)
+    # sumTime1 += singleLoop(list1, list2)
+print("AVERAGE %f for %s" % (sumTime1/numTries, indexSum.__name__))
 sumTime2 = 0
 for i in range(numTries):
-    sumTime2 += doubleLoop(list1, list2)
-print("AVERAGE %f" % (sumTime2/numTries))
+    sumTime2 += forEachSum(list1)
+    # sumTime2 += doubleLoop(list1, list2)
+print("AVERAGE %f for %s" % (sumTime2/numTries, forEachSum.__name__))
+print()
 difference = abs(sumTime1 - sumTime2)
 minTime = min(sumTime1, sumTime2)
 diffMargin = minTime * 0.1
 if difference > diffMargin:
     if sumTime1 < sumTime2:
-        print("DIFF. Single loop is faster.")
+        print("DIFF. First is faster.")
     else:
-        print("DIFF. Double loop is faster.")
+        print("DIFF. Second is faster.")
 else:
     print("SAME. Difference within %f" % diffMargin)
 print("Time difference is %f" % difference)
