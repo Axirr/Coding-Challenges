@@ -15,9 +15,9 @@ class Solution:
             value = currentNode.val
             if value >= low and value <= high:
                 sum += value
-            if currentNode.left:
+            if low < value and currentNode.left:
                 nodeFrontier.append(currentNode.left)
-            if currentNode.right:
+            if high > value and currentNode.right:
                 nodeFrontier.append(currentNode.right)
         return sum
 
