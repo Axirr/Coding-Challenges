@@ -16,7 +16,6 @@ class ListNode:
 
 class Solution:
     def oddEvenList(self, head: Optional[ListNode]) -> Optional[ListNode]:
-        # Try traverse 3
         count = 0
         currentNode = head
         while currentNode:
@@ -28,7 +27,6 @@ class Solution:
         if count < 2:
             return head
         else:
-            # self.swapAdjacent(head, head.next)
             lastOdd = head
             firstEven = head.next
             lastEven = head.next
