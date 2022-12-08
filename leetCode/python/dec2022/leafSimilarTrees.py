@@ -11,48 +11,38 @@ class Solution:
     def leafSimilar(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> bool:
         areSame = True
         leaves1 = deque()
-        leftFrontier = deque()
-        rightFrontier = deque()
+        frontier = []
         currentNode = root1
+        firstPass = True
         while True:
             if currentNode.left is None and currentNode.right is None:
-                leaves1.append(currentNode.val)
-            else:
-                if currentNode.left:
-                    leftFrontier.append(currentNode.left)
-                if currentNode.right:
-                    rightFrontier.append(currentNode.right)
-            if len(leftFrontier) > 0:
-                currentNode = leftFrontier.popleft()
-            elif len(rightFrontier) > 0:
-                currentNode = rightFrontier.pop()
-            else:
-                break
-        currentNode = root2
-        leftFrontier = deque()
-        rightFrontier
-        while True:
-            if currentNode.left is None and currentNode.right is None:
-                try:
-                    leafValue = leaves1.popleft()
-                    if leafValue != currentNode.val:
+                if firstPass:
+                    leaves1.append(currentNode.val)
+                else:
+                    try:
+                        leafValue = leaves1.popleft()
+                        if leafValue != currentNode.val:
+                            areSame = False
+                            break
+                    # Asking for a leaf that doesn't exist, i.e. second tree has more leaves
+                    except IndexError:
                         areSame = False
                         break
-                # Asking for a leaf that doesn't exist
-                except IndexError:
-                    areSame = False
-                    break
             else:
-                if currentNode.left:
-                    leftFrontier.append(currentNode.left)
                 if currentNode.right:
-                    rightFrontier.append(currentNode.right)
-            if len(leftFrontier) > 0:
-                currentNode = leftFrontier.popleft()
-            elif len(rightFrontier) > 0:
-                currentNode = rightFrontier.pop()
+                    frontier.append(currentNode.right)
+                if currentNode.left:
+                    frontier.append(currentNode.left)
+            if len(frontier) > 0:
+                currentNode = frontier.pop()
             else:
-                break
+                if firstPass:
+                    firstPass = False
+                    currentNode = root2
+                    frontier = deque()
+                else:
+                    break
+        # Check if leaves from first tree remain (i.e. first tree had more leaves than last)
         if len(leaves1) > 0:  areSame = False
         return areSame
 
