@@ -4,15 +4,23 @@ from queue import PriorityQueue
 class Solution:
     def minFallingPathSum(self, matrix: List[List[int]]) -> int:
         n = len(matrix)
+        if n == 1:  return matrix[0][0]
+
         bestPath = []
         bestPath.append(matrix[0])
-        for y in range(1, n):
+        for y in range(1, n - 1):
             row = []
             for x in range(n):
                 minLastStep = min([bestPath[y - 1][x + i] for i in range(-1, 2) if (x + i) >= 0 and (x + i) < n])
                 row.append(minLastStep + matrix[y][x])
             bestPath.append(row)
-        return min(bestPath[n - 1])
+        resultMin = float('inf') 
+        y = n - 1
+        for x in range(n):
+            minLastStep = min([bestPath[y - 1][x + i] for i in range(-1, 2) if (x + i) >= 0 and (x + i) < n])
+            potMin = minLastStep + matrix[y][x]
+            resultMin = min(resultMin, potMin)
+        return resultMin
 
     # Note: making values positive only works for two reasons
     #       1) No cycles possible when y always increases in path
