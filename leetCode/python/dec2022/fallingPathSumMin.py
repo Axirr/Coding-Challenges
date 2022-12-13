@@ -6,13 +6,10 @@ class Solution:
         n = len(matrix)
         if n == 1:
             return matrix[0][0]
-        for i in range(n):
-            for j in range(n):
-                matrix[j][i] += 100
 
         frontier = PriorityQueue()
         for i in range(len(matrix[0])):
-            node = matrix[0][i]
+            node = matrix[0][i] + 100
             frontier.put((node, (i, 0)))
         minNodeValues = dict()
         
@@ -23,29 +20,20 @@ class Solution:
             nodeX = node[1][0]
             nodeY = node[1][1]
             if nodeY == n - 1:
-                if resultMin is None:  resultMin = nodeValue
-                else:
-                    resultMin = min(resultMin, nodeValue)
+                return nodeValue - 100 * n
             else:
                 newY = nodeY + 1
-                newCoords = []
                 for i in range(-1, 2):
                     newX = nodeX + i
                     if newX < 0 or newX >= n:
                         continue
-                    newCoords.append((newX, newY))
-                # if newY == n - 1:
-                #     return nodeValue + min([matrix[y][x] for x, y in newCoords])
-                for newCoord in newCoords:
-                    newSum = nodeValue + matrix[newCoord[1]][newCoord[0]]
-                    if newCoord[0] == 2 and newCoord[1] == 2:
-                        pass
+                    newCoord = (newX, nodeY + 1)
+                    newSum = nodeValue + matrix[newCoord[1]][newCoord[0]] + 100
                     if newCoord in minNodeValues and minNodeValues[newCoord] <= newSum:
                         continue
                     minNodeValues[newCoord] = newSum
                     if resultMin is None or newSum < resultMin:
                         frontier.put((newSum, newCoord))
-        return resultMin - 100 * n
     
     def recursiveFallingPathSum(self, matrix: List[List[int]]) -> int:
         if len(matrix) == 1:
