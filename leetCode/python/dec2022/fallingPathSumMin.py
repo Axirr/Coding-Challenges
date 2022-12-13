@@ -4,11 +4,28 @@ from queue import PriorityQueue
 class Solution:
     def minFallingPathSum(self, matrix: List[List[int]]) -> int:
         n = len(matrix)
+        bestPath = []
+        bestPath.append(matrix[0])
+        for y in range(1, n):
+            row = []
+            for x in range(n):
+                minLastStep = min([bestPath[y - 1][x + i] for i in range(-1, 2) if (x + i) >= 0 and (x + i) < n])
+                row.append(minLastStep + matrix[y][x])
+            bestPath.append(row)
+        return min(bestPath[n - 1])
+
+    # Note: making values positive only works for two reasons
+    #       1) No cycles possible when y always increases in path
+    #       2) Paths always have same node length to the bottom, so difference between actual cost and priority cost is predictable
+    #           Could possibly deal with by keeping path node length
+    def dijkstrMinFallingPathSum(self, matrix: List[List[int]]) -> int:
+        n = len(matrix)
         if n == 1:
             return matrix[0][0]
 
         frontier = PriorityQueue()
         for i in range(len(matrix[0])):
+            # Note + 100 to ensure values are positive so path always increases in cost
             node = matrix[0][i] + 100
             frontier.put((node, (i, 0)))
         minNodeValues = dict()
@@ -27,14 +44,18 @@ class Solution:
                     newX = nodeX + i
                     if newX < 0 or newX >= n:
                         continue
-                    newCoord = (newX, nodeY + 1)
+                    newCoord = (newX, newY)
+                    # Note + 100 to ensure values are positive so path always increases in cost
                     newSum = nodeValue + matrix[newCoord[1]][newCoord[0]] + 100
+
+                    # Already found faster path to node, so ignore
                     if newCoord in minNodeValues and minNodeValues[newCoord] <= newSum:
                         continue
                     minNodeValues[newCoord] = newSum
                     if resultMin is None or newSum < resultMin:
                         frontier.put((newSum, newCoord))
     
+    # For determining correct results only
     def recursiveFallingPathSum(self, matrix: List[List[int]]) -> int:
         if len(matrix) == 1:
             return matrix[0][0]
@@ -48,6 +69,8 @@ class Solution:
             return matrix[parentY][parentX] + min([matrix[parentY + 1][parentX + i] for i in range(-1, 2) if (parentX + i) >= 0 and (parentX + i) < len(matrix)])
         else:
             return matrix[parentY][parentX] + min([self.helper(matrix, parentX + i, parentY + 1) for i in range(-1, 2) if (parentX + i >= 0) and (parentX + i) < len(matrix)])
+
+
         
     
 
