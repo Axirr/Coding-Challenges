@@ -71,6 +71,7 @@ Naive:
 
     Time complexity:
         ~4^n worst case
-        Very bad, but since n <= 4, not so bad
+        Very bad, but since n <= 4, workable
             256
+        Given we have to construct the combinations, not just calculate the numbers, not sure how to make it better
 '''
