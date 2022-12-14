@@ -1,16 +1,26 @@
 from typing import List
 
 class Solution:
+    def rob(self, nums: List[int]):
+        listLen = len(nums)
+        if listLen == 1:  return nums[0]
+        dynamicSolutions = [nums[-1]]
+        dynamicSolutions.append(max(nums[-1], nums[-2]))
+        for i in range(listLen -3, -1, -1):
+            selfValue = nums[i]
+            dynamicSolutions.append(max(selfValue + dynamicSolutions[-2], dynamicSolutions[-1]))
+        return dynamicSolutions[-1]
+
     n = None
     memo = {}
-    def rob(self, nums: List[int]) -> int:
+    def recursiveRob(self, nums: List[int]) -> int:
         self.n = len(nums)
         self.memo = {}
         # if self.n == 1:  return nums[0]
-        myReturn = self.recursiveRob(nums, 0)
+        myReturn = self.helperRecursiveRob(nums, 0)
         return myReturn
 
-    def recursiveRob(self, nums, startIndex):
+    def helperRecursiveRob(self, nums, startIndex):
         if startIndex in self.memo:
             return self.memo[startIndex]
         if self.n - startIndex <= 2:
@@ -18,8 +28,8 @@ class Solution:
         elif self.n - startIndex == 3:
             myReturn = max(nums[startIndex] + nums[startIndex + 2], nums[startIndex + 1])
         else:
-            firstSum = nums[startIndex] + self.recursiveRob(nums, startIndex + 2)
-            secondSum = nums[startIndex + 1] + self.recursiveRob(nums, startIndex + 3)
+            firstSum = nums[startIndex] + self.helperRecursiveRob(nums, startIndex + 2)
+            secondSum = nums[startIndex + 1] + self.helperRecursiveRob(nums, startIndex + 3)
             myReturn = max(firstSum, secondSum)
         self.memo[startIndex] = myReturn
         return myReturn
