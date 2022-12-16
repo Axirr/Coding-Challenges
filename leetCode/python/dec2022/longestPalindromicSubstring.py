@@ -1,10 +1,7 @@
 class Solution:
     def longestPalindrome(self, s: str) -> str:
+        # Populate initial palindromes to be centered on either one letter or two
         n = len(s)
-        if n == 1:
-            return s[0]
-
-        # Population initial palindromes to be centered on either one letter or two
         bestForIndex = {}
         currentLongest = s[0]
         for i in range(n-1):
@@ -14,6 +11,10 @@ class Solution:
             bestForIndex[i] = s[i]
         bestForIndex[n-1] = s[n-1]
 
+        # Potential improvements:
+        #      Remove two if checks for validity of newLeft and newRight by pre-removing high and low indices at end of each loop
+        #      Remove currentLongest check by ensuring deletion of keys in order so that last one is the max size
+        #           Difficult because for each level of length of palindromes, anything centered on a double letter will be longer so should be dealt with last
         currentKeys = list(bestForIndex.keys())
         while len(currentKeys) > 0:
             for i in range(len(currentKeys) -1, -1, -1):
