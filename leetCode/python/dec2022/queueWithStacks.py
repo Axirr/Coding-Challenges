@@ -86,4 +86,12 @@ Top of stack is wrong order, but lower isn't?
     Then peak, pop, and empty take worst case O(5)
     And append is O(1) most of the time and O(5) occasionally
     Isn't this spreading the bad out and it will take the same time in aggregate
+
+Was close, but can't do it with one stack
+    Bottom of stack is a separate correctly ordered stack
+The real secret is ensuring that the correctStack is empty before you try to flip the other stack
+    Flipping a stack makes it correct internally, but not if it is put onto something
+    Was thinking about making a version that preemptively flipped the stack every k appends
+        Average time complexity would be the same, but you wouldn't ever get a really bad pop() time
+    But this is harder to do than I thought
 '''
