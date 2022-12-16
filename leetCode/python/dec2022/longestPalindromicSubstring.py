@@ -1,67 +1,40 @@
 class Solution:
     def longestPalindrome(self, s: str) -> str:
         n = len(s)
-        if n % 2 == 1:
-            low = 0
-            high = n - 1
-            isPlaindrome = True
-            while (low < high):
-                if s[low] != s[high]:
-                    isPlaindrome = False
-                    break
-                low += 1
-                high -= 1
-            if isPlaindrome:  return s
+        if n == 1:
+            return s[0]
+
+        # Population initial palindromes to be centered on either one letter or two
         bestForIndex = {}
         currentLongest = s[0]
         for i in range(n-1):
-            # if i == n // 2:
-            #     bestForIndex[i] = s[i]
             if s[i+1] == s[i]:
-                bestForIndex[i] = s[i:i+2]
-                currentLongest = bestForIndex[i]
-                bestForIndex[-i] = s[i]
-            else:
-                bestForIndex[i] = s[i]
+                bestForIndex[-i] = s[i:i+2]
+                currentLongest = bestForIndex[-i]
+            bestForIndex[i] = s[i]
         bestForIndex[n-1] = s[n-1]
-        doBreak = False
-        for windowSize in range(2, n + 1):
-            if doBreak:  break
-            minAllowedI = 0 + windowSize - 1
-            maxAllowedI = n - windowSize
-            for i in range(minAllowedI, maxAllowedI + 1):
-                if i in bestForIndex:
-                    oldValue = bestForIndex[i]
-                    if len(oldValue) % 2 == 1:
-                        changeValue = (len(oldValue) // 2) + 1
-                        newLeft = i - changeValue
-                        newRight = i + changeValue
-                    else:
-                        changeValue = (len(oldValue) // 2)
-                        newLeft = i - changeValue
-                        newRight = i + changeValue + 1
+
+        currentKeys = list(bestForIndex.keys())
+        while len(currentKeys) > 0:
+            for i in range(len(currentKeys) -1, -1, -1):
+                key = currentKeys[i]
+                if key in bestForIndex:
+                    absKey = abs(key)
+                    oldValue = bestForIndex[key]
+                    changeValue = (len(oldValue) // 2) + 1
+                    newLeft = absKey - changeValue
+                    newRight = absKey + changeValue
+                    if len(oldValue) % 2 == 0:
+                        newLeft += 1
                     if not newRight >= n and not newLeft < 0 and s[newLeft] == s[newRight]:
-                        bestForIndex[i] = s[newLeft] + bestForIndex[i] + s[newRight]
-                        if len(bestForIndex[i]) > len(currentLongest):
-                            currentLongest = bestForIndex[i]
+                        bestForIndex[key] = s[newLeft] + bestForIndex[key] + s[newRight]
                     else:
-                        del bestForIndex[i]
-                if -i in bestForIndex:
-                    oldValue = bestForIndex[-i]
-                    if len(oldValue) % 2 == 1:
-                        changeValue = (len(oldValue) // 2) + 1
-                        newLeft = i - changeValue
-                        newRight = i + changeValue
-                    else:
-                        changeValue = (len(oldValue) // 2)
-                        newLeft = i - changeValue
-                        newRight = i + changeValue + 1
-                    if not newRight >= n and not newLeft < 0 and s[newLeft] == s[newRight]:
-                        bestForIndex[-i] = s[newLeft] + bestForIndex[-i] + s[newRight]
-                        if len(bestForIndex[-i]) > len(currentLongest):
-                            currentLongest = bestForIndex[-i]
-                    else:
-                        del bestForIndex[-i]
+                        if len(bestForIndex[key]) > len(currentLongest):
+                            currentLongest = bestForIndex[key]
+                        del bestForIndex[key]
+                        # Delete current key in O(1) time
+                        currentKeys[i] = currentKeys[-1]
+                        currentKeys.pop()
         return currentLongest
 
 
