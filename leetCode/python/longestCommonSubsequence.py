@@ -1,35 +1,36 @@
 from functools import cache
+from copy import copy
 
 class Solution:
     def longestCommonSubsequence(self, text1: str, text2: str) -> int:
-        bestSolutions = {}
+        bestSolutions = []
         minString = text1
         maxString = text2
         if len(text2) < len(text1):
             minString = text2
             maxString = text1
         if minString[0] == maxString[0]:
-            bestSolutions[(0,0)] = 1
+            bestSolutions.append([1])
         else:
-            bestSolutions[(0,0)] = 0
+            bestSolutions.append([0])
         for i in range(1, len(minString)):
             if minString[i] == maxString[0]:
-                bestSolutions[(i,0)] = 1
+                bestSolutions.append([1])
             else:
-                bestSolutions[(i,0)] = bestSolutions[i-1,0]
+                bestSolutions.append(copy(bestSolutions[i-1]))
         for j in range(1, len(maxString)):
             if maxString[j] == minString[0]:
-                bestSolutions[0,j] = 1
+                bestSolutions[0].append(1)
             else:
-                bestSolutions[0,j] = bestSolutions[0,j-1]
+                bestSolutions[0].append(bestSolutions[0][-1])
         for i in range(1, len(minString)):
             for j in range(1, len(maxString)):
                 if minString[i] == maxString[j]:
-                    bestSolutions[(i,j)] = bestSolutions[(i-1, j-1)] + 1
+                    bestSolutions[i].append(bestSolutions[i-1][j-1] + 1)
                 else:
-                    bestSolutions[(i,j)] = max(bestSolutions[(i-1, j)], bestSolutions[(i, j - 1)])
+                    bestSolutions[i].append(max(bestSolutions[i-1][j], bestSolutions[i][j - 1]))
         #DP[i][j] = DP[i - 1][j - 1] + 1 , if text1[i] == text2[j] DP[i][j] = max(DP[i - 1][j], DP[i][j - 1]) , otherwise
-        return bestSolutions[(len(minString) - 1, len(maxString) - 1)]
+        return bestSolutions[len(minString) - 1][len(maxString) - 1]
 
 
 def main():
