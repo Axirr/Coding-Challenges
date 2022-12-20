@@ -12,10 +12,7 @@ class Solution:
                 if key in potentialRooms:
                     potentialRooms.remove(key)
                     frontier.add(key)
-        for leftoverRoom in potentialRooms:
-            if not leftoverRoom in frontier:
-                return False
-        return True
+        return potentialRooms.issubset(frontier)
 
 
 def main():
