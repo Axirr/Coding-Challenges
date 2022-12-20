@@ -8,17 +8,26 @@ class Solution:
         if len(text2) < len(text1):
             minString = text2
             maxString = text1
-        for i in range(len(minString)):
-            bestSolutions[(i,0)] = 0
-        for j in range(len(maxString)):
-            bestSolutions[(0,j)] = 0
+        if minString[0] == maxString[0]:
+            bestSolutions[(0,0)] = 1
+        else:
+            bestSolutions[(0,0)] = 0
         for i in range(1, len(minString)):
-            for j in range(1, i):
-                bestSolutions[(i, j)] = bestSolutions[(i, j-1)]
-            if minString[i] == maxString[j]:
-                bestSolutions[(i,j)] = bestSolutions[(i-1, j-1)] + 1
+            if minString[i] == maxString[0]:
+                bestSolutions[(i,0)] = 1
             else:
-                bestSolutions[(i,j)] = max(bestSolutions[(i-1, j)], bestSolutions[(i, j - 1)])
+                bestSolutions[(i,0)] = bestSolutions[i-1,0]
+        for j in range(1, len(maxString)):
+            if maxString[j] == minString[0]:
+                bestSolutions[0,j] = 1
+            else:
+                bestSolutions[0,j] = bestSolutions[0,j-1]
+        for i in range(1, len(minString)):
+            for j in range(1, len(maxString)):
+                if minString[i] == maxString[j]:
+                    bestSolutions[(i,j)] = bestSolutions[(i-1, j-1)] + 1
+                else:
+                    bestSolutions[(i,j)] = max(bestSolutions[(i-1, j)], bestSolutions[(i, j - 1)])
         #DP[i][j] = DP[i - 1][j - 1] + 1 , if text1[i] == text2[j] DP[i][j] = max(DP[i - 1][j], DP[i][j - 1]) , otherwise
         return bestSolutions[(len(minString) - 1, len(maxString) - 1)]
 
