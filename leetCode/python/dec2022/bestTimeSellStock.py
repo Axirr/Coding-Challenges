@@ -5,17 +5,22 @@ class Solution:
     classPrices = None
     memoCache = None
     def maxProfit(self, prices: List[int]) -> int:
+        if len(prices) <= 1:
+            return 0
+        s0 = [0]
+        s1 = [-prices[0]]
+        s2 = [-10000]
+        for i in range(1, len(prices)):
+            s0.append(max(s0[i - 1], s2[i - 1]))
+            s1.append(max(s1[i - 1], s0[i - 1] - prices[i]))
+            s2.append(s1[i - 1] + prices[i])
+        return max(s0[len(prices) - 1], s2[len(prices) - 1])
+
+    def outerRecMaxProfit(self, prices: List[int]) -> int:
         self.n = len(prices)
         self.classPrices = prices
         self.memoCache = {}
         result = self.recMaxProfit(0, False, False)
-        for i in range(self.n):
-            if (i, True) in self.memoCache:
-                print((i, True), end = " ")
-                print(self.memoCache[(i, True)])
-            if (i, False) in self.memoCache:
-                print((i, False), end = " ")
-                print(self.memoCache[(i, False)])
         return result
     
     def recMaxProfit(self, priceIndex, isOwn, isCooldown):
@@ -53,6 +58,14 @@ def main():
     maxProfit = sol.maxProfit(prices)
     print(maxProfit)
     assert maxProfit == 3
+    prices = [1,2]
+    maxProfit = sol.maxProfit(prices)
+    print(maxProfit)
+    assert maxProfit == 1
+    prices = [2,1]
+    maxProfit = sol.maxProfit(prices)
+    print(maxProfit)
+    assert maxProfit == 0
 
 main()
 
@@ -99,5 +112,69 @@ Dynamic programming bottom up:
     Don't own:
         Base case: len 1 return 0
         Len 2: action that takes you to max
-        
+
+Recursive works, and is fast, but want to do it with dynamic programming
+
+priceIndex, isOwn, isCooldown
+
+options control flow
+
+if isOwn:
+    skip
+    sell
+if not isOwn:
+    if isCooldown:
+        skip
+            best[priceIndex + 1, ]
+    else:
+        skip
+        buy
+
+priceIndex, [isOwn, isCooldown]
+
+Can we always control isOwn, isCooldown we are at as long as length is longer than 1?
+    No, getting to isOwn without skip necessitates isCooldown = True
+
+Top down building works better because we know our starting flags: isOwn = False, isCooldown = False
+
+Purely taking max would have to pass along conditions
+
+Dynamic generally:
+    d[i] = d[i-1] + something
+    But with multiple indexes, can also be a max/min operation
+    E.g. d[i,j] = max[d[i, j-1], d[i-1,j]] + something
+    But in that case, it's an unconditional max
+        Can always take either
+    Here, would seem to need to maintain multiple solutions, covering permutations of flags
+    E.g. d[i, True, True] = ...
+        d[i, True, False] = ...
+    Then would eventually get to d[0, False, False]
+    Less efficient than recursive if that's correct
+
+isOwn   isCooldown  ->      
+F       F               T,F     T,F
+F       T               F       F
+T       F               T,F     T,F
+T       T               impossible
+
+
+Skimmed a dynamic programming solution, now trying to recreate on my own
+    Kept 3 sets
+    buySet
+    sellSet
+    restSet
+Once construct these, answer is max(sellSet, restSet)
+Starting values:
+    buySet: [-maxInt]
+    sellSet: prices[-1]
+    skipSet: 0
+For non-base case:
+    sellSet either comes from buySet or restSet
+    buySet comes skipSet
+    skipSet can come from anywhere?
+
+
+Realized very late that this is a top down not bottom up solution
+Ended up just having to copy the solution
+Was close but couldn't get it working
 '''
