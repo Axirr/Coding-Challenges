@@ -1,23 +1,35 @@
 from typing import List
-from queue import PriorityQueue
 
 class Solution:
-    def bakanswerQueries(self, nums: List[int], queries: List[int]) -> List[int]:
-        totalSum = sum(nums)
+    def answerQueries(self, nums: List[int], queries: List[int]) -> List[int]:
+        nums.sort()
+        runningSum = [nums[0]]
+        # Max query calculation and cut off good idea as long as len(queries) << len(n)?
+        maxQuery = max(queries)
+        for i in range(1, len(nums)):
+            newSum = runningSum[i-1] + nums[i]
+            runningSum.append(newSum)
+            if newSum > maxQuery:
+                break
+
         resultList = []
         for myQuery in queries:
-            if totalSum < myQuery:
-                resultList.insert(0, len(nums))
-                continue
-            frontier = PriorityQueue()
-            frontier.add((0, totalSum, nums))
-            while len(frontier) > 0:
-                currentEntry = frontier.get()
-                currentRemoved = currentEntry[0] + 1
-            resultList.insert(0, currentRemoved)
+            low = 0
+            high = len(runningSum) - 1
+            maxN = 0
+            while low <= high:
+                middleIndex = (low + high) // 2
+                currentSum = runningSum[middleIndex]
+                if currentSum <= myQuery:
+                    maxN = max(middleIndex + 1, maxN)
+                    low = middleIndex + 1
+                else:
+                    high = middleIndex - 1
+            resultList.append(maxN)
+
         return resultList
-    
-    def answerQueries(self, nums: List[int], queries: List[int]) -> List[int]:
+
+    def slowAnswerQueries(self, nums: List[int], queries: List[int]) -> List[int]:
         nums.sort()
         originalSum = sum(nums)
         result = []
@@ -31,6 +43,8 @@ class Solution:
                     break
             result.append(i+1)
         return result
+
+    
 
 
 def main():
@@ -61,9 +75,20 @@ Tests:
 Ideas:
 
 Naive:
-    Priority queue based on number left
-    Try all one missings, then all two missings
+    sort nums in ascneding order
+    subtract until under query sum
 
-Priority queue with double priority
-    (numLeft, closestToSum)
+    Time complexity: n * log(n) + n * m
+        sort: n * log(n)
+        subtract: n worst case, m times
+
+Better: determine if closer to 0 or numsSum
+    Build up from length 0 if closer to 0
+    
+    Not a guranteed improvement
+
+Running sum of nums from small to large, then binary search
+    Sort ascending:     nlogn
+    Add running sum ascending: n time, n space
+    binary search
 '''
