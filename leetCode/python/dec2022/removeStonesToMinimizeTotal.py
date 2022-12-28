@@ -1,6 +1,7 @@
 from typing import List
 from math import floor
 from queue import PriorityQueue
+import heapq
 
 class LinkedListWithIndex:
     def __init__(self, value) -> None:
@@ -77,18 +78,14 @@ class DoublyLinkedNode:
 
 class Solution:
     def minStoneSum(self, piles: List[int], k: int) -> int:
-        myHeap = PriorityQueue()
-        for i in range(len(piles)):
-            myHeap.put(-piles[i])
+        myHeap = [-x for x in piles]
+        heapq.heapify(myHeap)
         while k > 0:
-            current = abs(myHeap.get())
+            current = -heapq.heappop(myHeap)
             current = current - floor(current // 2)
-            myHeap.put(-current)
+            heapq.heappush(myHeap, -current)
             k -= 1
-        total = 0
-        while myHeap.qsize() > 0:
-            total += -myHeap.get()
-        return total
+        return -sum(myHeap)
 
     def brokenminStoneSum(self, piles: List[int], k: int) -> int:
         lengthPiles = len(piles)
