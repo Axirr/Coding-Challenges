@@ -3,25 +3,27 @@ import heapq
 
 class Solution:
     def getOrder(self, tasks: List[List[int]]) -> List[int]:
-        for i in range(len(tasks)):
-            tasks[i] = tasks[i] + [i]
-        tasks.sort(reverse=True)
+        # Add original indexes to tasks and sort based on enqueue time
+        sortedTasks = [[enq, proc, i] for i, (enq, proc) in enumerate(tasks)]
+        sortedTasks.sort(reverse=True)
+
         available = []
-        heapq.heapify(available)
-        time = tasks[-1][0]
         taskOrder = []
-        while (len(tasks) > 0 or len(available) > 0):
-            while len(tasks) > 0:
-                if tasks[-1][0] <= time:
-                    heapq.heappush(available, tasks.pop()[1:3])
-                else:
-                    break
+        while (len(sortedTasks) > 0 or len(available) > 0):
+            # Change time to next time with enqueued task if none currently available
             if not len(available) == 0:
                 currentTask = heapq.heappop(available)
                 time += currentTask[0]
                 taskOrder.append(currentTask[1])
             else:
-                time = tasks[-1][0]
+                time = sortedTasks[-1][0]
+
+            # Push any tasks to the heap that are valid for current time
+            while len(sortedTasks) > 0:
+                if sortedTasks[-1][0] <= time:
+                    heapq.heappush(available, sortedTasks.pop()[1:3])
+                else:
+                    break
         return taskOrder
 
 
@@ -76,8 +78,9 @@ Naive:
     Minheap of available based on processing time
 
     Time complexity:
+        append indexes to tasks: n
         sort: nlogn
         heap insert: logn each, n times total   -> nlogn
         heap pop: logn each, n times total      -> nlogn
-        Total: 3nlogn -> O(nlogn)
+        Total: n + 3nlogn -> O(nlogn)
 '''
