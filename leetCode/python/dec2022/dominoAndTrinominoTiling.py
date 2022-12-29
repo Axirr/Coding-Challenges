@@ -4,24 +4,25 @@ class Solution:
         return self.helperNumTilings(n, False) % (10**9 + 7)
 
     def helperNumTilings(self, n: int, isPartiallyOccupied: bool) -> int:
-        if (n, isPartiallyOccupied) in self.cache:
-            return self.cache[(n, isPartiallyOccupied)]
         total = 0
+        subCases = []
         if n > 2:
             if not isPartiallyOccupied:
                 # Sideways domino pair
-                total += self.helperNumTilings(n-2, False)
+                subCases.append((n-2, False))
 
                 # Upright domino
-                total += self.helperNumTilings(n-1, False)
+                subCases.append((n-1, False))
 
                 # Trinomino, top and bottom isPartiallyOccupied
-                total += 2 * self.helperNumTilings(n-1, True)
+                subCases.append((n-1, True))
+                subCases.append((n-1, True))
             else:
                 # Sideways domino
-                total += self.helperNumTilings(n-1, True)
+                subCases.append((n-1, True))
+
                 # Complimentary trimino
-                total += self.helperNumTilings(n-2, False)
+                subCases.append((n-2, False))
         elif n == 2:
             if not isPartiallyOccupied:
                 total += 2
@@ -29,7 +30,15 @@ class Solution:
                 total += 1
         elif n == 1 and not isPartiallyOccupied:
             total += 1
-        self.cache[(n, isPartiallyOccupied)] = total
+
+        for arg in subCases:
+            if arg in self.cache:
+                total += self.cache[arg]
+            else:
+                subResult = self.helperNumTilings(arg[0], arg[1])
+                self.cache[arg] = subResult
+                total += subResult
+
         return total
 
 def main():
