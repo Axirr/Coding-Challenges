@@ -1,58 +1,128 @@
 from typing import List
-from copy import copy
+import random as rand
+from functools import wraps
+import time
+
+def timeit(func):
+    @wraps(func)
+    def timeit_wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        total_time = end_time - start_time
+        # print(f'Function {func.__name__}{args} {kwargs} Took {total_time:.4f} seconds')
+        print(f'Function {func.__name__} Took {total_time:.4f} seconds')
+        # return total_time
+        return result
+    return timeit_wrapper
 
 class Solution:
     # Class variables used in recursive method
     graph = None
     target = None
     cache = {}
+    cacheHitNum = None
 
     # Dynamic programming top down
-    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+    @timeit
+    def allPathsSourceTarget(self, graph):
         targetIndex = len(graph) - 1
-        cache = {}
         frontier = [[0]]
         solutions = []
         while (frontier):
             currPath = frontier.pop()
             endCurrPath = currPath[-1]
             for node in graph[endCurrPath]:
-                copyPath = copy(currPath)
+                copyPath = currPath[0:]
+                copyPath.append(node)
                 if node == targetIndex:
-                    copyPath.append(node)
                     solutions.append(copyPath)
-                    cache[copyPath[0]] = copyPath
                 else:
-                    if node in cache:
-                        solutions.append(copyPath + cache[node])
-                    else:
-                        copyPath.append(node)
-                        frontier.append(copyPath)
+                    frontier.append(copyPath)
         return solutions
 
     # Recursive with memoization
+    @timeit
     def recursiveAllPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
         self.graph = graph
         self.target = len(graph) - 1
         self.cache = {}
-        return self.helper(0)
+        self.cacheHitNum = 0
+        result = self.helper(0)
+        print("Cache hits: %d" % self.cacheHitNum)
+        return result
+
+    @timeit
+    def noCacheRecursiveAllPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+        self.graph = graph
+        self.target = len(graph) - 1
+        return self.helperNoCache(0)
     
     def helper(self, startIndex) -> List[List[int]]:
+        # if startIndex in self.cache:
+        #     print("cached")
+        #     return self.cache[startIndex]
         resultList = []
         for node in self.graph[startIndex]:
             if not node == self.target:
-                if startIndex in self.cache:
-                    subResults = self.cache[startIndex]
+                if node in self.cache:
+                    self.cacheHitNum += 1
+                    subResults = self.cache[node]
                 else:
                     subResults = self.helper(node)
                 for res in subResults:
                     resultList.append([startIndex] + res)
             else:
                 resultList.append([startIndex, node])
+        self.cache[startIndex] = resultList
+        return resultList
+
+    def helperNoCache(self, startIndex) -> List[List[int]]:
+        # if startIndex in self.cache:
+        #     print("cached")
+        #     return self.cache[startIndex]
+        resultList = []
+        for node in self.graph[startIndex]:
+            if not node == self.target:
+                subResults = self.helperNoCache(node)
+                for res in subResults:
+                    resultList.append([startIndex] + res)
+            else:
+                resultList.append([startIndex, node])
+        # print(startIndex)
+        # print(resultList)
+        return resultList
+    
+    def generateTestCaseWithNNodes(self, n):
+        resultList = []
+        rand.seed()
+        for i in range(n):
+            newList = []
+            maxEdges = min(7, n // 10)
+            failProb = 1 / maxEdges
+            possibleEdges = [j for j in range(i+1, n)]
+            while maxEdges > 0 and len(possibleEdges) > 0:
+                if rand.random() < failProb:
+                    maxEdges -= 1
+                    continue
+                randomIndex = rand.randrange(0, len(possibleEdges))
+                newList.append(possibleEdges.pop(randomIndex))
+                maxEdges -= 1
+            resultList.append(newList)
         return resultList
 
 def main():
     sol = Solution()
+    n = 89
+    graph = sol.generateTestCaseWithNNodes(n)
+    print("graph generated with %d nodes" % n)
+    # output = sol.noCacheRecursiveAllPathsSourceTarget(graph)
+    # print(len(output))
+    output = sol.recursiveAllPathsSourceTarget(graph)
+    print(len(output))
+    output = sol.allPathsSourceTarget(graph)
+    print(len(output))
+    return
     graph = [[1,2],[3],[3],[]]
     correctOutput = [[0,1,3],[0,2,3]]
     correctOutput.sort()
@@ -118,4 +188,10 @@ Restructuring as bottom up dynamic programming:
 What about top down non-recursive?
 
 If build tree by height, then can create lists from those heights, stopping everytime we hit target
+
+Does our top down version take advantage of memoization much?
+It's BFS, so only paths that are longer can use shorter ones
+    And, the shorter one has to be finished by the time that node gets in the path
+
+Better: DFS
 '''
