@@ -1,13 +1,14 @@
 from typing import List
 
 class Solution:
+    subCases = {}
+    largestN = 1
     def generateParenthesis(self, n: int) -> List[str]:
-        subCases = {}
-        subCases[1] = ["()"]
-        level = 2
+        self.subCases[1] = ["()"]
+        level = self.largestN + 1
         while level <= n:
             newSolutions = set()
-            for subSolution in subCases[level - 1]:
+            for subSolution in self.subCases[level - 1]:
                 count = 0
                 for i in range(len(subSolution) - 1):
                     if subSolution[i] == '(':
@@ -24,12 +25,10 @@ class Solution:
                         count = 1
                 newSolutions.add("()" + subSolution)
                 newSolutions.add("(" + subSolution + ")")
-            subCases[level] = newSolutions
+            self.subCases[level] = newSolutions
+            self.largestN = level
             level += 1
-        # for i in range(1, n+1):
-        #     print(subCases[i])
-        # print()
-        return list(subCases[n])
+        return list(self.subCases[n])
 
 def main():
     sol = Solution()
