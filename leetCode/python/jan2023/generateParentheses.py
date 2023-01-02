@@ -24,12 +24,12 @@ class Solution:
                         count = 1
                 newSolutions.add("()" + subSolution)
                 newSolutions.add("(" + subSolution + ")")
-            subCases[level] = list(newSolutions)
+            subCases[level] = newSolutions
             level += 1
         # for i in range(1, n+1):
         #     print(subCases[i])
         # print()
-        return subCases[n]
+        return list(subCases[n])
 
 def main():
     sol = Solution()
