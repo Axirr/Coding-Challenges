@@ -1,17 +1,20 @@
 from typing import List
+from queue import PriorityQueue
 
 class Solution:
     nums = None
     n = None
     cache = None
     def jump(self, nums: List[int]) -> int:
+        if len(nums) == 1:  return 0
         self.nums = nums
         self.n = len(self.nums)
         self.cache = {}
         self.cache[self.n - 1] = 0
         # return self.helper(0)
-        self.tabulationHelper(self.n - 2)
-        return self.cache[0]
+        # self.tabulationHelper(self.n - 2)
+        # return self.cache[0]
+        return self.BFShelper()
 
     def helper(self, currentIndex):
         if currentIndex in self.cache:
@@ -31,10 +34,29 @@ class Solution:
         for i in range(maxIndexToTabulate, -1, -1):
             myMin = self.n + 1
             maxCurrentJump = self.nums[i]
-            for nextStep in range(i + 1, min(self.n, i + 1 + maxCurrentJump)):
+            for nextStep in range(min(self.n, i + 1 + maxCurrentJump) - 1, i, -1):
                 minSteps = 1 + self.helper(nextStep)
                 myMin = min(myMin, minSteps)
             self.cache[i] = myMin
+    
+    def BFShelper(self):
+        frontier = PriorityQueue()
+        frontier.put((0, 0))
+        visited = set()
+        while True:
+            currentNode = frontier.get()
+            currentIndex = currentNode[1]
+            maxJump = self.nums[currentIndex]
+            if maxJump == 0:
+                continue
+            if currentIndex + maxJump >= self.n:
+                return currentNode[0] + 1
+            for nextStep in range(currentIndex + 1, min(currentIndex + 1 + maxJump, self.n)):
+                if nextStep == self.n - 1:
+                    return currentNode[0] + 1
+                if nextStep not in visited:
+                    frontier.put((currentNode[0] + 1, nextStep))
+                    visited.add(nextStep)
         
 
 def main():
