@@ -4,15 +4,36 @@ from collections import Counter
 
 class Solution:
     def maxIceCream(self, costs: List[int], coins: int) -> int:
+        count = [0] * (max(costs) + 1)
+        for i in range(len(costs)):
+            count[costs[i]] += 1
+        totalCost = 0
+        totalCount = 0
+        for i in range(len(count)):
+            totalCost += i * count[i]
+            totalCount += count[i]
+            if totalCost > coins:
+                while totalCost > coins:
+                    totalCost -= i
+                    totalCount -= 1
+                break
+        return totalCount
+
+    def hashMaxIceCream(self, costs: List[int], coins: int) -> int:
         # Unclear if using a hash table but then having to sort by keys is 
         #   more efficient than initializing a list to 0 for all values
-        #      n + m        vs.     n + klogk + k   where k = # of distinct costs
+        #      n + m        vs.     n + klogk + k   where k = # of distinct costs and k <= n and possibly k << n
         count = Counter()
         for i in range(len(costs)):
             count[costs[i]] += 1
         totalCost = 0
         totalCount = 0
-        for i in sorted(count.keys()):
+        keys = count.keys()
+        myMinKeyHeap = []
+        for key in keys:
+            heappush(myMinKeyHeap, key)
+        while myMinKeyHeap:
+            i = heappop(myMinKeyHeap)
             totalCost += i * count[i]
             totalCount += count[i]
             if totalCost > coins:
@@ -95,4 +116,52 @@ Better: max heap
             I.e. descending costs
             nlogn
         Average case might be better?
+
+If using a dictionary/counter, does putting the keys into a minheap help instead of sorting
+    n = len(costs)
+    k = # of distinct values
+    m = max cost
+    j = maxCostUsed in solution
+    x = max unique cost values used in solution
+
+    Count sort with count array initialied to max cost:
+        Find max cost: n
+        initialization of countArray: m
+        traversal for counting: n
+        traversal for greedy summation: worst case: m
+        2n + 2m
+        O(n + m)
+    
+    Count sort with hash table and sorting of hash keys for in order traversal:
+        Count: n
+        Sort keys:
+            average: klogk
+            worst: mlogm
+        Greedy summation:
+            average: x, maybe k
+            worst: k = m
+        Average:
+            n + klogk + k   where k = # of distinct costs
+            O(n + klogk)
+        Worst:
+            n + mlogm + m
+            O(n + mlogm)
+
+    Count sort with hash table and minHeap of keys:
+        Count: n
+        Construct min heap:
+            average: k
+            worst: m
+        Traverse min heap:
+            average: x pops/k pop
+                klogk
+            worst:
+                mlogm
+        Average:
+            n + k + klogk
+            O(n + klogk)
+            Good cases: O(n + xlogx) where x < k << m
+        Worst:
+            n + m + mlogm
+            O(n + mlogm)
 '''
