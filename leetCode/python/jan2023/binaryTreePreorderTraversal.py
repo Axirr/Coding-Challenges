@@ -17,19 +17,13 @@ class Solution:
     def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
         if root is None:  return []
         resultList = []
-        currentNode = root
-        rightNodeStack = []
-        while True:
-            resultList.append(currentNode.val)
-            if currentNode.right:
-                rightNodeStack.append(currentNode.right)
-            if currentNode.left:
-                currentNode = currentNode.left
-            elif rightNodeStack:
-                currentNode = rightNodeStack.pop()
-            else:
-                # No left node, and no remaining right nodes in stack
-                break
+        stack = [root]
+        while stack:
+            currentNode = stack.pop()
+            if currentNode:
+                resultList.append(currentNode.val)
+                stack.append(currentNode.right)
+                stack.append(currentNode.left)
         return resultList
 
     def recPreorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
