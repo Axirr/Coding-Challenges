@@ -16,6 +16,37 @@ class TreeNode:
 class Solution:
     def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
         if root is None:  return []
+
+        # Morris traversal - add parent to the right of the natural rightmost branch during left tree traversal
+        # to allow linking back to parent for right traversal
+        current = root
+        preOrderValues = []
+
+        while current:
+            if not current.left:
+                preOrderValues.append(current.val)
+                current = current.right
+            else:
+                # Find rightmost
+                last = current.left
+
+                while last.right and last.right != current:
+                    last = last.right
+                
+                # First visit to right most node, so add current value to node and result
+                if not last.right:
+                    preOrderValues.append(current.val)
+                    last.right = current
+                    current = current.left
+                # Second visit to this right most node, so reset it's right to None and go to right of current
+                else:
+                    last.right = None
+                    current = current.right
+
+        return preOrderValues
+
+    def iterativePreorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+        if root is None:  return []
         resultList = []
         stack = [root]
         while stack:
@@ -89,4 +120,18 @@ What are the indices of node children relative to node
         0  -> 1, 2
         1 -> 3, 4
         2 -> 5, 6
+
+Morris traversal:
+Saves space
+General idea
+    For each left subtree, traverse to find the right most node
+    Make the left of that = current
+    So when left = current we know we're done with the left subtree
+    Reset left to null
+    Return to current and explore right tree
+
+More detailed:
+    if not current:  break
+    append current.val
+    if left
 '''
