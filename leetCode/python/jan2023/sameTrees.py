@@ -24,8 +24,8 @@ class Solution:
                 pStack.append(pCurrent.left)
                 qStack.append(qCurrent.right)
                 qStack.append(qCurrent.left)
-            elif not pCurrent is None or not qCurrent is None:
-                    return False
+            elif pCurrent != qCurrent:
+                return False
         return True
 
     def treeFromList(self, myList):
