@@ -186,7 +186,7 @@ I turn an undirected graph into a directed graph here
         Initially, method assumed that lower value always the right one to add it to
         But now, modify that if lower value is not in the tree but higher value is
             E.g. [0,2], [1,2]
-    Minimizing steps means using the earliest connection to a node, rather than a cycle
+    Minimizing steps means using the earliest connection to a node, rather than a longer route
         Wouldn't be the case with uneven costs for edge traversal
         E.g. trivial proof
             [0,1, cost=100], [0,2, 1], [1, 2, 1], all nodes have apples and must be visited
