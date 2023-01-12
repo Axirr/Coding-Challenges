@@ -8,16 +8,59 @@ class TreeNode :
 
 class Solution:
     labels = None
-    countForNodeAtIndex = None
-    # currentLabels = None
+    resultList = None
+    adjacenyList = None
 
     def countSubTrees(self, n: int, edges: List[List[int]], labels: str) -> List[int]:
+        self.adjacenyList = self.makeAdjacencyList(edges, n)
+        self.labels = labels
+        self.resultList = [-1 for _ in range(n)]
+        self.adjHelper(0)
+        return self.resultList
+
+    def adjHelper(self, currentNodeValue):
+        neighbours = self.adjacenyList[currentNodeValue]
+        if len(neighbours) == 0:
+            countDict = Counter()
+        else:
+            countDict = self.adjHelper(neighbours[0])
+        countDict[self.labels[currentNodeValue]] += 1
+        for i in range(1, len(neighbours)):
+            neigh = neighbours[i]
+            childCount = self.adjHelper(neigh)
+            for key in childCount:
+                countDict[key] += childCount[key]
+        self.resultList[currentNodeValue] = countDict[self.labels[currentNodeValue]]
+        return countDict
+
+    # NOTE: this adjacency list doesn't include all edges and 
+    # relies on taking minimum steps to determine what edges to use
+    def makeAdjacencyList(self, edges, n):
+        adjList = [[] for i in range(n)]
+        used = set()
+        for edge in edges:
+            sender = min(edge)
+            receiver = max(edge)
+            if not sender in used and receiver in used:
+                temp = sender
+                sender = receiver
+                receiver = temp
+            adjList[sender].append(receiver)
+            used.add(sender)
+            used.add(receiver)
+        return adjList
+
+
+
+
+
+
+    def treeCountSubTrees(self, n: int, edges: List[List[int]], labels: str) -> List[int]:
         myTree = self.makeTreeFromEdges(edges)
         self.labels = labels
-        self.countForNodeAtIndex = [-1 for _ in range(n)]
-        # self.currentLabels = Counter()
+        self.resultList = [-1 for _ in range(n)]
         self.helper(myTree)
-        return self.countForNodeAtIndex
+        return self.resultList
     
     def helper(self, root):
         countDict = Counter()
@@ -26,7 +69,7 @@ class Solution:
             childCount = self.helper(neigh)
             for key in childCount:
                 countDict[key] += childCount[key]
-        self.countForNodeAtIndex[root.value] = countDict[self.labels[root.value]]
+        self.resultList[root.value] = countDict[self.labels[root.value]]
         return countDict
 
     def makeTreeFromEdges(self, edges: List[List[int]]):
@@ -42,6 +85,7 @@ class Solution:
             if sender not in nodeDict:  nodeDict[sender] = TreeNode(sender)
             nodeDict[sender].neighbours.append(nodeDict[receiver])
         return nodeDict[0]
+
 
 def main():
     sol = Solution()
