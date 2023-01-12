@@ -1,6 +1,5 @@
 from typing import List
 from collections import Counter
-from copy import copy
 
 class TreeNode :
     def __init__(self, value):
@@ -9,26 +8,25 @@ class TreeNode :
 
 class Solution:
     labels = None
-    answer = None
+    countForNodeAtIndex = None
+    # currentLabels = None
 
     def countSubTrees(self, n: int, edges: List[List[int]], labels: str) -> List[int]:
         myTree = self.makeTreeFromEdges(edges)
         self.labels = labels
-        self.answer = [0 for _ in range(n)]
-        topCount = self.helper(myTree, set(self.labels[0]))[self.labels[myTree.value]]
-        self.answer[0] = topCount
-        return self.answer
+        self.countForNodeAtIndex = [-1 for _ in range(n)]
+        # self.currentLabels = Counter()
+        self.helper(myTree)
+        return self.countForNodeAtIndex
     
-    def helper(self, root, parentLabelsToCount):
-        copyLabels = copy(parentLabelsToCount)
-        copyLabels.add(self.labels[root.value])
+    def helper(self, root):
         countDict = Counter()
         countDict[self.labels[root.value]] += 1
         for neigh in root.neighbours:
-            countNeigh = self.helper(neigh, copyLabels)
-            for key in countNeigh:
-                countDict[key] += countNeigh[key]
-        self.answer[root.value] = countDict[self.labels[root.value]]
+            childCount = self.helper(neigh)
+            for key in childCount:
+                countDict[key] += childCount[key]
+        self.countForNodeAtIndex[root.value] = countDict[self.labels[root.value]]
         return countDict
 
     def makeTreeFromEdges(self, edges: List[List[int]]):
@@ -90,4 +88,9 @@ Ideas:
 Naive:
     Construct tree from nodes
     Recursively do each subtree looking for both self and parent labels
+
+Better way to deal with parent labels and sending up count dict
+    Only need to send up relevant ones
+    And copying labels is likely inefficient
+        Since depth first traversal, can likely solve with merely popping label off a global stack
 '''
