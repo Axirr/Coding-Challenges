@@ -5,7 +5,6 @@ class Solution:
     labels = None
     adList = None
     parents = None
-    twoBest = None
     currentMax = None
 
     def longestPath(self, parent: List[int], s: str) -> int:
@@ -13,7 +12,6 @@ class Solution:
         self.labels = s
         self.parents = parent
         self.unvisited = set([i for i in range(len(parent) - 1, -1, -1)])
-        self.twoBest = [0 for _ in range(len(parent))]
 
         self.currentMax = 1
         while self.unvisited:
@@ -25,22 +23,18 @@ class Solution:
         return self.currentMax
     
     def helperLongestPath(self, currentNode):
-        lengths = [0, 0]
+        lengths = [0,0]
         i = 0
         while i < len(self.adList[currentNode]):
             child = self.adList[currentNode][i]
             if not child == self.parents[currentNode]:
                 if self.labels[child] != self.labels[currentNode]:
-                    self.helperLongestPath(child)
-                    # Using minheap guarantees max will be at index 1
-                    maxForChild = self.twoBest[child][1] + 1
-                    heappushpop(lengths, maxForChild)
+                    heappushpop(lengths, self.helperLongestPath(child) + 1)
                     if child in self.unvisited:
                         self.unvisited.remove(child)
             i += 1
-        self.twoBest[currentNode] = lengths
         self.currentMax = max(self.currentMax, sum(lengths) + 1)
-        return
+        return lengths[1]
 
     def makeAdjacencyList(self, parents):
         adjList = [[] for i in range(len(parents))]
@@ -66,6 +60,11 @@ def main():
     longestPath = sol.longestPath(parent, s)
     print(longestPath)
     assert longestPath == 3
+    parent = [-1,0,1]
+    s = "aab"
+    longestPath = sol.longestPath(parent, s)
+    print(longestPath)
+    assert longestPath == 2
 
 main()
 
