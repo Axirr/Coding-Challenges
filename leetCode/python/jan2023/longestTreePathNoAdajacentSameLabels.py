@@ -1,4 +1,5 @@
 from typing import List
+from heapq import *
 
 class Solution:
     labels = None
@@ -12,7 +13,8 @@ class Solution:
         self.labels = s
         self.parents = parent
         self.unvisited = set([i for i in range(len(parent) - 1, -1, -1)])
-        self.twoBest = [[0,0] for _ in range(len(parent))]
+        self.twoBest = [0 for _ in range(len(parent))]
+
         self.currentMax = 1
         while self.unvisited:
             start = self.unvisited.pop()
@@ -23,33 +25,26 @@ class Solution:
         return self.currentMax
     
     def helperLongestPath(self, currentNode):
-        lengths = []
+        lengths = [0, 0]
         i = 0
-        parentOfCurrent = self.parents[currentNode]
         while i < len(self.adList[currentNode]):
             child = self.adList[currentNode][i]
-            if child == parentOfCurrent:
-                i += 1
-                continue
-            if self.labels[child] != self.labels[currentNode]:
-                self.helperLongestPath(child)
-                lengths.append(max(self.twoBest[child]) + 1)
-                if child in self.unvisited:
-                    self.unvisited.remove(child)
+            if not child == self.parents[currentNode]:
+                if self.labels[child] != self.labels[currentNode]:
+                    self.helperLongestPath(child)
+                    # Using minheap guarantees max will be at index 1
+                    maxForChild = self.twoBest[child][1] + 1
+                    heappushpop(lengths, maxForChild)
+                    if child in self.unvisited:
+                        self.unvisited.remove(child)
             i += 1
-        maxes = [0,0]
-        for length in lengths:
-            if length > min(maxes):
-                maxes = [max(maxes), length]
-        self.twoBest[currentNode] = maxes
-        if sum(maxes) + 1 > self.currentMax:
-            self.currentMax = sum(maxes) + 1
+        self.twoBest[currentNode] = lengths
+        self.currentMax = max(self.currentMax, sum(lengths) + 1)
         return
 
     def makeAdjacencyList(self, parents):
         adjList = [[] for i in range(len(parents))]
-        for i in range(len(parents)):
-            if parents[i] == -1:  continue
+        for i in range(1, len(parents)):
             adjList[i].append(parents[i])
             adjList[parents[i]].append(i)
         return adjList
