@@ -4,27 +4,46 @@ var insert = function(intervals, newInterval) {
     var currentMin = newIntMin
     var currentMax = newIntMax
     var resultList = []
+
     for (var i = 0; i < intervals.length; i++) {
-        currentInterval = intervals[i]
-        // if (currentInterval[0] > newIntMax) {
-        //     continue
-        // }
-        overlap = Math.min(currentInterval[1], newIntMax) - Math.max(currentInterval[0], newIntMin)
-        if (Math.min(currentInterval[1], newIntMax) - Math.max(currentInterval[0], newIntMin) >= 0) {
-            currentMin = Math.min(currentMin, currentInterval[0])
-            currentMax = Math.max(currentMax, currentInterval[1])
-        } else {
-            resultList.push(currentInterval)
-        }
-    }
-    var i = 0
-    for (i = 0; i < resultList.length; i++) {
-        if (resultList[i][0] > currentMin) {
+        currentIntervalMin = intervals[i][0]
+
+        // Break if guaranteed that current and future intervals will not overlap
+        // because start is already outside range
+        if (currentIntervalMin > newIntMax) {
             break
+        }
+
+        currentIntervalMax = intervals[i][1]
+
+        // Calculating if two intevals overlap
+        if (Math.min(currentIntervalMax, newIntMax) - Math.max(currentIntervalMin, newIntMin) >= 0) {
+            currentMin = Math.min(currentMin, currentIntervalMin)
+            currentMax = Math.max(currentMax, currentIntervalMax)
+        } else {
+            resultList.push(intervals[i])
         }
     }
 
-    resultList.splice(i, 0, [currentMin, currentMax])
+    // Binary search for location to insert at
+    low = 0
+    high = resultList.length
+    middle = Math.floor((low + high) / 2)
+    while (low < high) {
+        middle = Math.floor((low + high) / 2)
+        if (resultList[middle][0] >= currentMin) {
+            high = middle - 1
+        } else {
+            low = middle + 1
+        }
+    }
+    resultList.splice(low, 0, [currentMin, currentMax])
+
+    // Appending remaining items
+    for (i; i < intervals.length; i++) {
+        resultList.push(intervals[i])
+    }
+
     return resultList
 };
 
