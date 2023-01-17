@@ -1,4 +1,19 @@
 function minFlipsMonoIncr(s: string): number {
+    // D[i] = D[i - 1] if s[i - 1] === '1'
+    // D[i] = min(d[i - 1] + 1, i - d[i - 1]) if s[i - 1] === '0'
+    var lastResult:number = 0
+    var runningOnes:number = 0
+    for (var i:number = 0; i < s.length; i++) {
+        if (s[i] !== '1') {
+            lastResult = Math.min(lastResult + 1, runningOnes)
+        } else {
+            runningOnes += 1
+        }
+    }
+    return lastResult
+}
+
+function firstMinFlipsMonoIncr(s: string): number {
     var minChanges:number = s.length
     var runningSumZeroes:number[] = []
     runningSumZeroes.push(s[0] === '0' ? 1 : 0)
@@ -69,4 +84,14 @@ Naive:
     Time complexity:
         running sum traversal: n
         all points traversal: n
+
+Dynamic programming way:
+    s[i] === '1' is simple case
+        Use last result
+            Since last result is valid already and can always add a 1
+    === '0'
+        Two options
+        Incrememnt flip by 1
+            To convert it into a 1, and thus ensure it is valid
+        Flip any ones in previous
 */
