@@ -1,6 +1,6 @@
 function minFlipsMonoIncr(s: string): number {
     // D[i] = D[i - 1] if s[i - 1] === '1'
-    // D[i] = min(d[i - 1] + 1, i - d[i - 1]) if s[i - 1] === '0'
+    // D[i] = min(d[i - 1] + 1, runningSumOnes) if s[i - 1] === '0'
     var lastResult:number = 0
     var runningOnes:number = 0
     for (var i:number = 0; i < s.length; i++) {
