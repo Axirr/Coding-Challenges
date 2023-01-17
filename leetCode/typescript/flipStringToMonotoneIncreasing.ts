@@ -1,20 +1,23 @@
 function minFlipsMonoIncr(s: string): number {
     var minChanges:number = s.length
     var runningSumZeroes:number[] = []
-    if (s[0] === '0') {
-        runningSumZeroes.push(1)
-    } else {
-        runningSumZeroes.push(0)
-    }
+    runningSumZeroes.push(s[0] === '0' ? 1 : 0)
+
+    // Create running sum of 0's
     for (var i:number = 1; i < s.length; i++) {
         runningSumZeroes.push(runningSumZeroes[i-1] + (s[i] === '0' ? 1 : 0))
     }
-    console.log(runningSumZeroes)
+
+    // Test how many changes at each point to split the string in two
+    let lastIndex:number = s.length - 1
     for (var i:number = 0; i < s.length; i++) {
-        var potNewMinChanges:number = (i + 1) - runningSumZeroes[i] + (runningSumZeroes[s.length - 1] - runningSumZeroes[i])
+        var potNewMinChanges:number = (i + 1) - runningSumZeroes[i] + (runningSumZeroes[lastIndex] - runningSumZeroes[i])
         minChanges = Math.min(potNewMinChanges, minChanges)
     }
-    minChanges = Math.min(minChanges, (runningSumZeroes[s.length - 1]))
+
+    // Check if changing to all 1's is the min
+    minChanges = Math.min(minChanges, (runningSumZeroes[lastIndex]))
+
     return minChanges
 };
 
