@@ -39,9 +39,9 @@ function maxSubarraySumCircular(nums: number[]): number {
     }
 
     bestFromBackToIndex.reverse()
-    // console.log(backSolutions)
-    // console.log(bestFromFrontToIndex)
-    // console.log(bestFromBackToIndex)
+    console.log(backSolutions)
+    console.log(bestFromFrontToIndex)
+    console.log(bestFromBackToIndex)
 
     for (var i = 0; i < nums.length - 2; i++) {
         var potentialMax:number = bestFromFrontToIndex[i] + bestFromBackToIndex[i+1]
