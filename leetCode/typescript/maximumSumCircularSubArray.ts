@@ -1,52 +1,53 @@
 function maxSubarraySumCircular(nums: number[]): number {
     var lastIndex:number = nums.length - 1
+
+    if (lastIndex === 0) {
+        return nums[0]
+    }
+
     var backRunningSum:number = nums[lastIndex]
     var frontRunningSum:number = nums[0]
-    var bestFromFrontToIndex:number[] = []
-    bestFromFrontToIndex.push(nums[0])
-    var bestFromBackToIndex:number[] = []
-    bestFromBackToIndex.push(nums[lastIndex])
-    var backSolutions:number[] = []
-    backSolutions.push(nums[lastIndex])
-    var partialBackRunningSum:number = 0
+    var bestFromFrontToIndex:number = nums[0]
+    var bestFromBackToIndex:number = nums[lastIndex]
+    var partialBackRunningSum:number = nums[lastIndex]
     var maxSum:number = nums[lastIndex]
+
+    var halfIndex:number = Math.floor(nums.length / 2)
 
 
     // Construct backwards stuff (runningSum, bestFromBack, backSolutions)
     for (var i = lastIndex - 1; i >= 0; i--) {
-        var lastValue = backSolutions[backSolutions.length - 1]
-        var takeValueAndPast = lastValue + nums[i] + partialBackRunningSum
-        var takeValueAndPast = lastValue + nums[i]
-        if (nums[i] > takeValueAndPast) {
-            backSolutions.push(nums[i])
-        } else {
-            backSolutions.push(takeValueAndPast)
+        partialBackRunningSum += nums[i]
+        if (nums[i] > partialBackRunningSum) {
+            partialBackRunningSum = nums[i]
         }
-        maxSum = Math.max(maxSum, backSolutions[backSolutions.length - 1])
-
-        backRunningSum += nums[i]
-        bestFromBackToIndex.push(Math.max(bestFromBackToIndex[bestFromBackToIndex.length - 1], backRunningSum))
-        maxSum = Math.max(maxSum, bestFromBackToIndex[bestFromBackToIndex.length - 1])
-
+        maxSum = Math.max(maxSum, partialBackRunningSum)
     }
 
-    // Construct forward stuff (runningSum, bestFromFront)
-    for (var i = 1; i <= lastIndex; i++) {
-
+    var i:number = 1
+    var frontLastUsed = 0
+    var backLastUsed = lastIndex
+    while (i <= lastIndex) {
+        var backIndex = nums.length - 1 - i
+        if (frontLastUsed >= backIndex && backLastUsed <= i)  { break }
         frontRunningSum += nums[i]
-        bestFromFrontToIndex.push(Math.max(bestFromFrontToIndex[bestFromFrontToIndex.length - 1], frontRunningSum))
-        maxSum = Math.max(maxSum, bestFromFrontToIndex[bestFromFrontToIndex.length - 1])
+        backRunningSum += nums[backIndex]
+        if (backIndex > frontLastUsed) {
+            if (backRunningSum > bestFromBackToIndex) {
+                backLastUsed = backIndex
+                bestFromBackToIndex = backRunningSum
+            }
+        }
+        if (i < backLastUsed) {
+            if (frontRunningSum > bestFromFrontToIndex) {
+                frontLastUsed = i
+                bestFromFrontToIndex = frontRunningSum
+            }
+        }
+        i++
     }
 
-    bestFromBackToIndex.reverse()
-    console.log(backSolutions)
-    console.log(bestFromFrontToIndex)
-    console.log(bestFromBackToIndex)
-
-    for (var i = 0; i < nums.length - 2; i++) {
-        var potentialMax:number = bestFromFrontToIndex[i] + bestFromBackToIndex[i+1]
-        maxSum = Math.max(maxSum, potentialMax)
-    }
+    maxSum = Math.max(maxSum, bestFromBackToIndex + bestFromFrontToIndex)
 
     return maxSum
 };
@@ -85,6 +86,14 @@ function myMain() {
     maxSum = maxSubarraySumCircular(nums)
     console.log(maxSum)
     console.assert(maxSum === 84)
+    nums = [2,-2,2,7,8,0]
+    maxSum = maxSubarraySumCircular(nums)
+    console.log(maxSum)
+    console.assert(maxSum === 19)
+    nums = [-92,78,-45,-63,1,34,81,50,14,91,-77,-54,13,-88,24,37,-12,59,-48,-62,57,-22,-8,85,48,71,12,1,-20,36,-32,-14,39,46,-41,75,13,-23,98,10,-88,64,50,37,-95,-32,46,-91,10,79,-11,43,-94,98,79,42,51,71,4,-30,2,74,4,10,61,98,57,98,46,43,-16,72,53,-69,54,-96,22,0,-7,92,-69,80,68,-73,-24,-92,-21,82,32,-1,-6,16,15,-29,70,-66,-85,80,50,-3]
+    maxSum = maxSubarraySumCircular(nums)
+    console.log(maxSum)
+    console.assert(maxSum === 1437)
 }
 
 myMain()
@@ -176,4 +185,15 @@ Partial running sum fix backSolutions greediness?
     Unlike bestFromBack, we don't have to go all the way to the back though
         Just to where our optimal starts from
     Solution: whenever we take current value alone (i.e. restart the subarray at that point) we need to start a running sum
+
+Forward index to backward index formula:
+    0 -> n - 1
+    1 -> n - 2
+
+Can I do this without having to store all the forward and backward sums?
+    When they meet in the middle, no point in expanding into the other's territory?
+        Counter example [1,10, -100,10]
+            Best here would be 
+
+Subarray can go as far as the other one isn't using
 */
