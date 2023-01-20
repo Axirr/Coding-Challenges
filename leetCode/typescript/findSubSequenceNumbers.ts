@@ -121,7 +121,28 @@ Better naive:
         Copy
         Add next character if it is >= last
         Add back to frontier if newEnd != n - 1
+    O(2^n) in worst case for constructing all subarrays
 
 Problem: same starting point can create difference sequences
     E.g. 4, 6, 7 or 4, 7
+
+Does my solution have advantages over pure brute force?
+    Pure brute force: generate all combos
+        2^n
+        And we have the problem of needing to check condition validity by full traversal of each
+    At least my solution only looks at sequences that have the potential to generate future ones
+        E.g. best case: pure descending list
+            Will traverse sum(n, n+1, ...) -> O(n^2)
+            But will not traverse for bad subsequences starting points
+
+Why is time complexity O(2^n * n^2)?
+    Number of subarrays of an array is 2^n
+    So our worst case has to be that bad, since we need to generate the subarrays
+    But our average and best case are better
+        E.g.:
+            Total steps for [4, 6, 7, 7, 9, 10, 11, 12, 13] is 511
+                2^9 ~= 511
+            Total steps for [13, 12, 11, 10, 9, 7, 7, 6, 4] is 47
+                9 for initial traversal
+                ~40 for minimal traversal n, n - 1, ...      => 9 * 9 / 2
 */
