@@ -2,75 +2,29 @@ function subarraysDivByK(nums: number[], k: number): number {
     if (nums.length === 1) {
         return nums[0] % k === 0 ? 1 : 0
     }
-    var divisibleSums:number = 0
+
+    var resultCount:number = 0
     var modCounts: { [key: string]: number} = {}
-    // var tempWorkingCounts: { [key: string]: number} = {}
+    modCounts['0'] = 1
     var currentOffset:number = 0
-    var currentMod:number = 0
 
     for (var i=nums.length - 1; i >= 0; i--) {
-        currentMod = nums[i] % k
-        if (currentMod < 0)  { currentMod += k}
-        // currentMod = (currentMod + currentOffset) % k
-        // tempWorkingCounts = {}
+        currentOffset = (currentOffset + nums[i] % k + k) % k
+        // currentOffset = (currentOffset + nums[i] % k)
+        // if (currentOffset < 0 )  {currentOffset += k}
 
-        // Shift over
-        // for (const key in modCounts) {
-        //     var newKey:string = ((Number(key) + currentMod) % k).toString()
-        //     tempWorkingCounts[newKey] = modCounts[key]
-        // }
-        // modCounts = tempWorkingCounts
+        if (currentOffset in modCounts) {
+            resultCount += modCounts[currentOffset]
+        }
 
-        // var myKey = (currentMod + currentOffset) % k
-        // var myKey = (currentMod + currentOffset) % k
-        var myKey = (2 * currentMod) % k
-        // var myKey = currentMod
-        if (myKey.toString() in modCounts) {
-            modCounts[myKey] += 1
+        if (currentOffset in modCounts) {
+            modCounts[currentOffset] += 1
         } else {
-            modCounts[myKey] = 1
+            modCounts[currentOffset] = 1
         }
-        process.stdout.write('modCounts ')
-        console.log(modCounts)
-        if (currentMod in modCounts) {
-            divisibleSums += modCounts[currentMod]
-        }
-        // if ('0' in modCounts) {
-        //     divisibleSums += modCounts['0']
-        // }
-        // currentOffset = currentMod
-        console.log(divisibleSums)
-
-        
-        // currentOffset = (currentOffset + currentMod) % k
-        // if (i !== 0) {
-        //     currentOffset = (currentOffset + currentMod) % k
-        // }
-        // if (i === 0) {
-        //     console.log('i = 0')
-        //     process.stdout.write('modCounts ')
-        //     console.log(modCounts)
-        //     console.log(`currentMod ${currentMod}`)
-        //     console.log(`currentMod + currentOffset ${(currentMod + currentOffset) % k}`)
-        //     console.log(`currentOffset ${currentOffset}`)
-        //     if (currentMod in modCounts) {
-        //         // divisibleSums = modCounts[(currentMod)]
-        //         divisibleSums = modCounts[currentOffset]
-        //     }
-        //     console.log(divisibleSums)
-        // }
     }
-    console.log()
 
-    // process.stdout.write('modCounts ')
-    // console.log(modCounts)
-
-    // if ('0' in modCounts) {
-    //     divisibleSums = modCounts['0']
-    // }
-    // const mySum = nums.reduce((partialSum, a) => partialSum + a, 0);
-    // if (mySum % k === 0)  { divisibleSums += 1}
-    return divisibleSums
+    return resultCount
 };
 
 function naiveSubArraysDivByK(nums: number[], k: number): number {
@@ -141,14 +95,14 @@ function ma() {
     subArrayDivCount = subarraysDivByK(nums, k)
     correctDivCount = naiveSubArraysDivByK(nums, k)
     if (subArrayDivCount !== correctDivCount)  { printError(subArrayDivCount, correctDivCount, nums, k)}
-    // nums = [
-    //     17, -5, 12, 15,
-    //    -14,  5,  3
-    //  ]
-    // k = 10
-    // subArrayDivCount = subarraysDivByK(nums, k)
-    // correctDivCount = naiveSubArraysDivByK(nums, k)
-    // if (subArrayDivCount !== correctDivCount)  { printError(subArrayDivCount, correctDivCount, nums, k)}
+    nums = [
+        17, -5, 12, 15,
+       -14,  5,  3
+     ]
+    k = 10
+    subArrayDivCount = subarraysDivByK(nums, k)
+    correctDivCount = naiveSubArraysDivByK(nums, k)
+    if (subArrayDivCount !== correctDivCount)  { printError(subArrayDivCount, correctDivCount, nums, k)}
     nums = [5]
     k = 9
     subArrayDivCount = subarraysDivByK(nums, k)
@@ -169,6 +123,11 @@ function ma() {
     if (subArrayDivCount !== correctDivCount)  { printError(subArrayDivCount, correctDivCount, nums, k)}
     nums = [-1,2,9]
     k = 2
+    subArrayDivCount = subarraysDivByK(nums, k)
+    correctDivCount = naiveSubArraysDivByK(nums, k)
+    if (subArrayDivCount !== correctDivCount)  { printError(subArrayDivCount, correctDivCount, nums, k)}
+    nums = [6, -3]
+    k = 3
     subArrayDivCount = subarraysDivByK(nums, k)
     correctDivCount = naiveSubArraysDivByK(nums, k)
     if (subArrayDivCount !== correctDivCount)  { printError(subArrayDivCount, correctDivCount, nums, k)}
@@ -235,4 +194,27 @@ Incrementing pre-existing subarrays
     Can't just use increment them
     They will increment a (often) different key
         E.g. 1 + 3 increments 4
+
+Had to look at the solution
+    I think I was close
+
+One of my issues: modulus for negative values
+    My method reversed the negative value
+    E.g. -3 % 5 -> -3 -> 2
+    But -3 % 5   needed to go to 3
+    E.g. [6, -3]    k = 3
+        Should be 3 solutions
+        But my method would yield one solution I think
+            As if the array was [6, 2]
+                [2] wrong
+                [6,2] wrong
+                [6] right
+
+Understanding the solution problems:
+    1) Why initialize one of the groups to 1?
+        Getting a result for the first number impossible without it
+            Since incrementing of modCounts happens after result is incremented
+        Seems quite like my bug where I was off by one for many inputs
+            Last num update will never be included in result
+            So this is pre-including it, if we ever hit '0'?
 */
