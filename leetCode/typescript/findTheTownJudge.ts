@@ -4,22 +4,24 @@ function findJudge(n: number, trust: number[][]): number {
     var resultNum:number = -1;
     var adjacencyList:number[][] = [[]];
     var currentTrust:number[] = [0, 0];
-    var trustsSomeone:boolean[] = [false]
+    var trustsSomeone:Set<number> = new Set<number>();
 
     for (var i=0; i < n; i++) {
         adjacencyList.push([])
-        trustsSomeone.push(false)
+        trustsSomeone.add(i+1)
     }
     for (var i=0; i < trust.length; i ++) {
         currentTrust = trust[i]
         adjacencyList[currentTrust[1]].push(currentTrust[0])
-        trustsSomeone[currentTrust[0]] = true
+        trustsSomeone.delete(currentTrust[0])
     }
 
-    for (var i = 1; i < adjacencyList.length; i++) {
-        var currentAdjacenyList:number[] = adjacencyList[i]
-        if (currentAdjacenyList.length === n - 1 && !trustsSomeone[i])  { return i }
+    if (trustsSomeone.size === 0)  {return -1}
+
+    for (let element of trustsSomeone) {
+        if (adjacencyList[element].length === n - 1)  {return element}
     }
+
     return resultNum
 };
 
