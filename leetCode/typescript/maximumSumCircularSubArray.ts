@@ -1,4 +1,29 @@
 function maxSubarraySumCircular(nums: number[]): number {
+    // Minimum subarray approach
+    var maxSum:number = nums.reduce((partialSum, a) => partialSum += a, 0)
+    var minSum = minSubArray(nums)
+    return Math.max(maxSum + minSum, maxSum)
+}
+
+function minSubArray(nums: number[]): number {
+    var minSum:number = -nums[0]
+    var partialRunningSum:number = -nums[0]
+    console.log(minSum)
+
+    for (var i = 1; i < nums.length; i++) {
+        var myNum:number = -nums[i]
+        partialRunningSum = partialRunningSum + myNum
+        if (myNum > partialRunningSum) {
+            partialRunningSum = myNum
+        }
+        minSum = Math.max(minSum, partialRunningSum)
+        console.log(minSum)
+    }
+
+    return minSum
+};
+
+function notWorkingMaxSubarraySumCircular(nums: number[]): number {
     var lastIndex:number = nums.length - 1
 
     if (lastIndex === 0) {
@@ -28,18 +53,21 @@ function maxSubarraySumCircular(nums: number[]): number {
     var frontLastUsed = 0
     var backLastUsed = lastIndex
     while (i <= lastIndex) {
+        console.log(`i ${i}`)
         var backIndex = nums.length - 1 - i
         if (frontLastUsed >= backIndex && backLastUsed <= i)  { break }
         frontRunningSum += nums[i]
         backRunningSum += nums[backIndex]
         if (backIndex > frontLastUsed) {
             if (backRunningSum > bestFromBackToIndex) {
+            console.log(`backIndex ${backIndex}`)
                 backLastUsed = backIndex
                 bestFromBackToIndex = backRunningSum
             }
         }
         if (i < backLastUsed) {
             if (frontRunningSum > bestFromFrontToIndex) {
+            console.log(`frontIndex ${i}`)
                 frontLastUsed = i
                 bestFromFrontToIndex = frontRunningSum
             }
@@ -54,10 +82,22 @@ function maxSubarraySumCircular(nums: number[]): number {
 
 
 function myMain() {
-    var nums:number[] = [1,-2,3,-2]
-    var maxSum:number = maxSubarraySumCircular(nums)
+    var nums:number[]
+    var maxSum:number
+    // nums = [-92,78,-45,-63,1,34,81,50,14,91,
+    //     -77,-54,13,-88,24,37,-12,59,-48,-62,
+    //     57,-22,-8,85,48,71,12,1,-20,36,
+    //     -32,-14,39,46,-41,75,13,-23,98,10,
+    //     -88,64,50,37,-95,-32,46,-91,10,79,
+    //     -11,43,-94,98,79,42,51,71,4,-30,2,74,4,10,61,98,57,98,46,43,-16,72,53,-69,54,-96,22,0,-7,92,-69,80,68,-73,-24,-92,-21,82,32,-1,-6,16,15,-29,70,-66,-85,80,50,-3]
+    // maxSum = maxSubarraySumCircular(nums)
+    // console.log(maxSum)
+    // console.assert(maxSum === 1437)
+    nums = [1,-2,3,-2]
+    maxSum = maxSubarraySumCircular(nums)
     console.log(maxSum)
     console.assert(maxSum === 3)
+    return
     nums = [5,-3,5]
     maxSum = maxSubarraySumCircular(nums)
     console.log(maxSum)
@@ -90,10 +130,6 @@ function myMain() {
     maxSum = maxSubarraySumCircular(nums)
     console.log(maxSum)
     console.assert(maxSum === 19)
-    nums = [-92,78,-45,-63,1,34,81,50,14,91,-77,-54,13,-88,24,37,-12,59,-48,-62,57,-22,-8,85,48,71,12,1,-20,36,-32,-14,39,46,-41,75,13,-23,98,10,-88,64,50,37,-95,-32,46,-91,10,79,-11,43,-94,98,79,42,51,71,4,-30,2,74,4,10,61,98,57,98,46,43,-16,72,53,-69,54,-96,22,0,-7,92,-69,80,68,-73,-24,-92,-21,82,32,-1,-6,16,15,-29,70,-66,-85,80,50,-3]
-    maxSum = maxSubarraySumCircular(nums)
-    console.log(maxSum)
-    console.assert(maxSum === 1437)
 }
 
 myMain()
@@ -196,4 +232,20 @@ Can I do this without having to store all the forward and backward sums?
             Best here would be 
 
 Subarray can go as far as the other one isn't using
+
+Not just about whether front or back get there first?
+    Since one might be more optimal tham the other
+    E.g. there's only negatives in the front, but there's a good number it gets to first to compensate it
+        E.g. [1,-100,101, ..., 1]
+            Where all num in ... > 0
+            So we can take everything but the -100, but current method won't do this because front beats back
+
+Solutions:
+    When they meet, test subbing one number from one to the other?
+        Don't always meet though
+        Would have to go all the way to the end to figure it out
+    Most solutions seem to need to store previous results/calculate all forward and back sums
+
+Minimum subarray approach
+    Reverse sign, and use Kadanes?
 */
