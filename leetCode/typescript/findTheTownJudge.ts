@@ -1,24 +1,24 @@
 function findJudge(n: number, trust: number[][]): number {
-    if (n < 2) {
-        return 1;
-    }
+    if (n === 1)  { return 1; }
+
     var resultNum:number = -1;
-    var adjacencyList:number[][] = [];
+    var adjacencyList:number[][] = [[]];
     var currentTrust:number[] = [0, 0];
-    var trustsSomeone:boolean[] = []
+    var trustsSomeone:boolean[] = [false]
+
     for (var i=0; i < n; i++) {
         adjacencyList.push([])
         trustsSomeone.push(false)
     }
     for (var i=0; i < trust.length; i ++) {
         currentTrust = trust[i]
-        adjacencyList[currentTrust[1] - 1].push(currentTrust[0] - 1)
-        trustsSomeone[currentTrust[0] - 1] = true
+        adjacencyList[currentTrust[1]].push(currentTrust[0])
+        trustsSomeone[currentTrust[0]] = true
     }
-    // console.log(adjacencyList)
-    for (var i = 0; i < adjacencyList.length; i++) {
+
+    for (var i = 1; i < adjacencyList.length; i++) {
         var currentAdjacenyList:number[] = adjacencyList[i]
-        if (currentAdjacenyList.length === n - 1 && !trustsSomeone[i])  { return i + 1 }
+        if (currentAdjacenyList.length === n - 1 && !trustsSomeone[i])  { return i }
     }
     return resultNum
 };
