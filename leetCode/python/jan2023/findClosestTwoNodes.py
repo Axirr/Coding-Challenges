@@ -1,18 +1,20 @@
-from typing import List
+from typing import List, Optional, Set
 from collections import deque
 
 class Solution:
     def closestMeetingNode(self, edges: List[int], node1: int, node2: int) -> int:
-        nodes = [node1, node2]
-        newNodes = [None, None]
-        visited = []
+        nodes: List[Optional[int]] = [node1, node2]
+        newNodes: List[Optional[int]] = [None, None]
+        visited:List[Set] = []
         visited.append(set())
         visited.append(set())
 
-        globalVisited = set()
+        globalVisited:Set = set()
 
-        resultNode = None
-        while nodes[0] is not None or nodes[1] is not None:
+        resultNode:Optional[int] = None
+        hasValidNodes:bool = True
+        currentNode:Optional[int] = None
+        while hasValidNodes:
             for i in range(2):
                 currentNode = nodes[i]
                 if currentNode is None or currentNode in visited[i]:
@@ -29,6 +31,11 @@ class Solution:
             
             if not resultNode is None:  return resultNode
             
+            hasValidNodes = False
+            for item in newNodes:
+                if not item is None:
+                    hasValidNodes = True
+                    break
             nodes = newNodes
             newNodes = [None, None]
         return -1
