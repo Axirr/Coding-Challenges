@@ -3,58 +3,60 @@ from collections import deque
 
 class Solution:
     def closestMeetingNode(self, edges: List[int], node1: int, node2: int) -> int:
-        # if edges[node1] == node2 or edges[node2] == node1:
-        #     return node1
-
-        queueNode1 = deque()
-        queueNode1.append(node1)
-        newQueue1 = deque()
+        queueNode1 = node1
+        newQueue1 = None
         visited1 = set()
 
-        queueNode2 = deque()
-        queueNode2.append(node2)
-        newQueue2 = deque()
+        queueNode2 = node2
+        newQueue2 = None
         visited2 = set()
 
         globalVisited = set()
 
-        currentSteps = 0
         resultNode = None
         while True:
-            intersectionNode = self.exploreLevel(queueNode1, visited1, globalVisited, newQueue1, edges)
-            if not intersectionNode is None:
-                resultNode = intersectionNode
-            intersectionNode = self.exploreLevel(queueNode2, visited2, globalVisited, newQueue2, edges)
-            if not intersectionNode is None:
-                if not resultNode is None:
-                    resultNode = min(resultNode, intersectionNode)
-                else:  resultNode = intersectionNode
+            if not queueNode1 is None and not queueNode1 in visited1:
+                if queueNode1 in globalVisited:
+                    resultNode = queueNode1
+                visited1.add(queueNode1)
+                globalVisited.add(queueNode1)
+                if edges[queueNode1] != -1 and edges[queueNode1] not in visited1:
+                    newQueue1 = edges[queueNode1]
+
+            if not queueNode2 is None and not queueNode2 in visited2:
+                if queueNode2 in globalVisited:
+                    if not resultNode is None:
+                        resultNode = min(resultNode,queueNode2)
+                    else:
+                        resultNode = queueNode2
+                visited2.add(queueNode2)
+                globalVisited.add(queueNode2)
+                if edges[queueNode2] != -1 and edges[queueNode2] not in visited2:
+                    newQueue2 = edges[queueNode2]
             
             if not resultNode is None:  return resultNode
             
-            if not newQueue1 and not newQueue2:
+            if newQueue1 is None and newQueue2 is None:
                 return -1
             else:
                 queueNode1 = newQueue1
                 queueNode2 = newQueue2
-                newQueue1 = deque()
-                newQueue2 = deque()
-                currentSteps += 1
+                newQueue1 = None
+                newQueue2 = None
     
     def exploreLevel(self, queue, visited, globalVisited, newFrontier, edges):
-        while queue:
-            currentNode = queue.pop()
-            while currentNode in visited and len(queue) > 0:
-                currentNode = queue.pop()
+        resultList = [None, None]
+        if not queue is None:
+            currentNode = queue
             if currentNode in visited:
-                return None
-            if currentNode in globalVisited:
-                return currentNode
+                resultList[0] = None
+            elif currentNode in globalVisited:
+                resultList[0] = currentNode
             visited.add(currentNode)
             globalVisited.add(currentNode)
             if edges[currentNode] != -1 and edges[currentNode] not in visited:
-                newFrontier.append(edges[currentNode])
-        return None
+                resultList[1] = edges[currentNode]
+        return resultList
 
 def main():
     sol = Solution()
