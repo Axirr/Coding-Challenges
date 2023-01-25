@@ -3,9 +3,7 @@ from collections import deque
 
 class Solution:
     def closestMeetingNode(self, edges: List[int], node1: int, node2: int) -> int:
-        nodes = []
-        nodes.append(node1)
-        nodes.append(node2)
+        nodes = [node1, node2]
         newNodes = [None, None]
         visited = []
         visited.append(set())
