@@ -8,21 +8,17 @@ class Solution:
         self.flights = flights
         flightsTaken:int = 0
         flights.sort()
-        # visited:set = set()
-        # newVisited:set = set()
-        newFrontier:PriorityQueue[Tuple[int]] = PriorityQueue()
+        newFrontier:PriorityQueue[Tuple[int, int]] = PriorityQueue()
         frontier:PriorityQueue[Tuple[int, int]] = PriorityQueue()
         myTup:Tuple[int, int] = (0, src)
         frontier.put(myTup)
-        largeConstant:int = 10 ** 9
+        largeConstant:int = 10 ** 6 + 1
         minCost:int = largeConstant
         costs:List[int] = [largeConstant] * n
         while frontier.qsize() > 0 and flightsTaken <= k:
             currentNode:Tuple[int, int] = frontier.get()
             currentCost:int = currentNode[0]
             sourceCity:int = currentNode[1]
-            # print("Source city %d" % sourceCity)
-            # print("Current cost %d" % currentCost)
 
             firstIndex:int = self.earliestIndex(sourceCity)
             if firstIndex != -1:
@@ -36,14 +32,6 @@ class Solution:
                         if newCost < costs[newCity]:
                             costs[newCity] = newCost
                             newFrontier.put((newCost, newCity))
-                # if sourceCity in visited:
-                #     continue
-                # newVisited.add(sourceCity)
-                # visited = newVisited
-                # newVisited = set()
-            # for item in newVisited:
-            #     visited.add(item)
-            # newVisited = set()
 
             if frontier.qsize() == 0:
                 frontier = newFrontier
@@ -77,6 +65,8 @@ def main() -> None:
     src:int
     dst:int 
     k:int 
+    cheapestPrice:int
+
     n = 4
     flights = [[0,1,1],[0,2,5],[1,2,1],[2,3,1]]
     src = 0
@@ -108,7 +98,7 @@ def main() -> None:
     src = 0
     dst = 3
     k = 1
-    cheapestPrice:int = sol.findCheapestPrice(n, flights, src, dst, k)
+    cheapestPrice = sol.findCheapestPrice(n, flights, src, dst, k)
     print(cheapestPrice)
     assert cheapestPrice == 700
 
