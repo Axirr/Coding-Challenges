@@ -2,14 +2,10 @@ from typing import List
 class Node:
     value = None
     childrenDict = None
-    # children = None
     isEnd = None
-    # childrenValueSet = None
 
     def __init__(self, value):
         self.value = value
-        # self.children = []
-        # self.childrenValueSet = set()
         self.childrenDict = {}
         self.isEnd = False
 
@@ -39,7 +35,8 @@ class Solution:
             currentNode = wordMap
             for i in range(start, len(target)):
                 letter = target[i]
-                if letter in currentNode.childrenDict:
+                currentDict = currentNode.childrenDict
+                if letter in currentDict:
                     node = currentNode.childrenDict[letter]
                     # If last letter of word and letter is an endpoint, we have a match
                     if i == (len(target) - 1) and node.isEnd:  return True
@@ -57,6 +54,8 @@ class Solution:
                         # No index check needed here because function returns if i == len(target) - 1
                             alternateStarts.append(i + 1)
                         currentNode = node
+                else:
+                    break
         return False
     
     def addWordToWordMap(self, rootList, newWord):
@@ -68,15 +67,10 @@ class Solution:
                 currentParent = currentChildren[letter]
             else:
                 newNode = Node(letter)
-                # if currentParent is None:
-                #     currentChildren[letter] = newNode
-                # else:
-                #     currentParent.addChild(newNode)
                 currentParent.addChild(newNode)
                 currentParent = newNode
             if i == len(newWord) - 1:
                 currentParent.isEnd = True
-            # currentChildren = currentParent.childrenDict
     
     def prettyPrintWordMap(self, wordMap):
         level = [wordMap.childrenDict]
@@ -97,14 +91,13 @@ class Solution:
 
 def main():
     sol = Solution()
-    words = ['l', 'x',     'w',     'f',     'b',     'd',     'g',     'r',     't',     'k',     'o',     'm',     'p',     'v',     'a',     'y',     'n',     'u',     'e',     'h',     's',     'c',     'q',    'jm',     'zd',     'il',     'if',     'jp',     'id',      'zz',     'jf',     'jy', ]
+    words = ['l', 'x',     'w',     'f',     'b',     'd',     'g',     'r',     't',     'k',     'o',     'm',     'p',     'v',     'a',     'y',     'n',     'u',     'e',     'h',     's',     'c',     'q']
     wordMap = Node(-1)
     for word in words:
         sol.addWordToWordMap(wordMap, word)
     isConcat = sol.isWordConcatendated("id", wordMap)
     print(isConcat)
-    # assert not isConcat
-    return
+    assert not isConcat
     words = ["cat","cats","catsdogcats","dog","dogcatsdog","hippopotamuses","rat","ratcatdogcat"]
     resultWordList = sol.findAllConcatenatedWordsInADict(words)
     resultWordList.sort()
@@ -129,7 +122,6 @@ def main():
     for i in range(30):
         print(correctOutput[i], end=" ")
         print(resultWordList[i])
-    return
     assert resultWordList == correctOutput
     words = ["cat","dog","catdog"]
     resultWordList = sol.findAllConcatenatedWordsInADict(words)
