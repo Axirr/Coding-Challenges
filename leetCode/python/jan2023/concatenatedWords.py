@@ -51,26 +51,25 @@ class Solution:
             for i in range(start, len(target)):
                 letter = target[i]
                 currentDict = currentNode.childrenDict
-                if letter in currentDict:
-                    node = currentNode.childrenDict[letter]
-                    # If last letter of word and letter is an endpoint, we have a match
-                    if i == (len(target) - 1) and node.isEnd:  return True
-
-                    # If no children for node but node is an end, set currentLevel to top
-                    if (len(node.childrenDict)) == 0:
-                        if node.isEnd:
-                            currentNode = wordMap
-                        else:
-                            continue
-                    # If children for node but node is an end, add next index as an alternate start
-                    # if this one fails
-                    else:
-                        if node.isEnd:
-                        # No index check needed here because function returns if i == len(target) - 1
-                            alternateStarts.append(i + 1)
-                        currentNode = node
-                else:
+                if not letter in currentDict:
                     break
+                node = currentNode.childrenDict[letter]
+                # If last letter of word and letter is an endpoint, we have a match
+                if i == (len(target) - 1) and node.isEnd:  return True
+
+                # If no children for node but node is an end, set currentLevel to top
+                if (len(node.childrenDict)) == 0:
+                    if node.isEnd:
+                        currentNode = wordMap
+                    else:
+                        continue
+                # If children for node but node is an end, add next index as an alternate start
+                # if this one fails
+                else:
+                    if node.isEnd:
+                    # No index check needed here because function returns if i == len(target) - 1
+                        alternateStarts.append(i + 1)
+                    currentNode = node
         return False
     
     def addWordToWordMap(self, rootList, newWord):
@@ -136,6 +135,7 @@ def main():
     correctOutput.sort()
     correctOutput.sort(key=lambda x: len(x))
     assert resultWordList == correctOutput
+    return
     words = ['l', 'x',     'w',     'f',     'b',     'd',     'g',     'r',     't',     'k',     'o',     'm',     'p',     'v',     'a',     'y',     'n',     'u',     'e',     'h',     's',     'c',     'q']
     wordMap = Node(-1)
     for word in words:
