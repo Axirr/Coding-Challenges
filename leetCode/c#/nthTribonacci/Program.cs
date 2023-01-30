@@ -20,22 +20,23 @@ namespace nthTribonacci {
     }
     public class Solution {
         public int Tribonacci(int n) {
-            List<int> partialResults = new List<int>() {0, 1, 1};
-            // partialResults.Add(0);
-            // partialResults.Add(1);
-            // partialResults.Add(1);
-
-            if (n < 3) { return partialResults[n]; }
-
-            for (int i = 3; i <= n; i++) {
-                int triSum = 0;
-                triSum += partialResults[partialResults.Count - 1];
-                triSum += partialResults[partialResults.Count - 2];
-                triSum += partialResults[partialResults.Count - 3];
-                partialResults.Add(triSum);
+            if (n < 3) {
+                if (n == 0) { return 0; }
+                if (n == 1 || n == 2) { return 1; }
             }
 
-            return partialResults[n];
+            int thirdLast = 0;
+            int secondLast = 1;
+            int last = 1;
+
+            for (int i = 3; i <= n; i++) {
+                int triSum = last + secondLast + thirdLast;
+                thirdLast = secondLast;
+                secondLast = last;
+                last = triSum;
+            }
+
+            return last;
         }
     }
 }
