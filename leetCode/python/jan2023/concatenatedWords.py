@@ -135,7 +135,6 @@ def main():
     correctOutput.sort()
     correctOutput.sort(key=lambda x: len(x))
     assert resultWordList == correctOutput
-    return
     words = ['l', 'x',     'w',     'f',     'b',     'd',     'g',     'r',     't',     'k',     'o',     'm',     'p',     'v',     'a',     'y',     'n',     'u',     'e',     'h',     's',     'c',     'q']
     wordMap = Node(-1)
     for word in words:
