@@ -9,28 +9,25 @@ var tribonacci = function(n) {
     memo['0'] = 0
     memo['1'] = 1
     memo['2'] = 1
-    while (true) {
+    while (stack.length > 0) {
         var stringLastItem = stack[stack.length - 1]
         var intLastItem = Number(stringLastItem)
+
         if (stringLastItem in memo) {
-            if (intLastItem == n) {  break}
             stack.pop()
-        } else {
-            for (var i = 1; i < 4; i++) {
-                var newItemString = String(intLastItem - i)
-                if (!(newItemString in memo)) {
-                    stack.push(newItemString)
-                } else {
-                    break
-                }
-            }
-            if (i === 1) {
-                var total = 0
-                for (i = 1; i < 4; i++) {
-                    total += memo[String(intLastItem - i)]
-                }
-                memo[stringLastItem] = total
-            }
+            continue
+        }
+
+        var total = 0
+        var stackLength = stack.length
+        for (var i = 1; i < 4; i++) {
+            var newItemString = String(intLastItem - i)
+            if (!(newItemString in memo)) { stack.push(newItemString) }
+            else { total += memo[newItemString] }
+        }
+
+        if (stackLength == stack.length) {
+            memo[stringLastItem] = total
         }
     }
     return memo[String(n)]
