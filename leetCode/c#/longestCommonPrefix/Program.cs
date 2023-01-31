@@ -1,42 +1,45 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace longestCommonPrefix {
     internal class Program {
         public static void Main(string[] args) {
             Solution sol = new Solution();
-            string[] strs = new String[] { "flower","flow","flight" };
-            string resultString = sol.LongestCommonPrefix(strs);
+            string[] strs = new String[0];
+            string resultString = "Hello";
+
+            strs = new String[] { "flower","flow","flight" };
+            resultString = sol.LongestCommonPrefix(strs);
             Console.WriteLine(resultString);
             Debug.Assert(resultString == "fl");
+
+            strs = new String[] { "reflower","flow","flight" };
+            resultString = sol.LongestCommonPrefix(strs);
+            Console.WriteLine(resultString);
+            Debug.Assert(resultString == "");
         }
     } 
 
     public class Solution {
         public string LongestCommonPrefix(string[] strs) {
-            if (strs.Length == 1) {
-                return strs[0];
-            }
-            Array.Sort(strs, (x, y)=> x.Length.CompareTo(y.Length));
-            string longestPrefix = strs[0];
+            if (strs.Length == 1)  { return strs[0]; }
+
+            string shortestWord = strs[0];
+            foreach (var myStr in strs)  { if (myStr.Length < shortestWord.Length)  { shortestWord = myStr; }}
+
             int longestMatchIndex = 0;
-            for (int i = 0; i < longestPrefix.Length; i++) {
-                char letter = longestPrefix[i];
-                bool didBreak = false;
-                for (int j = 1; j < strs.Length; j++) {
+            for (int i = 0; i < shortestWord.Length; i++) {
+                char letter = shortestWord[i];
+                for (int j = 0; j < strs.Length; j++) {
                     if (letter != strs[j][i]) {
-                        didBreak = true;
-                        break;
+                        return shortestWord.Substring(0, longestMatchIndex);
                     }
                 }
-                if (!didBreak) {
-                    longestMatchIndex += 1;
-                } else {
-                    break;
-                }
+                longestMatchIndex += 1;
             }
 
-            return longestPrefix.Substring(0, longestMatchIndex);
+            return shortestWord.Substring(0, longestMatchIndex);
         }
     }
 }
