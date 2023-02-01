@@ -38,12 +38,8 @@ namespace stringDivisor {
 
     public class Solution {
         public string GcdOfStrings(string str1, string str2) {
-            string longString = str1;
-            string shortString = str2;
-            if (str2.Length > str1.Length)  {
-                longString = str2;
-                shortString = str1;
-            }
+            string longString = (str1.Length >= str2.Length) ? str1 : str2;
+            string shortString = (str1.Length >= str2.Length) ? str2 : str1;
 
             for (int i=0; i < longString.Length; i++) {
                 int shortIndex = i % shortString.Length;
@@ -54,8 +50,9 @@ namespace stringDivisor {
 
             int currentLen = shortString.Length;
             while (currentLen > 0) {
-                if (longString.Length % currentLen == 0 && shortString.Length % currentLen == 0)  { return shortString.Substring(0, currentLen); }
-                currentLen -= 1;
+                if (longString.Length % currentLen == 0)  { return shortString.Substring(0, currentLen); }
+                do { currentLen -= 1; }
+                while (shortString.Length % currentLen != 0);
             }
 
             return shortString.Substring(0,1);
