@@ -48,14 +48,15 @@ namespace stringDivisor {
                 }
             }
 
-            int currentLen = shortString.Length;
-            while (currentLen > 0) {
-                if (longString.Length % currentLen == 0)  { return shortString.Substring(0, currentLen); }
-                do { currentLen -= 1; }
-                while (shortString.Length % currentLen != 0);
+            int large = longString.Length;
+            int small = shortString.Length;
+            while (large % small != 0) {
+                int temp = small;
+                small = large % small;
+                large = temp;
             }
 
-            return shortString.Substring(0,1);
+            return shortString.Substring(0,small);
         }
     }
 }
