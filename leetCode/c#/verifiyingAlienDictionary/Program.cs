@@ -38,30 +38,28 @@ namespace verifyingAlienDictionary {
                 string word1 = words[i];
                 string word2 = words[i + 1];
                 int minLength = Math.Min(word1.Length, word2.Length);
+                
                 int j;
                 for (j = 0; j < minLength; j++) {
-                    // Console.WriteLine(j);
-                    if (orderDict[word1[j]] < orderDict[word2[j]]) {
-                        break;
-                    } else if (orderDict[word1[j]] > orderDict[word2[j]])  { return false; }
+                    if (orderDict[word1[j]] < orderDict[word2[j]])  { break; }
+                    else if (orderDict[word1[j]] > orderDict[word2[j]])  { return false; }
                 }
 
+                // Ensure shorter word first, if end of shortest reached without definitive pass or fail
                 if (j == minLength && word1.Length > word2.Length)  { return false; }
             }
+
             return true;
         }
 
         public Dictionary<char,int> DictionaryForOrder(string order) {
             Dictionary<char, int> resultDict = new Dictionary<char, int>();
-            int letterCount = 0;
-            foreach (char letter in order) {
-                resultDict[letter] = letterCount;
-                letterCount += 1;
+            for (int i=0; i < order.Length; i++) {
+                resultDict[order[i]] = i;
             }
             return resultDict;
         }
     }
-    
 }
 
 /*
@@ -99,5 +97,5 @@ Checking neighbours good enough?
     If all neighbours are sorted, then list has to be sorted
 
 Faster way to determine order than traversal
-    Object with letter = number
+    Dictionary<char,int> with index for letter in order
 */
