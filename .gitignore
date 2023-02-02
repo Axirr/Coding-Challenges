@@ -405,3 +405,11 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Ignore C# non-code
+leetcode/c#/*/bin
+leetcode/c#/*/obj
+leetcode/c#/*/*.csproj
+
+# Ignore swap files
+*.swp
