@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace zizazConversion {
     class Program {
@@ -31,25 +32,28 @@ namespace zizazConversion {
             public string Convert(string s, int numRows) {
                 if (s.Length == 1 || numRows == 1)  { return s; }
 
-                string resultString = "";
+                char[] charArray = new char[s.Length];
+                int arrayIndex = 0;
                 int normalJumpDistance = numRows + Math.Max(0, numRows - 2);
-                for (int i=0; i < numRows; i++) {
-                    int currentIndex = i;
+
+                for (int currentRow=0; currentRow < numRows; currentRow++) {
+                    int currentIndex = currentRow;
                     while (currentIndex < s.Length) {
-                        resultString += s[currentIndex];
-                        Console.WriteLine(resultString);
-                        if (i > 0 && i < numRows - 1) {
-                            int potentialNewIndex = currentIndex + normalJumpDistance - (i * 2);
-                            if (potentialNewIndex > 0 && potentialNewIndex < s.Length) {
+                        charArray[arrayIndex] = s[currentIndex];
+                        arrayIndex += 1;
+                        if (currentRow > 0 && currentRow < numRows - 1) {
+                            int potentialNewIndex = currentIndex + normalJumpDistance - (currentRow * 2);
+                            if (potentialNewIndex < s.Length) {
                                 char newChar = s[potentialNewIndex];
-                                resultString = resultString + newChar;
+                                charArray[arrayIndex] = newChar;
+                                arrayIndex += 1;
                             }
                         }
                         currentIndex += normalJumpDistance;
                     }
                 }
 
-                return resultString;
+                return new String(charArray);
             }
         }
     }
