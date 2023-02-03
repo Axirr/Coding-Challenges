@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Collections.Generic;
+using System.Text;
 
 namespace zizazConversion {
     class Program {
@@ -32,28 +32,24 @@ namespace zizazConversion {
             public string Convert(string s, int numRows) {
                 if (s.Length == 1 || numRows == 1)  { return s; }
 
-                char[] charArray = new char[s.Length];
-                int arrayIndex = 0;
+                StringBuilder resultString = new StringBuilder();
                 int normalJumpDistance = numRows + Math.Max(0, numRows - 2);
 
                 for (int currentRow=0; currentRow < numRows; currentRow++) {
                     int currentIndex = currentRow;
                     while (currentIndex < s.Length) {
-                        charArray[arrayIndex] = s[currentIndex];
-                        arrayIndex += 1;
+                        resultString.Append(s[currentIndex]);
                         if (currentRow > 0 && currentRow < numRows - 1) {
                             int potentialNewIndex = currentIndex + normalJumpDistance - (currentRow * 2);
                             if (potentialNewIndex < s.Length) {
-                                char newChar = s[potentialNewIndex];
-                                charArray[arrayIndex] = newChar;
-                                arrayIndex += 1;
+                                resultString.Append(s[potentialNewIndex]);
                             }
                         }
                         currentIndex += normalJumpDistance;
                     }
                 }
 
-                return new String(charArray);
+                return resultString.ToString();
             }
         }
     }
