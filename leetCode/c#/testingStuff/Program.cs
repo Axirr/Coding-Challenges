@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 class Program {
     public static void Main(string[] args) {
@@ -36,5 +37,12 @@ class Program {
         myList.RemoveAt(0);
         foreach (int myNum in myList)  { Console.WriteLine(myNum); }
         Console.WriteLine();
+
+        int[] myIntArray = new int[] { 1, 2, 3, 4, 11, 12, 15, 16 };
+        IEnumerable<int> evenQuery = 
+            from myInt in myIntArray
+            where myInt % 2 == 0
+            select myInt;
+        foreach (int num  in evenQuery)  { Console.WriteLine(num); }
     }
 }
