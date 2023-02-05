@@ -12,9 +12,6 @@ var reverse = function(x) {
     }
     var numDigits;
 
-    // if (x % 10 === 0) {
-    //     numDigits = Math.ceil(Math.log10(x) + 1);
-    // } else  { numDigits = Math.ceil(Math.log10(x)); }
     numDigits = Math.ceil(Math.log10(x))
     if (10 ** numDigits === x)  { numDigits += 1; }
     var divisor = 1;
