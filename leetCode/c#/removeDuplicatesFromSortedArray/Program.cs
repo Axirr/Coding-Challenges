@@ -26,7 +26,6 @@ namespace RemoveDuplicatesFromSortedArray
             correctNums = new int[] {1,2,2};
             Debug.Assert(numRemaining == 2);
             Debug.Assert(Enumerable.SequenceEqual(nums, correctNums));
-
         }
     }
     public class Solution {
@@ -46,6 +45,7 @@ namespace RemoveDuplicatesFromSortedArray
                 last = current;
                 i += 1;
             }
+
             return nums.Length - removeCount;
         }
     }
