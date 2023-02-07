@@ -63,49 +63,48 @@ namespace FruitIntoBasket {
         public int TotalFruit(int[] fruits) {
             int maxFruitPick = Math.Min(2, fruits.Length);
 
+            // Initalizing variables so that they will be in the base state, fruit[i] is pointing to the next new fruit (or i = fruits.Length and is outside array)
             int i = 0;
             int startCount = 0;
-            int startNumber = fruits[0];
-            while (i < fruits.Length && fruits[i] == startNumber) {
-                startCount += 1;
-                i += 1;
-            }
-            if (!(i < fruits.Length)) { return startCount; }
-
-            int secondCount = 1;
-            int secondNumber = fruits[i];
+            int firstFruit = fruits[0];
+            int secondCount = 0;
+            int secondFruit = -1;
             int startNumsSinceLastOther = 0;
             int secondNumsSinceLastOther = 1;
-            i += 1;
-            while (i < fruits.Length && (fruits[i] == secondNumber || fruits[i] == startNumber)) {
-                if (fruits[i] == secondNumber) {
-                    secondCount += 1;
-                    secondNumsSinceLastOther += 1;
-                    startNumsSinceLastOther = 0;
-                } else { 
+            while (i < fruits.Length && (secondFruit == -1 || fruits[i] == firstFruit || fruits[i] == secondFruit)) {
+                if (fruits[i] == firstFruit) {
                     startCount += 1;
                     startNumsSinceLastOther += 1;
                     secondNumsSinceLastOther = 0;
-                }
+                } else {
+                    if (secondFruit == -1) {
+                        secondFruit = fruits[i];
+                    } 
+                    secondCount += 1;
+                    secondNumsSinceLastOther += 1;
+                    startNumsSinceLastOther = 0;
+                } 
                 i += 1;
             }
             maxFruitPick = Math.Max(maxFruitPick, startCount + secondCount);
 
+            // Change fruit to the new fruit at i and keep whichever fruit was last
             while (i < fruits.Length) {
-                if (fruits[i - 1] != startNumber) {
+                if (secondNumsSinceLastOther > 0) {
                     startCount = secondNumsSinceLastOther;
-                    startNumber = secondNumber;
+                    firstFruit = secondFruit;
                 } else { startCount = startNumsSinceLastOther; }
                 startNumsSinceLastOther = 0;
-                secondNumber = fruits[i];
+                secondFruit = fruits[i];
                 secondCount = 1;
                 secondNumsSinceLastOther = 1;
                 i += 1;
 
 
-                while (i < fruits.Length && (fruits[i] == startNumber || fruits[i] == secondNumber)) {
+                // Traverse to next different fruit from current two
+                while (i < fruits.Length && (fruits[i] == firstFruit || fruits[i] == secondFruit)) {
                     int nextFruit = fruits[i];
-                    if (nextFruit == startNumber) { 
+                    if (nextFruit == firstFruit) { 
                         startCount += 1; 
                         startNumsSinceLastOther += 1;
                         secondNumsSinceLastOther = 0;
@@ -118,6 +117,7 @@ namespace FruitIntoBasket {
                 }
                 maxFruitPick = Math.Max(maxFruitPick, startCount + secondCount);
             }
+
             return maxFruitPick;
         }
     }
