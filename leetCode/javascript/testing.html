@@ -1,0 +1,38 @@
+<!-- Not sure how to use this type of import in an html file -->
+<!-- <script>import classes from './testingStyleSheet.css'</script> -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="./testingStyleSheet.css">
+        <style>
+            h2 {background-color: purple;}
+        </style>
+        <title>Testing HTML and CSS</title>
+        <meta name="author" content="Someone">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    </head>
+
+    <h1>Should be blue</h1>
+    <notBuiltIn><b>Should be Green and bold</b></notBuiltIn>
+    <h1 style="color:orange;">This is orange, not blue, because of inline styling (but still margin-left offset)</h1>
+    <h2>This has a purple background from internal CSS. External would make the background pink but is overridden by internal because it is further
+        down the page. Switching order would switch this. Inline will generally have highest priority (note: inline != internal).</h2>
+    <table>
+        <tr>
+            <th style="background-color: aqua;">First Name</th>
+            <th style="color:blueviolet;">Last Name</th>
+            <th>Using external stylesheet styles, not inline</th>
+        </tr>
+        <tr>
+            <td>John</td>
+            <td>Doe</td>
+        </tr>
+    </table>
+    <div class="classProp">This styling uses classes not style=""</div>
+    <h4>This H4 isn't styled because it doesn't have class .anotherClass</h4>
+    <h4 class="anotherClass">This one is because it is caught by h4.anotherClass class</h4>
+    <div class="classProp thirdClass">This is styled with multiple classes, separated by a " "</div>
+</html>

@@ -257,3 +257,74 @@ console.log(typeof 1n)
 // Coercion from Number to BigInt can lead to loss of precision
 console.assert(1n == 1)
 console.assert(!(1n === 1))
+
+class Animal {
+    // Public field
+    static soundCount = 0;
+    noise = "original";
+    static declaredOnly;
+    
+    // This doesn't seem to be supported in my JS version
+    // static {
+    //     Animal.declaredOnly = "now initialized";
+    // }
+
+    // Private field
+    #privateNoise = "secret";
+
+
+    constructor(noise) {
+        this.noise = noise;
+    }
+
+    makeNoise() {
+        console.log(this.noise);
+        console.log(this.#privateNoise);
+        Animal.soundCount += 1;
+    }
+
+    // Appears this isn't supported in the version I'm using
+    // #makePrivateNoise() {
+    //     console.log(this.#privateNoise);
+    // }
+
+    // consentPrivateNoise() {
+    //     this.#makePrivateNoise();
+    // }
+}
+let myAnimal = new Animal("meow");
+for (let i = 0; i < 4; i++) {
+    myAnimal.makeNoise();
+    console.log(Animal.soundCount);
+}
+// console.log(Animal.declaredOnly);
+// This would be illegal since it's accessing a private field
+// console.log(myAnimal.#privateNoise);
+
+// Map and arrow (anonymous) functions
+let chemicalArray = ["Hydrogen", "Helium", "N"];
+let chemLengthArray = chemicalArray.map((chemical) => { return chemical.length;} )
+console.log(chemLengthArray);
+
+// Arrow functions
+// Traditional anonymous function, only missing it's name
+var firstArrowFunction = function (param) { return param.length - 1; }
+chemLengthArray = chemicalArray.map(firstArrowFunction);
+console.log(chemLengthArray);
+// Can leave out the () around a single parameter and the 'return' if the body is one line long
+var secondArrowFunction = param => param.length % 2 ? "odd" : "even";
+chemLengthArray = chemicalArray.map(secondArrowFunction);
+console.log(chemLengthArray);
+
+// Rest parameters function
+function sumWithoutArray(...myArgs) {
+    let total = 0;
+    for (const arg of myArgs) { total += arg; }
+    return total;
+}
+console.log(sumWithoutArray(1,2,3,4,5,6));
+
+// Apply
+let myNumsToMax = [1, 2, 3, 4, 913];
+let maxValue = Math.max.apply(null, myNumsToMax);
+console.log(maxValue);
