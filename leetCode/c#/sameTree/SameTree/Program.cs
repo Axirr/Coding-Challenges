@@ -16,7 +16,7 @@ namespace SameTree {
             p = TreeFromList(listForInit);
             q = TreeFromList(listForInit);
             areSame = sol.IsSameTree(p, q);
-            // Console.WriteLine(areSame);
+            Console.WriteLine(areSame);
             Debug.Assert(areSame);
         }
 
@@ -44,30 +44,8 @@ namespace SameTree {
             }
             return root;
         }
-    // def treeFromList(self, myList):
-    //     root = None
-    //     nodes = [TreeNode(myList[0])]
-    //     root = nodes[0]
-    //     for i in range(len(myList)):
-    //         currentRoot = nodes[i]
-    //         if currentRoot is None:
-    //             nodes.append(None)
-    //             nodes.append(None)
-    //             continue
-    //         leftIndex = i // 2 * 2 + 1
-    //         rightIndex = i // 2 * 2 + 2
-    //         if len(myList) > leftIndex and myList[leftIndex] != None:
-    //             currentRoot.left = TreeNode(myList[leftIndex])
-    //             nodes.append(currentRoot.left)
-    //         else:
-    //             nodes.append(None)
-    //         if len(myList) > rightIndex and myList[rightIndex] != None:
-    //             currentRoot.right = TreeNode(myList[rightIndex])
-    //             nodes.append(currentRoot.right)
-    //         else:
-    //             nodes.append(None)
-    //     return root
     }
+
     public class TreeNode {
         public int val;
         public TreeNode left;
@@ -87,40 +65,37 @@ public class Solution {
                 return false;
             }
 
-            Queue<TreeNode> pStack = new Queue<TreeNode>();
-            pStack.Enqueue(p);
-            Queue<TreeNode> qStack = new Queue<TreeNode>();
-            qStack.Enqueue(q);
-            Console.WriteLine(pStack.Count);
+            List<TreeNode> pStack = new List<TreeNode>();
+            pStack.Add(p);
+            List<TreeNode> qStack = new List<TreeNode>();
+            qStack.Add(q);
 
             while (pStack.Count > 0 && qStack.Count > 0) {
-                TreeNode currentP = pStack.Dequeue();
-                TreeNode currentQ = qStack.Dequeue();
-                // Console.WriteLine(currentP.val);
-                // Console.WriteLine(currentQ.val);
+                TreeNode currentP = pStack[pStack.Count - 1];
+                pStack.RemoveAt(pStack.Count - 1);
+                TreeNode currentQ = qStack[qStack.Count - 1];
+                qStack.RemoveAt(qStack.Count - 1);
+
                 if (currentP.val != currentQ.val) { return false; }
+
                 if (currentP.left == null && currentQ.left != null) { return false; }
                 if (currentQ.left == null && currentP.left != null) { return false; }
                 if (currentP.right == null && currentQ.right != null) { return false; }
                 if (currentQ.right == null && currentP.right != null) { return false; }
-                // if (currentP.left != currentQ.left) { return false; }
-                // if (currentP.right != currentQ.right) { return false; }
+
                 if (currentP.left != null) {
-                    pStack.Enqueue(currentP.left); 
+                    pStack.Add(currentP.left); 
                 }
                 if (currentQ.left != null) {
-                    qStack.Enqueue(currentQ.left); 
+                    qStack.Add(currentQ.left); 
                 }
                 if (currentP.right != null) {
-                    pStack.Enqueue(currentP.right); 
+                    pStack.Add(currentP.right); 
                 }
                 if (currentQ.right != null) {
-                    qStack.Enqueue(currentQ.right); 
+                    qStack.Add(currentQ.right); 
                 }
             }
-
-            // Console.WriteLine($"pStack count {pStack.Count}");
-            // Console.WriteLine($"qStack count {qStack.Count}");
 
             return pStack.Count == qStack.Count;
         }
