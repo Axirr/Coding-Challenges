@@ -328,3 +328,54 @@ console.log(sumWithoutArray(1,2,3,4,5,6));
 let myNumsToMax = [1, 2, 3, 4, 913];
 let maxValue = Math.max.apply(null, myNumsToMax);
 console.log(maxValue);
+
+// Map
+// NOTE: do not set with [], because that will set properties
+// Must set with .set(key, value) and get values with .get(key)
+let myMap = new Map()
+myMap.set(5, "non string key");
+console.log(myMap.get(5));
+myMap.set(false, "non num key")
+console.log(myMap.get(false))
+console.log(myMap.size);
+console.assert(myMap.has(5))
+console.assert(!myMap.has(7))
+myMap.delete(5)
+console.assert(!myMap.has(5))
+
+// async function and promises
+// async function myFunction() { return "hello"; }
+// myFunction().then(
+//     function(value) { console.log(value); },
+//     function(error) { console.log(error); }
+// )
+// async function wait() {
+//     let myPromise = new Promise((resolve, reject) => { resolve("await"); });
+//     let message = "shouldn't see this"
+//     message = await myPromise;
+//     console.log(message);
+// }
+// wait()
+// async function shouldTimeout() {
+//     let myPromise = new Promise((resolve) => {
+//         setTimeout(function() {resolve("No timeout");}, 500)
+//     })
+//     let message = "shouldn't see this"
+//     message = await myPromise
+//     console.log(message)
+// }
+// shouldTimeout()
+
+// Sets
+let mySet = new Set();
+mySet.add(5);
+console.log(mySet.size)
+console.assert(mySet.has(5));
+console.assert(!mySet.has(7));
+mySet.delete(5)
+console.assert(!mySet.has(5));
+// Okay to delete non-existent
+mySet.delete(5)
+mySet.add(7)
+mySet.add(10)
+for (const item of mySet) { console.log(item); }
