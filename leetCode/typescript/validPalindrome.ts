@@ -2,8 +2,6 @@ function isPalindrome(s: string): boolean {
     let frontIndex:number = 0;
     let backIndex:number = s.length - 1;
 
-    // Convert and remove
-    // s = s.toLowerCase();
     let alphaRegEx:RegExp = new RegExp('[A-Za-z0-9]');
 
     while (true) {
@@ -18,9 +16,6 @@ function isPalindrome(s: string): boolean {
         }
 
         if (frontIndex >= backIndex) { break; }
-        // console.log(s[frontIndex])
-        // console.log(s[backIndex])
-        // console.log()
         if (s[frontIndex].toLowerCase() !== s[backIndex].toLowerCase()) { return false; }
         frontIndex += 1;
         backIndex -= 1;
