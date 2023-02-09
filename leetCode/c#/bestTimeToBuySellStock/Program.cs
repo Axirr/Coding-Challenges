@@ -16,6 +16,19 @@ class Program {
 }
 public class Solution {
     public int MaxProfit(int[] prices) {
+        // Back to front max min
+        if (prices.Length == 1) { return 0; }
+
+        int maxSell = prices[prices.Length - 1];
+        int maxProfit = 0;
+        for (int i=prices.Length - 2; i >= 0; i--) {
+            maxProfit = Math.Max(maxProfit, maxSell - prices[i]);
+            maxSell = Math.Max(maxSell, prices[i]);
+        }
+        return maxProfit;
+    }
+    public int DynamicMaxProfit(int[] prices) {
+    // public int MaxProfit(int[] prices) {
         if (prices.Length == 1) { return 0; }
         
         // Optimals for index if own a share there
