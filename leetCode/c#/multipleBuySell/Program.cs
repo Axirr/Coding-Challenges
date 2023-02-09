@@ -7,10 +7,15 @@ class Program {
         int[] prices = new int[] {};
         int maxProfit;
 
+        // prices = new int[] {7,1,5,3,6,4 };
+        // maxProfit = sol.MaxProfit(prices);
+        // Console.WriteLine(maxProfit);
+        // Debug.Assert(maxProfit == 5);
+
         prices = new int[] {7,1,5,3,6,4 };
         maxProfit = sol.MaxProfit(prices);
         Console.WriteLine(maxProfit);
-        Debug.Assert(maxProfit == 5);
+        Debug.Assert(maxProfit == 7);
     }
 
 }
@@ -35,8 +40,8 @@ public class Solution {
         int potentialProfit;
         if (stockValue != -1) {
             // Sell
-            // potentialProfit = classPrices[startIndex] + HelperMaxProfit(startIndex + 1, -1);
-            potentialProfit = classPrices[startIndex];
+            potentialProfit = classPrices[startIndex] + HelperMaxProfit(startIndex + 1, -1);
+            // potentialProfit = classPrices[startIndex];
             resultProfit = Math.Max(resultProfit, potentialProfit);
 
             // No action
