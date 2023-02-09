@@ -21,39 +21,39 @@ class Program {
 }
 // NOTE: Solution is way over built because I thought you could buy and sell multiple times
 public class Solution {
-    private Dictionary<(int, int), int> cache = new Dictionary<(int, int), int>();
+    private Dictionary<(int, bool), int> cache = new Dictionary<(int, bool), int>();
     private int[] classPrices = new int[] {};
     public int MaxProfit(int[] prices) {
         if (prices.Length == 1) { return 0; }
 
-        cache = new Dictionary<(int, int), int>();
+        cache = new Dictionary<(int, bool), int>();
         classPrices = prices;
-        return HelperMaxProfit(0, -1);
+        return HelperMaxProfit(0, false);
     }
 
-    public int HelperMaxProfit(int startIndex, int stockValue) {
+    public int HelperMaxProfit(int startIndex, bool doOwnStock) {
         if (startIndex >= classPrices.Length)  { return 0; }
 
         int resultProfit = 0;
-        (int, int) tupleArgs = (startIndex, stockValue);
+        (int, bool) tupleArgs = (startIndex, doOwnStock);
         if (cache.ContainsKey(tupleArgs))  { return cache[tupleArgs]; }
         int potentialProfit;
-        if (stockValue != -1) {
+        if (doOwnStock) {
             // Sell
-            potentialProfit = classPrices[startIndex] + HelperMaxProfit(startIndex + 1, -1);
+            potentialProfit = classPrices[startIndex] + HelperMaxProfit(startIndex + 1, false);
             // potentialProfit = classPrices[startIndex];
             resultProfit = Math.Max(resultProfit, potentialProfit);
 
             // No action
-            potentialProfit = HelperMaxProfit(startIndex + 1, 1);
+            potentialProfit = HelperMaxProfit(startIndex + 1, true);
             resultProfit = Math.Max(resultProfit, potentialProfit);
         } else {
             // Buy
-            potentialProfit = -classPrices[startIndex] + HelperMaxProfit(startIndex + 1, 1);
+            potentialProfit = -classPrices[startIndex] + HelperMaxProfit(startIndex + 1, true);
             resultProfit = Math.Max(resultProfit, potentialProfit);
 
             // No action
-            potentialProfit = HelperMaxProfit(startIndex + 1, -1);
+            potentialProfit = HelperMaxProfit(startIndex + 1, false);
             resultProfit = Math.Max(resultProfit, potentialProfit);
         }
         cache[tupleArgs] = resultProfit;
