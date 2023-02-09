@@ -34,7 +34,8 @@ public class Solution {
         for (int i=prices.Length - 2; i >= 0; i--) {
             int maxProfit = 0;
             int actionResult = 0;
-            // Update own
+
+            // Update optimal if own shares
             // Sell
             actionResult = prices[i] + dontOwnOptimals[i + 1];
             maxProfit = Math.Max(maxProfit, actionResult);
@@ -44,8 +45,7 @@ public class Solution {
             maxProfit = Math.Max(maxProfit, actionResult);
             ownOptimals[i] = maxProfit;
 
-            maxProfit = 0;
-            // Update dont own
+            // Update optimal if don't own shares
             // Buy
             actionResult = -prices[i] + ownOptimals[i + 1];
             maxProfit = Math.Max(maxProfit, actionResult);

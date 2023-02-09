@@ -14,45 +14,45 @@ class Program {
     }
 
 }
-// NOTE: Solution is way over built because I thought you could buy and sell multiple times
 public class Solution {
-    private Dictionary<(int, int), int> cache = new Dictionary<(int, int), int>();
-    private int[] classPrices = new int[] {};
     public int MaxProfit(int[] prices) {
         if (prices.Length == 1) { return 0; }
+        
+        // Optimals for index if own a share there
+        int[] ownOptimals = new int[prices.Length];
+        ownOptimals[prices.Length - 1] = prices[prices.Length - 1];
 
-        cache = new Dictionary<(int, int), int>();
-        classPrices = prices;
-        return HelperMaxProfit(0, -1);
-    }
+        // Optimals for index if don't own a share there
+        int[] dontOwnOptimals = new int[prices.Length];
+        dontOwnOptimals[prices.Length - 1] = 0;
 
-    public int HelperMaxProfit(int startIndex, int stockValue) {
-        if (startIndex >= classPrices.Length)  { return 0; }
-
-        int resultProfit = 0;
-        (int, int) tupleArgs = (startIndex, stockValue);
-        if (cache.ContainsKey(tupleArgs))  { return cache[tupleArgs]; }
-        int potentialProfit;
-        if (stockValue != -1) {
+        for (int i=prices.Length - 2; i >= 0; i--) {
+            int maxProfit = 0;
+            int actionResult = 0;
+            // Update own
             // Sell
-            // potentialProfit = classPrices[startIndex] + HelperMaxProfit(startIndex + 1, -1);
-            potentialProfit = classPrices[startIndex];
-            resultProfit = Math.Max(resultProfit, potentialProfit);
+            actionResult = prices[i];
+            maxProfit = Math.Max(maxProfit, actionResult);
 
-            // No action
-            potentialProfit = HelperMaxProfit(startIndex + 1, 1);
-            resultProfit = Math.Max(resultProfit, potentialProfit);
-        } else {
+            // Skip
+            actionResult = ownOptimals[i + 1];
+            maxProfit = Math.Max(maxProfit, actionResult);
+            ownOptimals[i] = maxProfit;
+
+            maxProfit = 0;
+            // Update dont own
             // Buy
-            potentialProfit = -classPrices[startIndex] + HelperMaxProfit(startIndex + 1, 1);
-            resultProfit = Math.Max(resultProfit, potentialProfit);
+            actionResult = -prices[i] + ownOptimals[i + 1];
+            maxProfit = Math.Max(maxProfit, actionResult);
 
-            // No action
-            potentialProfit = HelperMaxProfit(startIndex + 1, -1);
-            resultProfit = Math.Max(resultProfit, potentialProfit);
+            // Skip
+            actionResult = dontOwnOptimals[i + 1];
+            maxProfit = Math.Max(maxProfit, actionResult);
+            dontOwnOptimals[i] = maxProfit;
         }
-        cache[tupleArgs] = resultProfit;
-        return resultProfit;
+
+
+        return dontOwnOptimals[0];
     }
 }
 
