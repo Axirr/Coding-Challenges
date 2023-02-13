@@ -379,3 +379,37 @@ mySet.delete(5)
 mySet.add(7)
 mySet.add(10)
 for (const item of mySet) { console.log(item); }
+
+// Class
+class Living {
+    sayLiving() {
+        console.log("living");
+    }
+}
+
+class AnAnimal extends Living {
+    uniqueName;
+
+    constructor(value) {
+        super();
+        this.uniqueName = value;
+    }
+    sayType() {
+        console.log("Animal")
+    }
+
+    sayName() {
+        console.log(this.uniqueName);
+    }
+}
+
+let anotherAnimal = new AnAnimal("Blah Blah");
+anotherAnimal.sayType();
+anotherAnimal.sayLiving();
+anotherAnimal.sayName();
+
+let arrayToMap = [1,3,5]
+console.log(arrayToMap.map(x => x + 2))
+arrayToMap.forEach((item) => console.log(item))
+console.log(arrayToMap.slice(arrayToMap.length - 1))
+console.log(arrayToMap.slice(0, 1))
