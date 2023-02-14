@@ -11,11 +11,7 @@ var addBinary = function(a, b) {
         longestString = a;
     }
 
-    let buildString = ""
-    for (let i=0; i < (longestString.length - shortestString.length); i++) {
-        buildString += "0"
-    }
-    shortestString = buildString + shortestString;
+    shortestString = "0".repeat(longestString.length - shortestString.length) + shortestString;
 
     let resultArray = [];
     let carry = 0;
@@ -42,11 +38,11 @@ var addBinary = function(a, b) {
         }
         resultArray.push(addedLetter)
     }
-    let tempArray = []
-    if (carry === 1) tempArray.push("1")
-    for (let i=resultArray.length - 1; i >= 0; i--) tempArray.push(resultArray[i])
 
-    return tempArray.join("")
+    if (carry === 1) resultArray.push("1")
+    resultArray.reverse()
+
+    return resultArray.join("")
 };
 
 function mainAddBinary() {
@@ -54,24 +50,23 @@ function mainAddBinary() {
     let b;
     let addedString;
     
-    a = "100"
-    b = "110010"
+    a = "100";
+    b = "110010";
     addedString = addBinary(a, b);
     console.log(addedString);
     console.assert(addedString === "110110");
 
-    a = "1010"
-    b = "1011"
+    a = "1010";
+    b = "1011";
     addedString = addBinary(a, b);
     console.log(addedString);
-    console.assert(addedString === "10101")
+    console.assert(addedString === "10101");
 
-    a = "11"
-    b = "1"
+    a = "11";
+    b = "1";
     addedString = addBinary(a, b);
-    console.log(addedString)
-    console.assert(addedString === "100")
-
+    console.log(addedString);
+    console.assert(addedString === "100");
 }
 
 mainAddBinary()
