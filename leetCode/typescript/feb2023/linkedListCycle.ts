@@ -9,21 +9,15 @@ class ListNode {
 
 
 function hasCycle(head: ListNode | null): boolean {
-    if (head === null)  return false;
+    if (head === null) return false;
+    let impossibleValue = Math.pow(10,6);
+    let currentNode:ListNode = head;
 
-    let frontier:ListNode[] = [head];
-    let nextFrontier:ListNode[] = [];
-    let impossibleValue = Math.pow(10,6)
-
-    while (frontier.length > 0) {
-        while (frontier.length > 0) {
-            let currentNode:ListNode = frontier.pop() as ListNode;
-            if (currentNode.val === impossibleValue)  return true;
-            currentNode.val = impossibleValue;
-            if (currentNode.next !== null)  nextFrontier.push(currentNode.next);
-        }
-        frontier = nextFrontier;
-        nextFrontier = [];
+    while (true) {
+        if (currentNode.val === impossibleValue) return true;
+        currentNode.val = impossibleValue;
+        if (currentNode.next !== null)  currentNode = currentNode.next;
+        else break;
     }
 
     return false;
