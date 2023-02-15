@@ -11,20 +11,16 @@ class ListNode {
 function hasCycle(head: ListNode | null): boolean {
     if (head === null)  return false;
 
-    let visitedSet:Set<ListNode> = new Set<ListNode>();
     let frontier:ListNode[] = [head];
     let nextFrontier:ListNode[] = [];
+    let impossibleValue = Math.pow(10,6)
 
     while (frontier.length > 0) {
         while (frontier.length > 0) {
-            let tempOptional:ListNode | undefined = frontier.pop()
-            let currentNode:ListNode;
-            if (tempOptional !== undefined) {
-                currentNode = tempOptional;
-                if (visitedSet.has(currentNode))  return true;
-                visitedSet.add(currentNode)
-                if (currentNode.next !== null)  nextFrontier.push(currentNode.next);
-            }
+            let currentNode:ListNode = frontier.pop() as ListNode;
+            if (currentNode.val === impossibleValue)  return true;
+            currentNode.val = impossibleValue;
+            if (currentNode.next !== null)  nextFrontier.push(currentNode.next);
         }
         frontier = nextFrontier;
         nextFrontier = [];
@@ -44,3 +40,13 @@ function mainHasCycle(): void {
 }
 
 mainHasCycle();
+
+/*
+Constant space complexity?
+    Depth first search, cycle will be infinite so if exceed n then know we have cycle
+        We don't have n and this is inefficient
+    Replace every node that you visit with a dummy reference
+        If you ever reach the dummy, you know it has cycled
+        Problem: how to set a reference when don't have the thing using it
+    Set value of visited node to impossible value
+*/
