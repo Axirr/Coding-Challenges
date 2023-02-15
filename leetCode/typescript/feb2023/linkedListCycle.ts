@@ -9,15 +9,19 @@ class ListNode {
 
 
 function hasCycle(head: ListNode | null): boolean {
-    if (head === null) return false;
-    let impossibleValue = Math.pow(10,6);
+    if (head === null || head.next === null) return false;
     let currentNode:ListNode = head;
+    let fastNode:ListNode = head.next;
 
-    while (true) {
-        if (currentNode.val === impossibleValue) return true;
-        currentNode.val = impossibleValue;
-        if (currentNode.next !== null)  currentNode = currentNode.next;
-        else break;
+    // This is an anti-pattern because exceptions shouldn't be used for control flow
+    try {
+        while (true) {
+                if (currentNode === fastNode) return true;
+                currentNode = currentNode.next as ListNode;
+                fastNode = (fastNode.next as ListNode).next as ListNode;
+        }
+    } catch {
+
     }
 
     return false;
@@ -28,6 +32,12 @@ function mainHasCycle(): void {
     let doesHaveCycle:boolean;
 
     head = new ListNode(5);
+    doesHaveCycle = hasCycle(head);
+    console.log(doesHaveCycle)
+    console.assert(!doesHaveCycle)
+
+    head = new ListNode(30);
+    head.next = new ListNode(15);
     doesHaveCycle = hasCycle(head);
     console.log(doesHaveCycle)
     console.assert(!doesHaveCycle)
