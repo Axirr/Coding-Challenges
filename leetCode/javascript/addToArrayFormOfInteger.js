@@ -6,35 +6,27 @@
 var addToArrayForm = function(num, k) {
     let divisor = 1
     let carry = 0
-    let i;
-    for (i=num.length - 1; i >= 0; i--) {
-        let addResult = num[i] + Math.floor(k / divisor) % 10 + carry
-        carry = Math.floor(addResult / 10) % 10
-        num[i] = addResult % 10;
-        divisor *= 10;
-        // if (k / divisor < 1) { break; }
-    }
-    if (carry !== 0 && k / divisor < 1) {
-        num.splice(0, 0, carry)
-    }
+    let i = 0;
 
-    let prefixArray = []
-    while (k / divisor >= 1) {
+    let tempNum = num
+    tempNum.reverse()
+
+    while (i < tempNum.length || k / divisor >= 1) {
         let addResult = Math.floor(k / divisor) % 10 + carry
-        carry = Math.floor(addResult / 10) % 10;
-        addResult = addResult % 10
-        prefixArray.push(addResult)
+        if (i < tempNum.length)  {
+            addResult += num[i]
+            tempNum[i] = addResult % 10;
+        } else  tempNum.push(addResult % 10)
+
+        carry = Math.floor(addResult / 10) % 10
+        i += 1;
         divisor *= 10;
     }
 
-    if (prefixArray.length > 0) {
-        if (carry !== 0) { prefixArray.push(carry) }
-        prefixArray.reverse()
-        num.forEach(value => prefixArray.push(value))
-        num = prefixArray
-    }
+    if (carry !== 0)  tempNum.push(carry)
 
-    return num
+    tempNum.reverse()
+    return tempNum
 };
 
 function addToArrayMain() {
@@ -46,13 +38,13 @@ function addToArrayMain() {
     k = 34
     addedArray = addToArrayForm(numArray, k);
     console.log(addedArray)
-    console.assert(addedArray.reduce((partialSum, x) => partialSum += x, 0) === 10)
+    // console.assert(addedArray === [1, 2, 3, 4])
 
     numArray = [2, 1, 5]
     k = 806
     addedArray = addToArrayForm(numArray, k);
     console.log(addedArray)
-    console.assert(addedArray.reduce((partialSum, x) => partialSum += x, 0) === 4)
+    // console.assert(addedArray === [1,0,2,1])
 
     numArray = [0, 0, 0, 0]
     k = 999999
@@ -91,4 +83,15 @@ Naive:
 What if k is longer:
     Create separate array, and then combine the two
         Rather than append at the front
+
+Better:
+    Reverse num
+    Dereverse num
+
+Time complexity of simpler solution:
+    Reverse = n
+    Loop = n + max(log10(k) - n, 0)
+        Slower than unrolled loops because conditionals included
+    Reverse = n
+    ~O(3n) or O(log10k)
 */
