@@ -5,35 +5,24 @@ function TreeNode(val, left, right) {
 }
 
 var minDiffInBST = function(root) {
-    let valueArray = []
-    let setValues = new Set()
-    let frontier = [root]
-    let nextFrontier = []
+    let valueArray = helperRecurive(root);
 
-    while (frontier.length > 0) {
-        while (frontier.length > 0) {
-            let currentNode = frontier.pop()
-            if (currentNode.val in setValues) { return 0; }
-            setValues.add(currentNode.val)
-            valueArray.push(currentNode.val)
-
-            if (currentNode.left !== null)  nextFrontier.push(currentNode.left);
-            if (currentNode.right !== null)  nextFrontier.push(currentNode.right);
-        }
-
-        frontier = nextFrontier
-        nextFrontier = []
+    minDist = valueArray[1] - valueArray[0];
+    for (let i = 0; i < valueArray.length - 1; i++) {
+        minDist = Math.min(minDist, valueArray[i + 1] - valueArray[i])
+        if (minDist === 0)  return 0;
     }
-
-    valueArray.sort((a, b) => a - b)
-    console.log(valueArray)
-    minDist = valueArray[1] - valueArray[0]
-    for (let index = 0; index < valueArray.length - 1; index++) {
-        minDist = Math.min(minDist, valueArray[index + 1] - valueArray[index]);
-    }
-
-    return minDist;
+    return minDist
 };
+
+function helperRecurive(root) {
+    let resultArray = []
+    if (root.left !== null)  resultArray = resultArray.concat(helperRecurive(root.left))
+    resultArray.push(root.val)
+    if (root.right !== null)  resultArray = resultArray.concat(helperRecurive(root.right))
+
+    return resultArray;
+}
 
 function mainMinDiffInBST() {
     let root;
@@ -45,13 +34,13 @@ function mainMinDiffInBST() {
     console.log(minDist)
     console.assert(minDist === 3)
 
-    root = new TreeNode(5)
-    newLeft = new TreeNode(2)
+    root = new TreeNode(3)
+    newLeft = new TreeNode(-10)
     root.left = newLeft
-    newLeft.right = new TreeNode(5)
+    newLeft.right = new TreeNode(0)
     minDist = minDiffInBST(root)
     console.log(minDist)
-    console.assert(minDist === 0)
+    console.assert(minDist === 3)
 
     root = new TreeNode(5)
     newLeft = new TreeNode(2)
@@ -87,9 +76,18 @@ Naive:
     sort
     traverse record mins
     Time complexity: n + nlogn + n
+
+Inorder traversal, non-recursive:
+    DFS, not BFS
 */
 
 /*
-Did go well?
+Did go well? partially
 If not, why?
+    Initial good but slow
+        Because of not realizing it was a BST instead of a tree, so needing a sort
+    Improvement was a bit slow
+        Because trying to do iterative instead of recursive
+        So much simpler
+        Premature optimization
 */
