@@ -86,6 +86,6 @@ Naive:
 */
 
 /*
-Went well (y/n)?
-If not, why
+Went well (y/n)?    y
+If not, why?    n/a
 */
