@@ -25,6 +25,27 @@ class Program {
 
 public class Solution {
     public int SearchInsert(int[] nums, int target) {
+        int low = 0;
+        int high = nums.Length - 1;
+        int middle = (low + high) / 2;
+
+        while (low <= high) {
+            middle = (low + high) / 2;
+            if (nums[middle] == target)  return middle;
+            else if (nums[middle] > target)  high = middle - 1;
+            else if (nums[middle] < target)  low = middle + 1;
+        }
+
+        if (middle == nums.Length - 1) {
+            if (nums[nums.Length - 1] < target) {
+                middle += 1;
+            }
+        }
+
+        return low;
+    }
+
+    public int LinearSearchInsert(int[] nums, int target) {
         int insertIndex = 0;
         while (insertIndex < nums.Length && nums[insertIndex] < target) {
             insertIndex += 1;
