@@ -11,25 +11,20 @@ var singleNonDuplicate = function(nums) {
 
     while (low < high) {
         middle = Math.floor((low + high) / 2);
-        if (middle === 0) {
-            if (nums[middle] !== nums[1])  return nums[middle]
-        } else if (middle === nums.length) {
-            if (nums[middle] !== nums[middle - 1])  return nums[middle]
-        } else {
-            if (nums[middle] !== nums[middle - 1] && nums[middle] !== nums[middle + 1])  { 
-                return nums[middle]; 
-            }
+        if (middle === 0 || middle === nums.length - 1)  return nums[middle];
+
+        if (nums[middle] !== nums[middle - 1]) {
+            if (nums[middle] !== nums[middle + 1])  return nums[middle];
             if (middle % 2 !== 0) {
-                if (nums[middle] !== nums[middle - 1])  {
-                    high = middle - 1
-                } else { low = middle + 1}
-            } else {
-                if (nums[middle] !== nums[middle + 1])  {
-                    high = middle - 1
-                } else { low = middle + 1; }
-            }
+                high = middle - 1;
+            } else { low = middle + 1; }
+        } else {
+            if (middle % 2 === 0) {
+                high = middle - 1;
+            } else { low = middle + 1; }
         }
     }
+
     return nums[Math.floor((low + high) / 2)];
 };
 
