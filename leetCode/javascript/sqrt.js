@@ -5,15 +5,13 @@
 var mySqrt = function(x) {
     if (x === 0)  return 0;
 
-    let approx = x;
-    let count = 0;
+    let oldApprox = x;
+    let approx = (oldApprox + x/oldApprox) / 2;
     let epsilon = 0.01;
 
-    while (count < 1000) {
-        let oldApprox = approx;
+    while (oldApprox - approx > epsilon) {
+        oldApprox = approx;
         approx = (approx + x/approx) / 2;
-        count += 1;
-        if (Math.abs(oldApprox - approx) < epsilon)  break;
     }
 
     return Math.floor(approx);
