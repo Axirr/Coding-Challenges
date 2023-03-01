@@ -1,4 +1,6 @@
-myNull = "a"
+'use strict'
+
+let myNull = "a"
 
 class TreeNode {
     constructor(val, left = null, right = null) {
@@ -18,21 +20,100 @@ class TreeNode {
     }
 }
 
-class ArrayAndRoot {
-    myArray;
-    currentRoot;
+class NodeWithParent {
+    parent;
+    val;
+    left;
+    right;
+    isLeftChild;
 
-    constructor(myArray, currentRoot) {
-        this.myArray = myArray;
-        this.currentRoot = currentRoot;
+    constructor(val, parentNode, isLeftChild, left = null, right = null) {
+        this.val = val;
+        this.parent = parentNode;
+        this.left = left;
+        this.right = right;
+        this.isLeftChild = isLeftChild;
     }
+
+    prettyPrint() {
+        if (this.left !== null) {
+            this.left.prettyPrint();
+        }
+        let parentVal = this.parent === null ? "null" : this.parent.val;
+        console.log(`Value ${this.val} Parent ${parentVal}`)
+        if (this.right !== null) {
+            this.right.prettyPrint();
+        }
+    }
+}
+
+var findDuplicateSubtrees = function(root) {
+    let parentNodeTree = createParentNodeTreeFromRoot(root, null);
+    parentNodeTree.prettyPrint();
+
+    let leafNodes = leafNodesForParentTree(parentNodeTree, true);
+    console.log("may want to delete")
+    leafNodes.forEach((node) => node.isLeft = true);
+    let frontier = new Map();
+    let newFrontier = new Map();
+    let resultNodes = [];
+    for (let node of leafNodes) {
+        let keyForNode = node.isLeft ? node.val * -1 : node.val;
+        if (frontier.has(keyForNode))  {
+            frontier.get(keyForNode).push(node);
+        }
+        else frontier.set(keyForNode, [node])
+    }
+
+    while (frontier.size > 0) {
+        for (let [currentKey, value] of frontier.entries()) {
+            if (value.length > 1) {
+                resultNodes.push(value[0])
+                for (let node of value) {
+                    let newNode = node.parent;
+                    if (newNode === null) continue;
+                    if (newNode.parent !== null) {
+                        let keyForNode = node.isLeft ? node.val * -1 : node.val;
+                        if (newFrontier.has(keyForNode)) {
+                            newFrontier.get(keyForNode).push(newNode)
+                        } else {newFrontier.set(keyForNode, [newNode])}
+                    }
+                }
+            } 
+        }
+        frontier = newFrontier;
+        newFrontier = new Map();
+    }
+    
+    return resultNodes;
+
+}
+
+function leafNodesForParentTree(root) {
+    if (root === null)  return [];
+
+    let resultNodes = leafNodesForParentTree(root.left)
+    resultNodes = resultNodes.concat(leafNodesForParentTree(root.right))
+    if (root.left === null & root.right === null)  resultNodes.push(root)
+
+    return resultNodes;
+}
+
+function createParentNodeTreeFromRoot(root, parent, isLeftChild) {
+    if (root === null)  return null;
+
+    let myParentNode = new NodeWithParent(root.val, parent, isLeftChild)
+    myParentNode.left = createParentNodeTreeFromRoot(root.left, myParentNode, true);
+    myParentNode.right = createParentNodeTreeFromRoot(root.right, myParentNode, false);
+
+    return myParentNode;
 }
 
 /**
  * @param {TreeNode} root
  * @return {TreeNode[]}
  */
-var findDuplicateSubtrees = function(root) {
+var slowFindDuplicateSubtrees = function(root) {
     let pathMap = new Map();
     let nodes = returnAllNodes(root, 0);
     let resultNodes = []
@@ -51,30 +132,6 @@ var findDuplicateSubtrees = function(root) {
     }
 
     return resultNodes;
-    // let nodeList = returnAllNodes(root)
-    // let usedIndex = new Set();
-    // let dictionaryForSolutions = new Map();
-    // let resultNodes = [];
-    
-    // for (let i = 0; i < nodeList.length; i++) {
-    //     if (usedIndex.has(i))  continue;
-    //     const currentNode = nodeList[i];
-    //     for (let j = i + 1; j < nodeList.length; j++) {
-    //         if (usedIndex.has(j))  continue;
-    //         const testNode = nodeList[j];
-    //         if (binaryTreeEquality(currentNode, testNode)) {
-    //             let testString = genStringForNode(testNode);
-    //             if (!dictionaryForSolutions.has(testString)) {
-    //                 usedIndex.add(j)
-    //                 dictionaryForSolutions.set(testString, null);
-    //                 resultNodes.push(testNode)
-    //                 break;
-    //             }
-    //         }
-    //     }
-    // }
-
-    // return resultNodes;
 }
 
 function genStringForNode(node) {
@@ -92,16 +149,6 @@ function genStringForNode(node) {
 
 function returnAllNodes(root, level) {
     if (root === null) {
-        // i = 0;
-        // let result = []
-        // let maxNum = Math.pow(level - 1, 2)
-        // console.log(`maxNum ${maxNum}`)
-        // while (i < maxNum) {
-        //     result.push(null)
-        //     i += 1;
-        // }
-        // console.log(`Result ${result}`)
-        // return result;
         return [myNull]
     }
 
@@ -114,110 +161,26 @@ function returnAllNodes(root, level) {
     return nodes;
 }
 
-
-
-/**
- * @param {TreeNode} root
- * @return {TreeNode[]}
- */
-var complicatedFindDuplicateSubtrees = function(root) {
-    let treeArray = generateAllSubTrees(root);
-    treeArray = treeArray[0].concat(treeArray[1])
-    treeArray.filter((x) => x === undefined);
-    // treeArray.forEach((element) => {
-    //     console.log(element.myArray);
-    // })
-    let i = treeArray.length - 1;
-    let usedIndex = new Set();
-    let resultArrays = [];
-
-    while (i >= 0) {
-        const firstTree = treeArray[i].myArray;
-        let j = 0;
-        if (!usedIndex.has(i)) {
-            while (j < i) {
-                if (!usedIndex.has(j)) {
-                    // if (arrayEquality(firstTree, treeArray[j].myArray)) {
-                    if (treeArray[i].currentRoot !== treeArray[j].currentRoot && binaryTreeEquality(treeArray[i].currentRoot, treeArray[j].currentRoot)) {
-                        // console.log(`Match for index ${i} and ${j}`)
-                        // console.log(treeArray[i])
-                        // console.log(treeArray[j])
-                        usedIndex.add(j)
-                        usedIndex.add(i)
-                        resultArrays.push(treeArray[j].currentRoot)
-                        break;
-                        // resultArrays.push(treeArray[j].currentRoot);
-                        if (!usedIndex.has(i)) {
-                            usedIndex.add(i)
-                            // resultArrays.push(treeArray[i].currentRoot);
-                            resultArrays.push(treeArray[i].myArray);
-                        }
-                    }
-                }
-                j++;
-            }
-        }
-        i -= 1;
-    }
-    return resultArrays;
-};
-
-function generateAllSubTrees(root) {
-    if (root === null) return [[], []];
-
-    let doubleLeft = generateAllSubTrees(root.left);
-    let doubleRight = generateAllSubTrees(root.right);
-    let leftSubtrees = doubleLeft[0]
-    let rightSubtrees = doubleRight[0]
-
-    let oldNewArray = [[],doubleLeft[1].concat(doubleRight[1])]
-    if (root.left === null && root.right === null)  oldNewArray[0].push(new ArrayAndRoot([root.val], root))
-
-    leftSubtrees.forEach((subArray) => {
-        oldNewArray[1].push(new ArrayAndRoot([...subArray.myArray], subArray.currentRoot))
-        subArray.myArray.push(root.val);
-        subArray.currentRoot = root;
-        oldNewArray[0].push(subArray);
-    })
-    rightSubtrees.forEach((subArray) => {
-        oldNewArray[1].push(new ArrayAndRoot([...subArray.myArray], subArray.currentRoot))
-        subArray.myArray.push(root.val);
-        subArray.currentRoot = root;
-        oldNewArray[0].push(subArray);
-    })
-
-    return oldNewArray;
-}
-
-function arrayEquality(array1, array2) {
-    if (array1.length !== array2.length)  return false;
-    for (let i = 0; i < array1.length; i++) {
-        if (array1[i] !== array2[i])  return false;
-    }
-    return true;
-}
-
-function binaryTreeEquality(tree1, tree2) {
-    if (tree1 === null || tree2 === null) {
-        if (tree1 === null && tree2 === null)  return true;
-        return false;
-    }
-
-    if (tree1.val !== tree2.val)  return false;
-    if (!binaryTreeEquality(tree1.left, tree2.left))  return false;
-    if (!binaryTreeEquality(tree1.right, tree2.right))  return false;
-
-    return true;
-}
-
 function mainFindDuplicateSubTrees() {
     let tree;
     let duplicateArray;
+
+    // tempTree = new TreeNode(0, new TreeNode(0), new TreeNode(0))
+    // tempTree = new TreeNode(0, tempTree, null)
+    // secondTemp = new TreeNode(0, new TreeNode(0), new TreeNode(0))
+    // secondTemp = new TreeNode(0, secondTemp, null)
+    // tree = new TreeNode(0, tempTree, secondTemp)
+    // duplicateArray = findDuplicateSubtrees(tree)
+    // console.log(`Length ${duplicateArray.length} should be 2`)
+    // console.assert(duplicateArray.length === 2)
+    // return;
 
     tree = new TreeNode(2, new TreeNode(1), new TreeNode(1));
     duplicateArray = findDuplicateSubtrees(tree);
     console.log(duplicateArray);
     console.assert(duplicateArray.length === 1)
+    console.log()
+    return;
 
     tempTree = new TreeNode(2, new TreeNode(4), null);
     secondTemp = new TreeNode(3, tempTree, new TreeNode(4));
@@ -226,6 +189,8 @@ function mainFindDuplicateSubTrees() {
     duplicateArray = findDuplicateSubtrees(tree);
     console.log(duplicateArray);
     console.assert(duplicateArray.length === 2)
+    return;
+
 }
 
 
@@ -282,10 +247,24 @@ This is a better way to compare nodes in general:
     if find again
         add to solution
         set isInSolution = true
+
+Still slow though
+Better:
+    Double linked nodes, to allow traversal up from leaf?
+    Since every recursive subtree must come from a recursive subtree
+    Pseudocode:
+        Give all nodes (except root) reference to parent
+        Collect all leaf nodes (no left or right)
+        Compare each leaf node to others
+        Add one match to solutions
+        Add all matches to future frontier
+        If frontier is empty return
+        Else, keep doing that
+And should only need to compare the next value if we group them into sets
 */
 
 /*
-Did it go well? No, quite bad
+Did it go well? No, disastrous
 If not, why
     Not really sure
     Solution was awkward and wrong
@@ -293,4 +272,6 @@ If not, why
         Return arrays rather than dealing with trees
     Wrong:
         Was creating trees for all children, rathern than just the last batch of children
+    And my naive solution wasn't naive enough
+        Struggled to make naive solution, which should never be the case
 */
