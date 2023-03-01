@@ -6,9 +6,6 @@ function sortArray(nums:number[]):number[] {
 }
 
 function quickSort(nums:number[], startIndex:number, endIndex:number) {
-    console.log(`start ${startIndex} end ${endIndex}`)
-    if (endIndex === startIndex)  return;
-
     if ((endIndex - startIndex) === 1) {
         if (nums[startIndex] >= nums[endIndex]) {
             let temp:number = nums[startIndex];
@@ -18,7 +15,9 @@ function quickSort(nums:number[], startIndex:number, endIndex:number) {
         return;
     }
 
-    let pivotIndex:number = Math.floor((startIndex + endIndex) / 2);
+    // Not sure if middle or random is better
+    // let pivotIndex:number = Math.floor((startIndex + endIndex) / 2);
+    let pivotIndex:number = Math.floor(Math.random() * (endIndex - startIndex)) + startIndex;
 
     let i:number = endIndex;
     let noChange:boolean;
@@ -46,8 +45,8 @@ function quickSort(nums:number[], startIndex:number, endIndex:number) {
         }
         if (noChange)  i-= 1;
     }
-    quickSort(nums, startIndex, Math.max(startIndex, pivotIndex - 1));
-    quickSort(nums, Math.min(pivotIndex + 1, endIndex), endIndex);
+    if (pivotIndex - 1 > startIndex)  quickSort(nums, startIndex, pivotIndex - 1);
+    if (pivotIndex + 1 < endIndex)  quickSort(nums, pivotIndex + 1, endIndex);
 }
 
 function mainSortArray(): void {
