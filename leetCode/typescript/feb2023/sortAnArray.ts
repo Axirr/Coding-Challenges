@@ -74,6 +74,6 @@ Merge sort:
 */
 
 /*
-Did it go well?
+Did it go well? yes, quite well
 If not, why?
 */
