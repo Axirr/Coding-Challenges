@@ -9,24 +9,31 @@ function compress(chars: string[]): number {
         if (chars[i] === currentLetter)  {
             currentCount += 1;
         } else {
-            writeIndex = writeNumber(currentLetter, currentCount, chars, writeIndex);
+            writeIndex = writeNumberAndCountDigits(currentLetter, currentCount, chars, writeIndex);
             currentLetter = chars[i];
             currentCount = 1;
         }
     }
-    writeIndex = writeNumber(currentLetter, currentCount, chars, writeIndex);
+    writeIndex = writeNumberAndCountDigits(currentLetter, currentCount, chars, writeIndex);
     return writeIndex;
 };
 
-function writeNumber(currentLetter:string, currentCount:number, chars:string[], writeIndex:number):number {
+function writeNumberAndCountDigits(currentLetter:string, currentCount:number, chars:string[], writeIndex:number):number {
     chars[writeIndex] = currentLetter;
     writeIndex += 1;
+
     if (currentCount > 1) {
-        let digits = digitsForNumber(currentCount);
-        for (const digitString of digits) {
-            chars[writeIndex] = digitString;
-            writeIndex += 1;
+        let numDigits = Math.ceil(Math.log10(currentCount) + 0.0001);
+        let writeOffset = numDigits - 1;
+
+        while (currentCount > 0) {
+            let digit:number = currentCount % 10;
+            chars[writeIndex + writeOffset] = digit.toString();
+            currentCount = Math.floor(currentCount / 10);
+            writeOffset -= 1;
         }
+
+        writeIndex += numDigits;
     }
     return writeIndex;
 }
@@ -112,6 +119,7 @@ Digit calculation:
 */
 
 /*
-Did it go well?
+Did it go well? medium
 If not, why?
+    Separation of digits algorithm was overcomplicated at first
 */
