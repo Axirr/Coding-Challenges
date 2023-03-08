@@ -1,6 +1,6 @@
 function minEatingSpeed(piles: number[], h: number): number {
     let minK:number = 1;
-    let maxK:number = Math.max(...piles);
+    let maxK:number = 1000000000;
     let middleK:number = Math.floor(minK / 2 + maxK / 2);
     let bestK:number = maxK;
 
@@ -92,4 +92,5 @@ Did it go well? yes
 If not, why?
     Used the same technique as yesterday
     A few debugging issues, but not too bad
+Completion time: 31 minutes
 */
