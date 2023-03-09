@@ -8,7 +8,38 @@ class ListNode {
 }
 
 
+/*
+Don't fully understand the math, but it's something like
+    currentNode will have travelled a full cycle plus outsideLength before collision
+    So then travelling outsideLength again will get it back to the start node of the cycle
+*/
 function detectCycle(head: ListNode | null): ListNode | null {
+    if (head === null)  return null;
+    if (head.next === null)  return null;
+
+    let currentNode:ListNode | null = head;
+    let doubleSpeedNode:ListNode | null = head;
+
+    while (doubleSpeedNode !== null) {
+        doubleSpeedNode = doubleSpeedNode.next === null ? null : doubleSpeedNode.next.next;
+        currentNode = currentNode!.next;
+
+        if (doubleSpeedNode === currentNode)  {
+            let slowNode2: ListNode = head!;
+            while (true) {
+                if (slowNode2 === currentNode)  return slowNode2;
+
+                slowNode2 = slowNode2.next!;
+                currentNode = currentNode!.next!;
+            }
+        }
+
+    }
+
+    return null;
+}
+
+function modifyListConstantSpaceDetectCycle(head: ListNode | null): ListNode | null {
     if (head === null)  return null;
     if (head.next === null)  return null;
 
@@ -131,6 +162,13 @@ Modify values in cycle to something recognizable
 Then retraverse from start until hit first instance of that value
 Involves modification of original linked list, which isn't great
     Necessary for O(1) time complexity?
+
+Looked up better solution without modifying the list:
+    Starting traversal from start of the list again when first duplciate found
+    Values at time of meeting:
+        currentNode travel time = A = outsideLength + insideLength
+        doubleNode travel time = 2A = outsideLength + X
+            Where X % insideLength = 0;
 */
 
 /*
