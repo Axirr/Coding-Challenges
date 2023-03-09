@@ -10,10 +10,52 @@ class ListNode {
 
 function detectCycle(head: ListNode | null): ListNode | null {
     if (head === null)  return null;
+    if (head.next === null)  return null;
+
+    let currentNode:ListNode | null = head;
+    let doubleSpeedNode:ListNode | null = head.next;
+    let recognizableValue = 1000000;
+    let didFindCycle = false;
+
+    // Detect cycle
+    while (doubleSpeedNode !== null) {
+        if (doubleSpeedNode === currentNode)  {
+            didFindCycle = true;
+            break;
+        }
+
+        doubleSpeedNode = doubleSpeedNode.next === null ? null : doubleSpeedNode.next.next;
+        currentNode = currentNode!.next;
+    }
+
+    // Replace all values of nodes in cycle with a uniquely recognizable one
+    if (didFindCycle) {
+        while (true) {
+            currentNode!.val = recognizableValue;
+            if (currentNode?.next?.val === recognizableValue)  break;
+
+            currentNode = currentNode!.next;
+        }
+
+        // Traverse from head to first instance of recognizable value, which is the cycle head
+        currentNode = head;
+        while (true) {
+            if (currentNode!.val === recognizableValue)  return currentNode;
+
+            currentNode = currentNode!.next;
+        }
+    }
+
+
+    return null;
+}
+
+function spaceIntensiveDetectCycle(head: ListNode | null): ListNode | null {
+    if (head === null)  return null;
 
     let nodeMap:Map<ListNode, number> = new Map<ListNode, number>();
     let currentNode:ListNode | null = head;
-    let index = 0;
+    let index:number = 0;
 
     while (currentNode !== null) {
         nodeMap.set(currentNode, index);
@@ -65,6 +107,30 @@ Naive:
     If node.next in set, return
     Time: O(n)
     Space: O(n)
+
+How to do in constant space?
+    Using the values is tempting but very fragile
+        E.g. all values the same
+Double speed moving pointer
+    Will catch up with the other at some point in the cycle
+        But how do we figure out if it is the start node of cycle?
+        Start node's parent is not in the cycle
+            Or is null
+        Retraverse from the start until hit a node in the cycle
+            E.g. for each node, traverse whole cycle as a search
+            Might work, but very inefficient for possible large cycle
+
+Finding start node:
+    Two pointer traversal until firstPointer.child = secondPointer
+    A nested for loop
+    n^2
+Modify values in cycle to something recognizable
+    Tough with strong typing
+    Higher than max value?
+
+Then retraverse from start until hit first instance of that value
+Involves modification of original linked list, which isn't great
+    Necessary for O(1) time complexity?
 */
 
 /*
