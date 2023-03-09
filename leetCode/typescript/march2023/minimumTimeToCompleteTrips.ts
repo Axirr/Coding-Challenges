@@ -1,4 +1,108 @@
+class MinHeapNumberList {
+    heapArray:number[][];
+
+    constructor(doubleArray:number[][] = []) {
+        this.heapArray = [];
+        for (const numArray of doubleArray) { 
+            this.insertVal(numArray); 
+        }
+    }
+
+    popMin():number[] {
+        if (this.heapArray.length === 0)  throw new Error("Can't pop from empty heap")
+
+        let resultNum = this.heapArray[0];
+        let endValue = this.heapArray[this.heapArray.length - 1];
+        this.heapArray.pop()
+        if (this.heapArray.length > 0) {
+            this.heapArray[0] = endValue;
+            this.siftDown(0);
+        }
+
+        return resultNum;
+    }
+
+    peek():number[] {
+        if (this.heapArray.length === 0)  throw new Error("Can't peek from empty heap")
+
+        return this.heapArray[0];
+    }
+
+    insertVal(val:number[]):void {
+        this.heapArray.push(val);
+        let index = this.heapArray.length - 1;
+        this.siftUp(index);
+    }
+
+    siftDown(index:number) {
+        let firstPotentialChildIndex:number = index * 2;
+        let secondPotentialChildIndex:number = index * 2 + 1;
+        let indexToSwap:number;
+        if (firstPotentialChildIndex >= this.heapArray.length) return;
+        if ((firstPotentialChildIndex < this.heapArray.length && this.heapArray[index][0] > this.heapArray[firstPotentialChildIndex][0]) || 
+            (secondPotentialChildIndex < this.heapArray.length && this.heapArray[index][0] > this.heapArray[secondPotentialChildIndex][0])) {
+            indexToSwap = firstPotentialChildIndex;
+            if (secondPotentialChildIndex < this.heapArray.length && this.heapArray[secondPotentialChildIndex][0] < this.heapArray[firstPotentialChildIndex][0])  indexToSwap = secondPotentialChildIndex;
+            let temp:number[] = this.heapArray[indexToSwap];
+            this.heapArray[indexToSwap] = this.heapArray[index];
+            this.heapArray[index] = temp;
+            this.siftDown(indexToSwap);
+        }
+    }
+
+    siftUp(index:number):void {
+        let parentIndex = index / 2;
+        if (index % 2 !== 0)  parentIndex = (index - 1) / 2;
+
+        if (index !== 0 && this.heapArray[index][0] < this.heapArray[parentIndex][0]) {
+            index = index;
+            let temp:number[] = this.heapArray[parentIndex];
+            this.heapArray[parentIndex] = this.heapArray[index];
+            this.heapArray[index] = temp;
+            this.siftUp(parentIndex);
+        }
+    }
+
+    updateMinPriorityAndSift(newValue:number):void {
+        if (this.heapArray.length === 0)  throw new Error("Can't update and sift from empty heap")
+
+        this.heapArray[0][0] = newValue;
+        this.siftDown(0);
+    }
+}
+
+
+
 function minimumTime(time: number[], totalTrips: number): number {
+    let minHeap:MinHeapNumberList = new MinHeapNumberList();
+    let countMap:Map<number, number> = new Map<number,number>();
+
+    // Count same length trips
+    for (let i = 0; i < time.length; i++) {
+        const element = time[i];
+        if (countMap.has(element))  countMap.set(element, countMap.get(element)! + 1)
+        else  countMap.set(element, 1);
+    }
+
+    // Insert only unique trips into heap, but third entry (value) indicates the number of trips the job entry represents
+    for (const [currentTime,value] of countMap) {
+        minHeap.insertVal([currentTime, currentTime, value])
+    }
+
+    let currentTrips = 0;
+    let currentTime = 0;
+    while (currentTrips < totalTrips) {
+        let currentMin = minHeap.peek();
+        currentTime = currentMin[0];
+        currentTrips += currentMin[2];
+
+        minHeap.updateMinPriorityAndSift(currentMin[0] + currentMin[1]);
+    }
+
+    return currentTime;
+}
+
+function binarySearchForAnswerMinimumTime(time: number[], totalTrips: number): number {
     if (time.length === 1)  return totalTrips * time[0];
 
     time.sort((a, b) => a - b);
@@ -36,56 +140,29 @@ function minTripsForTime(time:number[], totalTime:number) {
     return totalTrips;
 }
 
-// Bad attempted version before looking up solution
-    // if (time.length === 1)  return Math.ceil(time[0] * totalTrips);
-
-    // let numberCount:Map<number, number> = new Map<number, number>();
-    // for (let i = 0; i < time.length; i++) {
-    //     const element = time[i];
-    //     if (numberCount.has(element))  numberCount.set(element, numberCount.get(element)! + 1);
-    //     else  numberCount.set(element, 1)
-    // }
-    // time.sort((a, b) => a - b);
-    // console.log(time);
-    // let noDups:number[] = [time[0]];
-    // for (let i = 0; i < time.length; i++) {
-    //     const element = time[i];
-    //     if (noDups[noDups.length - 1] !== element)  noDups.push(element);
-    // }
-
-    // return recursiveWindow(noDups, numberCount, noDups.length - 1);
-
-    // let currentIndex = 0;
-    // let totalCount = 0;
-    // let sumValues = 0;
-    // let endIndex = noDups.length - 1;
-    // // let totalTime:number = Math.ceil(totalTrips / (noDups[1] * numberCount.get(1)!));
-    // let totalTime:number = -1;
-    // while (currentIndex <= endIndex) {
-    //     let count = numberCount.get(noDups[currentIndex])!
-    //     totalCount += count;
-    //     sumValues += count * noDups[currentIndex];
-    //     let avgValue = sumValues / totalCount;
-    //     totalTime = Math.floor(totalTrips / totalCount) * avgValue;
-    //     console.log(`Totaltime ${totalTime}`)
-    //     while (noDups[endIndex] > totalTime)  endIndex--;
-
-    //     currentIndex++;
-    // }
-
-    // return totalTime;
-
 function mainMinTime(): void {
     let time:number[];
     let totalTrips:number;
     let timeMin:number;
+
+    time = [5,10,10];
+    totalTrips = 9;
+    timeMin = minimumTime(time, totalTrips);
+    console.log(`Min Time ${timeMin}`)
+    console.assert(timeMin === 25);
+
+    time = [7,10,7,6,9,4,7];
+    totalTrips = 5;
+    timeMin = minimumTime(time, totalTrips);
+    console.log(`Min Time ${timeMin}`)
+    console.assert(timeMin === 7);
+
 
     time = [9,7,10,9,10,9,10];
     totalTrips = 1;
     timeMin = minimumTime(time, totalTrips);
     console.log(`Min Time ${timeMin}`)
     console.assert(timeMin === 7);
-    return;
 
     time = [9,3,10,5];
     totalTrips = 2;
@@ -93,11 +170,6 @@ function mainMinTime(): void {
     console.log(`Min Time ${timeMin}`)
     console.assert(timeMin === 5);
 
-    time = [5,10,10];
-    totalTrips = 9;
-    timeMin = minimumTime(time, totalTrips);
-    console.log(`Min Time ${timeMin}`)
-    console.assert(timeMin === 25);
 
     time = [2];
     totalTrips = 1;
@@ -227,6 +299,14 @@ Don't think this will work, still has the same average problem but pushes it dow
 
 Different strategy:
     Rather than increments of time = 1, bifurcate data into ranges that we can increment for a larger number
+
+Trying to implement with a minHeap and "rescheduling"
+    Theory: min heap maintains the trips
+    Pull the smallest one off, and add to total
+    Re-add it to heap but with time incremented by trip time
+    Slight complication: trip times of 1 / tied trip times more generally
+        Solution: pull from heap until none left that meet the current time
+            Then bulk reschedule
 */
 
 /*
