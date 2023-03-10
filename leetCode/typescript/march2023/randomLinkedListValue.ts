@@ -27,10 +27,26 @@ class Solution {
             if (currentNode.next === null)  break;
             else  currentNode = currentNode.next;
         }
+
         this.listLength = length;
     }
 
     getRandom(): number {
+        let randomNumber = this.head!.val;
+        let currentNode:ListNode | null = this.head;
+        let count = 0;
+
+        while (currentNode !== null) {
+            count++;
+            let pickRandom = Math.floor(Math.random() * count)
+            if (pickRandom === 0)  randomNumber = currentNode.val;
+
+            currentNode = currentNode.next;
+        }
+        return randomNumber;
+    }
+
+    preStoreLengthGetRandom(): number {
         let randomNumber:number = Math.floor(Math.random() * this.listLength);
         let count:number = 0;
         let currentNode:ListNode = this.head!;
@@ -47,9 +63,12 @@ function mainRandomLinkedListValue(): void {
     let head:ListNode | null;
     let randomNumber:number;
     let sol:Solution;
-    let iterations:number = 100;
+    let iterations:number = 5000;
     let runCount:number;
     let setValues:Set<number>;
+    let runningTotal:number;
+    let epsilon:number = 0.1;
+    let expectedAverage:number;
 
     head = new ListNode(1);
     head.next = new ListNode(2, new ListNode(3));
@@ -59,12 +78,21 @@ function mainRandomLinkedListValue(): void {
     setValues.add(2);
     setValues.add(3);
     runCount = 0;
-    while (runCount < iterations && setValues.size > 0) {
+    runningTotal = 0;
+    expectedAverage = 2;
+    while (runCount < iterations) {
         randomNumber = sol.getRandom();
+        runningTotal += randomNumber;
         setValues.delete(randomNumber);
-        console.log(`Random number ${randomNumber}`);
+        // console.log(`Random number ${randomNumber}`);
         runCount++;
     }
+
+    console.log(`Actual average ${runningTotal / iterations}`)
+    console.log(`Expected average ${expectedAverage}`)
+    console.log('Average assertion:')
+    console.assert(Math.abs(runningTotal / runCount - expectedAverage) < epsilon)
+    console.log('All values returned assertion:')
     console.assert(setValues.size === 0);
 }
 
