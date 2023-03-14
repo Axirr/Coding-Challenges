@@ -10,11 +10,26 @@ class TreeNode {
 }
 
 function sumNumbers(root: TreeNode | null): number {
-    let total:number = recursiveDFSsum(root, []);
+    let total:number = recursiveDFSsum(root, 0);
     return total;
 };
 
-function recursiveDFSsum(root: TreeNode | null, currentDigits:number[]):number {
+
+function recursiveDFSsum(root: TreeNode | null, currentSum:number):number {
+    if (root === null)  return 0;
+
+    let total = 0;
+    if (root.left === null && root.right === null)  return currentSum * 10 + root.val;
+    else {
+        total += recursiveDFSsum(root.left, currentSum * 10 + root.val)
+        total += recursiveDFSsum(root.right, currentSum * 10 + root.val)
+    }
+
+
+    return total;
+}
+
+function storeDigitsRecursiveDFSsum(root: TreeNode | null, currentDigits:number[]):number {
     let total:number = 0;
     if (root === null)  return total;
 
@@ -26,8 +41,8 @@ function recursiveDFSsum(root: TreeNode | null, currentDigits:number[]):number {
         }
     // Non-leaf node
     } else {
-        total += recursiveDFSsum(root.left, currentDigits);
-        total += recursiveDFSsum(root.right, currentDigits);
+        total += storeDigitsRecursiveDFSsum(root.left, currentDigits);
+        total += storeDigitsRecursiveDFSsum(root.right, currentDigits);
 
     }
     currentDigits.pop()
@@ -65,10 +80,10 @@ function mainSumNumbers():void {
     let root:TreeNode | null;
     let sumNumber:number;
 
-    root = new TreeNode(1, new TreeNode(2), new TreeNode(3));
+    root = new TreeNode(1, new TreeNode(2, new TreeNode(7)), new TreeNode(3));
     sumNumber = sumNumbers(root);
     console.log(sumNumber);
-    if (sumNumber !== 25)  {
+    if (sumNumber !== 140)  {
         console.log("Assertion failed")
         if (doQuitAssert)  console.log('quitting'); return;
     }
@@ -117,6 +132,8 @@ Not really doing it like good DFS
 Is it possible to do with O(1) memory?
     Some DFS can do that
     But not where we have to keep the digits
+
+Improved solution learned from LeetCode discussion boards
 */
 
 /*
