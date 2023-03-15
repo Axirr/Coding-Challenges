@@ -1,56 +1,47 @@
-class TreeNode {
-    val: number
-    left: TreeNode | null
-    right: TreeNode | null
-    constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
-        this.val = (val===undefined ? 0 : val)
-        this.left = (left===undefined ? null : left)
-        this.right = (right===undefined ? null : right)
-    }
-}
+import TreeNode from './sumRootLeafNumbers';
 
 function isCompleteTree(root: TreeNode | null): boolean {
     if (root === null)  return true;
 
-    let stack:Array<any> = [[root, 0]];
-    let currentNode: TreeNode | null = root;
+    // Stack of tuples with nodes and their depth
+    let stack:Array<[TreeNode | null, number]> = [[root, 0]];
+    let currentNode:TreeNode | null = root;
 
-    let maxHeight:number = 0;
-
+    let maxLeftmostHeight:number = -1;
     while (currentNode !== null) {
-        maxHeight += 1;
+        maxLeftmostHeight += 1;
         currentNode = currentNode.left;
     }
 
-    maxHeight -= 1;
-
-    let maxHeightCompleteAllowed:boolean = true;
+    let deepNullFound:boolean = false;
     let currentHeight:number;
+    let currentDuo:[TreeNode | null, number];
 
     while (stack.length > 0) {
-        let currentDuo = stack.pop();
-        // console.log(`stackLength ${stack.length}`)
+        currentDuo = stack.pop()!;
         currentNode = currentDuo[0];
-        // console.log(`current node value ${currentNode === null ? "null" : currentNode.val}`)
         currentHeight = currentDuo[1];
-        if (currentHeight > maxHeight)  return false;
+        if (currentHeight > maxLeftmostHeight)  return false;
 
-        // console.log(`maxHeight ${maxHeight}`)
-        // console.log(`currentHeight ${currentHeight}`)
         if (currentNode === null) {
-            // console.log('null node')
-            if (currentHeight === maxHeight) {
-                maxHeightCompleteAllowed = false;
+            if (currentHeight === maxLeftmostHeight) {
+                deepNullFound = true;
             } else  return false
-        } else if (isLeaf(currentNode)) {
-                if (!(currentHeight === maxHeight || currentHeight === (maxHeight - 1)))  return false;
-                if (currentHeight === maxHeight && !maxHeightCompleteAllowed)  return false;
-            // if (!maxHeightCompleteAllowed && currentHeight < maxHeight) {
-            if (currentHeight < maxHeight) {
+        } else if (currentNode.left === null && currentNode.right === null) {
+            // Leaf not at bottom or one higher
+            if (!(currentHeight === maxLeftmostHeight || currentHeight === (maxLeftmostHeight - 1)))  return false;
+
+            // Non-null, at maxLeftmostHeight, and a more leftward null was found
+            if (currentHeight === maxLeftmostHeight && deepNullFound)  return false;
+
+            // Add "children" (i.e. nulls) if maxLeftmostHeight has not been reached at
+            // since no guarantee
+            if (currentHeight < maxLeftmostHeight) {
                 stack.push([currentNode!.right, currentHeight + 1])
                 stack.push([currentNode!.left, currentHeight + 1])
             }
         } else {
+            // Push inorder to ensure evaluated left to right 
             stack.push([currentNode!.right, currentHeight + 1])
             stack.push([currentNode!.left, currentHeight + 1])
         }

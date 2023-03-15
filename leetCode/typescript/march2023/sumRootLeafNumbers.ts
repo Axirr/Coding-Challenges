@@ -89,7 +89,8 @@ function mainSumNumbers():void {
     }
 }
 
-mainSumNumbers();
+// Commented out to allow import of TreeNode to prevent namespace conflict
+// mainSumNumbers();
 
 /*
 Data range/assumptions:
@@ -143,3 +144,5 @@ Describe how it went:
     Started with a suboptimal idea
     But then did stop, replan, and execute
 */
+
+export default TreeNode;
