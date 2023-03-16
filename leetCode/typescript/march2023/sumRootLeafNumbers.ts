@@ -7,6 +7,38 @@ class TreeNode {
         this.left = (left===undefined ? null : left)
         this.right = (right===undefined ? null : right)
     }
+
+    prettyPrint():void {
+        let queue:Array<TreeNode | null> = [this];
+        let nextqueue:Array<TreeNode | null> = [];
+        while (true) {
+            while (queue.length > 0) {
+                let currentNode:TreeNode | null = queue[0];
+                queue.splice(0, 1);
+                if (currentNode !== null) {
+                    console.log(currentNode.val);
+                    nextqueue.push(currentNode.left)
+                    nextqueue.push(currentNode.right)
+                } else {
+                    console.log(null);
+                    nextqueue.push(null);
+                    nextqueue.push(null);
+                }
+            }
+            console.log()
+            let hasNonNull:boolean = false;
+            for (let index = 0; index < nextqueue.length; index++) {
+                const element = nextqueue[index];
+                if (element !== null) {
+                    hasNonNull = true;
+                    break;
+                }
+            }
+            if (!hasNonNull)  break;
+            queue = nextqueue;
+            nextqueue = [];
+        }
+    }
 }
 
 function sumNumbers(root: TreeNode | null): number {
