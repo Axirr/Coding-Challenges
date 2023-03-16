@@ -1,28 +1,37 @@
 import TreeNode from "./sumRootLeafNumbers";
 
 function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
-    if (postorder.length === 0)  return null;
-    let resultTree:TreeNode = new TreeNode(postorder[postorder.length - 1]);
-    if (postorder.length === 1)  return resultTree;
+    return recursiveBuildTree(inorder, 0, inorder.length, postorder, 0, postorder.length);
+};
 
-    let parentNodeVal:number = postorder[postorder.length - 1];
-    let parentIndex:number = inorder.indexOf(parentNodeVal);
+// Start index inclusive, endIndex exclusive
+function recursiveBuildTree(inorder: number[], inorderStart:number, inorderEnd:number, postorder: number[], postorderStart:number, postorderEnd:number): TreeNode | null {
+    let postOrderLength = postorderEnd - postorderStart;
+    if (postOrderLength <= 0)  return null;
+    let parentNodeVal:number = postorder[postorderEnd - 1];
+    let resultTree:TreeNode = new TreeNode(parentNodeVal);
+    if (postOrderLength === 1)  return resultTree;
 
-    let inorderLeft:number[] = inorder.slice(0, parentIndex);
-    let inorderRight:number[] = inorder.slice(parentIndex + 1, inorder.length);
+    let parentIndex:number = inorder.indexOf(parentNodeVal, inorderStart);
+    let leftInorderStart:number = inorderStart;
+    let leftInorderEnd:number = parentIndex;
+    let rightInorderStart:number = parentIndex + 1;
+    let rightInorderEnd:number = inorderEnd;
+    let inorderLeftLength = leftInorderEnd - leftInorderStart;
 
-    let postorderLeft:number[] = postorder.slice(0, inorderLeft.length);
-    // Have to exclude last element since it's the parent
-    let postorderRight:number[] = postorder.slice(inorderLeft.length, postorder.length - 1);
+    let leftPostoderStart:number = postorderStart;
+    let leftPostoderEnd:number = postorderStart + inorderLeftLength;
+    let rightPostoderStart:number = leftPostoderEnd;
+    let rightPostoderEnd:number = postorderEnd - 1;
 
-    let leftTreeNode:TreeNode | null = buildTree(inorderLeft, postorderLeft);
-    let rightTreeNode:TreeNode | null = buildTree(inorderRight, postorderRight);
+    let leftTreeNode:TreeNode | null = recursiveBuildTree(inorder, leftInorderStart, leftInorderEnd, postorder, leftPostoderStart, leftPostoderEnd);
+    let rightTreeNode:TreeNode | null = recursiveBuildTree(inorder, rightInorderStart, rightInorderEnd, postorder, rightPostoderStart, rightPostoderEnd);
 
     resultTree.left = leftTreeNode;
     resultTree.right = rightTreeNode;
 
     return resultTree;
-};
+}
 
 function mainBuildTree():void {
     let inorder:number[];

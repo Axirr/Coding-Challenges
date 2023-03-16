@@ -9,13 +9,26 @@ class TreeNode {
     }
 
     prettyPrint():void {
+        // Simple preorder recursive print without nulls
+        // let currentNode:TreeNode | null = this;
+        // if (currentNode.left !== null) currentNode.left!.prettyPrint();
+        // console.log(currentNode.val);
+        // if (currentNode.right !== null) currentNode.right!.prettyPrint();
+
+        // Slow preorder print with explicit nulls
         let queue:Array<TreeNode | null> = [this];
         let nextqueue:Array<TreeNode | null> = [];
+        let depthLevel:number = 0;
+
         while (true) {
+            console.log(`Depth level ${depthLevel}`);
+            // Can save on searching if use this instead of search all for non-null?
+            // let hadNonNullParent:boolean = false;
             while (queue.length > 0) {
                 let currentNode:TreeNode | null = queue[0];
                 queue.splice(0, 1);
                 if (currentNode !== null) {
+                    // hadNonNullParent = true;
                     console.log(currentNode.val);
                     nextqueue.push(currentNode.left)
                     nextqueue.push(currentNode.right)
@@ -26,6 +39,7 @@ class TreeNode {
                 }
             }
             console.log()
+            depthLevel+=1;
             let hasNonNull:boolean = false;
             for (let index = 0; index < nextqueue.length; index++) {
                 const element = nextqueue[index];
