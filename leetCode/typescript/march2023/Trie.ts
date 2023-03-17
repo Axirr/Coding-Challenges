@@ -58,10 +58,9 @@ class Trie {
         let i:number;
         let currentNode:GraphNode = this.root;
         for (i = 0; i < word.length; i++) {
-            const letter:string = word[i];
-            if (!currentNode.children.has(letter))  break
+            if (!currentNode.children.has(word[i]))  break
             else {
-                currentNode = currentNode.children.get(letter)!;
+                currentNode = currentNode.children.get(word[i])!;
             }
         }
 
@@ -73,9 +72,8 @@ class Trie {
 
         // Node not found for ith letter
         for (i; i < word.length; i++) {
-            const letter:string = word[i];
-            let newNode:GraphNode = new GraphNode(letter);
-            currentNode.children.set(letter, newNode);
+            let newNode:GraphNode = new GraphNode(word[i]);
+            currentNode.children.set(word[i], newNode);
             currentNode = newNode;
         }
 
@@ -95,9 +93,8 @@ class Trie {
         let currentNode:GraphNode = this.root;
         let i:number;
         for (i = 0; i < word.length; i++) {
-            const letter = word[i];
-            if (!currentNode.children.has(letter))  return false;
-            else currentNode = currentNode.children.get(letter)!;
+            if (!currentNode.children.has(word[i]))  return false;
+            else currentNode = currentNode.children.get(word[i])!;
         }
         if (needsFinal)  return currentNode.isWordEnd;
         return true;
