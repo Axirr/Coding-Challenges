@@ -67,7 +67,10 @@ E.g. 1000001
 */
 
 /*
-Completion time (minutes): 
-How did it go?
+Completion time (minutes): 12
+How did it go? well
 Describe
+    Naive worked
+    Manually ran examples to ensure greedy worked
+    Small bug, easily fixed (< 0 needed to be <= 0)
 */
