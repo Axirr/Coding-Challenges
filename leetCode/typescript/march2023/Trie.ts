@@ -144,7 +144,8 @@ function myAssert(isTrue:boolean) {
     }
 }
 
-mainTrie();
+// Disable to allow export
+// mainTrie();
 
 /**
  * Your Trie object will be instantiated and called as such:
@@ -207,3 +208,5 @@ Describe:
     Implemented well on first go through
     No major bugs
 */
+
+export default myAssert;
