@@ -134,11 +134,11 @@ function mainTrie():void {
     myAssert(isFound);
 }
 
-function myAssert(isTrue:boolean) {
-    let doQuitOnAssertFail:boolean = true;
+function myAssert(isTrue:boolean, doQuitOnAssertFail:boolean = false) {
+    console.log(doQuitOnAssertFail)
     if (!isTrue) {
         console.log("ASSERTION FAILED")
-        if (doQuitOnAssertFail)  return;
+        if (doQuitOnAssertFail)  throw new Error("assertion fail");
     } else {
         console.log("Passed")
     }
