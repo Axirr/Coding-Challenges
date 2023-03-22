@@ -133,7 +133,7 @@ function mainSortArray(): void {
     console.log(sortedNums);
 }
 
-mainSortArray();
+// mainSortArray();
 
 // mainTests();
 
@@ -145,3 +145,5 @@ Inserting:
     If not smaller than parent, swap
     Check heap condition for both elements again and swap until all satisfied
 */
+
+export default MinHeap;

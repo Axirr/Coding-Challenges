@@ -184,7 +184,7 @@ function mainMinTime(): void {
     console.assert(timeMin === 3);
 }
 
-mainMinTime();
+// mainMinTime();
 
 /*
 Data ranges/assumptions:
@@ -316,3 +316,5 @@ If not, why?
         I.e. averages don't capture discrete nature of problem
     Had to look up solution
 */
+
+export default MinHeapNumberList;
