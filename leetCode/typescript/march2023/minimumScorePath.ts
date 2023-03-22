@@ -13,6 +13,7 @@ function minScore(n: number, roads: number[][]): number {
 
     let frontier:number[] = [1];
     let visited:Set<number> = new Set<number>();
+    // Set minimum to the first edge out of node 1
     let minimumPath:number = roads[0][2];
 
     while (frontier.length > 0) {
@@ -21,9 +22,8 @@ function minScore(n: number, roads: number[][]): number {
 
         let neighbourCity:number[][] = borderCity.get(currentCity)!;
         for (let i = 0; i < neighbourCity.length; i++) {
-            const currentCityPair = neighbourCity[i];
-            const currentCity = currentCityPair[0];
-            const currentDistance = currentCityPair[1];
+            const currentCity = neighbourCity[i][0];
+            const currentDistance = neighbourCity[i][1];
             if (currentDistance < minimumPath)  minimumPath = currentDistance;
 
             if (!visited.has(currentCity)) frontier.push(currentCity)
@@ -32,6 +32,7 @@ function minScore(n: number, roads: number[][]): number {
 
     return minimumPath;
 };
+
 
 function mainMinScore():void {
     let n:number;
@@ -120,6 +121,12 @@ Naive:
 Another way to think about it, we need to do 2 things:
     Visit every connected node once
     Update minimum for all edges from each visited node
+
+Solution time complexity: O(n + k)
+    Constructing borderCity map: 2n
+    Traversering all connected edges: 2k
+        Worst case: fully connected graph so all nodes and thus all edges are examined
+        But that's only 2k
 */
 
 /*
