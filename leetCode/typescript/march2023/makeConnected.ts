@@ -15,56 +15,41 @@ function makeConnected(n: number, connections: number[][]): number {
         fullNeighbourList.get(computer2)!.push(computer1);
     }
     
-    let numConnectedComputers:number = fullNeighbourList.size;
-
-    let visited:Set<number> = new Set<number>();
+    let connectedComputers:Set<number> = new Set(fullNeighbourList.keys());
     let frontier:number[] = [];
-    // let groupCount:number = n - numConnectedComputers;
-    let groupCount:number = 0;
-    // console.log(`numConnectedComputers ${numConnectedComputers}`)
-    // let groupCount:number = 0;
-    let startComputerForEachGroup:number[] = [];
+    let groupCount:number = n - connectedComputers.size;
     let extraConnections:number = 0;
     let currentGroupCounnections:number = 0;
 
-    while (visited.size < n) {
-        // console.log(`visited.size ${visited.size}`)
+    while (connectedComputers.size > 0) {
         groupCount++;
 
-        for (let i = 0; i < n; i++) {
-            if (!visited.has(i)) {
-                frontier.push(i);
-                break;
-            }
+        for (const value of connectedComputers)  {
+            frontier.push(value);
+            connectedComputers.delete(value);
+            break;
         }
 
-        startComputerForEachGroup.push(frontier[0]);
         currentGroupCounnections = 0;
         let groupSize:number = 1;
 
         while (frontier.length > 0) {
             let currentComputer:number = frontier.pop()!;
             let neighboursList:number[] = fullNeighbourList.get(currentComputer)!
-            if (neighboursList === undefined) {
-                visited.add(currentComputer);
-                continue;
-            }
             currentGroupCounnections += neighboursList.length;
             for (const computer of neighboursList) {
-                if (!visited.has(computer)) {
+                if (connectedComputers.has(computer)) {
                     groupSize++;
-                    visited.add(computer);
                     frontier.push(computer);
+                    connectedComputers.delete(computer);
                 }
             }
         }
 
-        let connectionsFormula:number = (Math.floor(currentGroupCounnections / 2) - groupSize + 1);
+        let connectionsFormula:number = (currentGroupCounnections / 2) - groupSize + 1;
         if (connectionsFormula > 0)  extraConnections +=  connectionsFormula;
     }
 
-    // console.log(`groupCount ${groupCount}`)
-    // console.log(`extraConnections ${extraConnections}`)
     if (extraConnections < (groupCount - 1))  return -1;
     return groupCount - 1;
 };
