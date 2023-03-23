@@ -135,13 +135,13 @@ function mainTrie():void {
 }
 
 function myAssert(isTrue:boolean, doQuitOnAssertFail:boolean = false) {
-    console.log(doQuitOnAssertFail)
     if (!isTrue) {
         console.log("ASSERTION FAILED")
         if (doQuitOnAssertFail)  throw new Error("assertion fail");
     } else {
         console.log("Passed")
     }
+    console.log()
 }
 
 // Disable to allow export
