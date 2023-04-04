@@ -40,17 +40,17 @@ function mainNumRescueBoats():void {
     let result:number;
     let doQuitOnFail:boolean = true;
 
-    people = [1,2];
-    limit = 3;
-    result = numRescueBoats(people, limit);
-    console.log(`Final result ${result}`);
-    myAssert(result === 1, doQuitOnFail);
-
     people = [3,2,2,1];
     limit = 3;
     result = numRescueBoats(people, limit);
     console.log(`Final result ${result}`);
     myAssert(result === 3, doQuitOnFail);
+
+    people = [1,2];
+    limit = 3;
+    result = numRescueBoats(people, limit);
+    console.log(`Final result ${result}`);
+    myAssert(result === 1, doQuitOnFail);
 
     // have to put single people in boats because no pair is below limit
     // some person has weight = limit
@@ -92,6 +92,53 @@ Naive:
 
 Keep place of last binary search?
     Since if partner worked for heaviest, then <= must work for next heaviest?
+
+Need to improve deletion of used people
+Minheap?
+    Swap second max with used node, then sift up second max each time
+    logn operation instead of n
+
+Stack, pair nodes as one finds appropriate ones?
+    If current max of "smalls" is too low, push heavy to stack and try next one?
+    Problem: to ensure optimality, heaviest has to take priority?
+    But if we only try the heaviest light one
+    What are these "light ones", formally?
+        Bottom half
+            But not always
+            E.g. uniform weight
+    Once push top half to stack, begin single boating or pairing with the smallest
+Seems intriguing but not sure if it works
+What happens after the first one?
+Trace: people [1, 2, 8, 9, 10] limit 10
+    Bottom: Math.ceil(length / 2)
+        For odd length, should always single boat the top one?
+            If it could be paired, anything below it could be paired
+    Bottom: [1, 2]
+    Top: [8, 9]
+    Stack: []
+    9 vs. 2, nope
+    Stack: [9]
+    8 + 2, yep
+    Pop from stack for next if not empty
+    9 + 1, yep
+
+Close, but some problems
+
+Seemed close, but I just can't get it to work
+Paths seem hard to disentangle
+Is it possible to always prioritize the stack whenever need a new one?
+    Was original idea, but causes infinite loop problems I think
+        If always do it, just add to stack and immediately take it back off
+Go into a second control flow the second you add something to the stack?
+    Now, go all the way to the bottom until find a match
+    If no match found, add stack.length to boat
+Maybe the issue is my "two halves" idea
+    Simpler: from currentIndex, go down until pair happens or reach 0
+    Break at 0 and add the stack length
+
+Never did get it to work
+    Just programming in circles
+    Waste of time
 */
 
 /*
