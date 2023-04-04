@@ -1,38 +1,26 @@
 import myAssert from "../march2023/Trie";
 
 function partitionString(s: string):number {
-    let runningSumsForLetters:number[][] = [];
-    for (const letter of "abcdefghijklmnopqrstuvwxyz") {
-        runningSumsForLetters.push([0]);
+    let allowedRunningSum:number[] = [];
+    for (let i = 0; i < 26; i++) {
+        allowedRunningSum.push(0);
     }
 
-    for (let i = 0; i < s.length; i++) {
-        let currentIndex:number = s.charCodeAt(i) - 97;
-        for (let j = 0; j < runningSumsForLetters.length; j++) {
-            let currentArray:number[] = runningSumsForLetters[j];
-            if (j === currentIndex)  currentArray.push(currentArray[currentArray.length - 1] + 1)
-            else  currentArray.push(currentArray[currentArray.length - 1]);
-        }
-    }
-
-    return nonRecursive(s, runningSumsForLetters);
-}
-
-function nonRecursive(s:string, runningSumsForLetters:number[][]):number {
+    let workingRunningSum:number[] = {...allowedRunningSum};
     let count:number = 1;
-    let startIndex:number = 0;
-    let currentIndex:number = 0;
-    while (currentIndex <= s.length) {
-        if (currentIndex !== startIndex) {
-            let hasDups:boolean = hasDupsAtIndex(currentIndex, startIndex, runningSumsForLetters);
-            if (hasDups) {
-                count++;
-                startIndex = currentIndex - 1;
-            }
-        }
+    let i = 0;
 
-        currentIndex++;
+    while (i < s.length) {
+        let alphaIndex:number = s.charCodeAt(i) - 97;
+        if (workingRunningSum[alphaIndex] > allowedRunningSum[alphaIndex]) {
+            count++;
+            allowedRunningSum = {...workingRunningSum};
+        } else {
+            workingRunningSum[alphaIndex] += 1;
+            i++;
+        }
     }
+
     return count;
 }
 
