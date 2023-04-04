@@ -6,8 +6,6 @@ function partitionString(s: string):number {
         runningSumsForLetters.push([0]);
     }
 
-    // runningSumsForLetters[s.charCodeAt(0) - 97] = [1];
-
     for (let i = 0; i < s.length; i++) {
         let currentIndex:number = s.charCodeAt(i) - 97;
         for (let j = 0; j < runningSumsForLetters.length; j++) {
@@ -16,13 +14,44 @@ function partitionString(s: string):number {
             else  currentArray.push(currentArray[currentArray.length - 1]);
         }
     }
-    // for (const array of runningSumsForLetters)  console.log(array)
 
-    return recursiveBinarySearchAnswer(s, runningSumsForLetters, 0);
+    return nonRecursive(s, runningSumsForLetters);
 }
 
+function nonRecursive(s:string, runningSumsForLetters:number[][]):number {
+    let count:number = 1;
+    let startIndex:number = 0;
+    let currentIndex:number = 0;
+    while (currentIndex <= s.length) {
+        if (currentIndex !== startIndex) {
+            let hasDups:boolean = hasDupsAtIndex(currentIndex, startIndex, runningSumsForLetters);
+            if (hasDups) {
+                count++;
+                startIndex = currentIndex - 1;
+            }
+        }
+
+        currentIndex++;
+    }
+    return count;
+}
+
+function hasDupsAtIndex(index:number, startIndex:number, runningSumsForLetters:number[][]):boolean {
+    if (index === startIndex) return false;
+
+    for (const array of runningSumsForLetters) {
+        let beforeCount:number = array[startIndex];
+        let currentCount:number = array[index];
+        if ((currentCount - beforeCount) > 1) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 function recursiveBinarySearchAnswer(s:string, runningSumsForLetters:number[][], startIndex:number):number {
-    // console.log(`outer startIndex ${startIndex}`)
     if (startIndex >= s.length)  return 0;
     if (startIndex === s.length - 1) return 1;
 
@@ -38,7 +67,6 @@ function recursiveBinarySearchAnswer(s:string, runningSumsForLetters:number[][],
             high = middle - 1;
         } else {
             maxValid = middle;
-            // console.log(`new maxValid ${maxValid}`)
             low = middle + 1;
         }
     }
@@ -47,22 +75,6 @@ function recursiveBinarySearchAnswer(s:string, runningSumsForLetters:number[][],
     return 1 + recursiveBinarySearchAnswer(s, runningSumsForLetters, maxValid);
 }
 
-function hasDupsAtIndex(index:number, startIndex:number, runningSumsForLetters:number[][]):boolean {
-    if (index === startIndex) return false;
-
-    for (const array of runningSumsForLetters) {
-        let beforeCount:number = array[startIndex];
-        let currentCount:number = array[index];
-        if ((currentCount - beforeCount) > 1) {
-            // console.log(`beforeCount ${beforeCount}`)
-            // console.log(`currentCount ${currentCount}`)
-            return true;
-        }
-    }
-
-    // console.log(`no dups found between ${index} and ${startIndex}`)
-    return false;
-}
 
 function slowPartitionString(s: string):number {
     let countDictionary:Map<string, number> = new Map();
@@ -110,7 +122,7 @@ function recursivePartition(s: string, countDictionary:Map<string, number>, dupl
 function mainPartitionString():void {
     let s:string;
     let minStrings:number;
-    let doQuitIfFail:boolean = true;
+    let doQuitIfFail:boolean = false;
 
     s = "cuieokbs";
     minStrings = partitionString(s);
