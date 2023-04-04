@@ -1,22 +1,22 @@
 import myAssert from "../march2023/Trie";
 
 function partitionString(s: string):number {
-    let allowedRunningSum:number[] = [];
+    let lastSeen:number[] = [];
     for (let i = 0; i < 26; i++) {
-        allowedRunningSum.push(0);
+        lastSeen.push(-1);
     }
 
-    let workingRunningSum:number[] = {...allowedRunningSum};
     let count:number = 1;
     let i = 0;
+    let currentStart = 0;
 
     while (i < s.length) {
         let alphaIndex:number = s.charCodeAt(i) - 97;
-        if (workingRunningSum[alphaIndex] > allowedRunningSum[alphaIndex]) {
+        if (lastSeen[alphaIndex] >= currentStart) {
             count++;
-            allowedRunningSum = {...workingRunningSum};
+            currentStart = i;
         } else {
-            workingRunningSum[alphaIndex] += 1;
+            lastSeen[alphaIndex] = i
             i++;
         }
     }
