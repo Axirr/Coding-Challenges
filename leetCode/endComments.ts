@@ -16,5 +16,4 @@ Naive:
 Completion time (minutes):
 Question difficulty:
 How did it go (0 - 6):
-Describe:
 */
