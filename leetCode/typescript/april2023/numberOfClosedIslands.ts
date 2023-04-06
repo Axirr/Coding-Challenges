@@ -1,45 +1,65 @@
 import myAssert from "../march2023/Trie";
 
 function closedIsland(grid: number[][]): number {
-    let visited:Set<string> = new Set();
-    let frontier:[number, number][];
+    let visited:Set<number> = new Set();
+    let frontier:number[] = [];
 
     let height:number = grid.length;
     let width:number = grid[0].length;
     let maxCell:number = (height * width) - 1; 
-    let currentCell:number = 0;
+    let outerLoopCellNumber:number = 0;
     let islandCount:number = 0;
+    let cellModifiers:number[] = [-width, width];
+    let onesCellMofiiers:number[] = [-1, 1]
 
-    while (currentCell <= maxCell) {
-        let tupCurrentCell:[number, number] = [Math.floor(currentCell / width), currentCell % width];
-        if (!visited.has(tupCurrentCell.toString())) {
-            let foundEdge:boolean = false;
+    while (outerLoopCellNumber <= maxCell) {
+        if (!visited.has(outerLoopCellNumber)) {
+            let tupCurrentCell:[number, number] = [Math.floor(outerLoopCellNumber / width), outerLoopCellNumber % width];
+
             if (grid[tupCurrentCell[0]][tupCurrentCell[1]] === 1) {
-                visited.add(tupCurrentCell.toString());
-            } else {
-                frontier = [tupCurrentCell];
-                while (frontier.length > 0) {
-                    let currentFrontierCell:[number, number] = frontier.pop()!;
-                    if (visited.has(currentFrontierCell.toString())) continue
-                    visited.add(currentFrontierCell.toString());
-                    let groundType:number = grid[currentFrontierCell[0]][currentFrontierCell[1]];
-                    if (groundType === 0) {
-                        let neighbours:[number, number][] = getNeighbours(grid, currentFrontierCell, height - 1, width - 1);
-                        if (neighbours.length < 4)  foundEdge = true;
-                        for (const neigh of neighbours)  {
-                            if (!visited.has(neigh.toString()) && grid[neigh[0]][neigh[1]] === 0) {
-                                frontier.push(neigh)
-                            }
+                visited.add(outerLoopCellNumber);
+                outerLoopCellNumber++;
+                continue;
+            }
+
+            let foundEdge:boolean = false;
+            frontier = [outerLoopCellNumber];
+            while (frontier.length > 0) {
+                let currentCellNumber:number = frontier.pop()!;
+                if (visited.has(currentCellNumber))  continue;
+                visited.add(currentCellNumber);
+
+                let currentFrontierCell:[number, number] = [Math.floor(currentCellNumber / width), currentCellNumber % width];
+                let groundType:number = grid[currentFrontierCell[0]][currentFrontierCell[1]];
+                if (groundType === 0) {
+                    let neighbours:number[] = [];
+
+                    for (const modifier of cellModifiers) {
+                        let potentialNewCellNumber:number = currentCellNumber + modifier;
+                        if (potentialNewCellNumber >= 0 && potentialNewCellNumber <= maxCell) neighbours.push(potentialNewCellNumber);
+                    }
+                    for (const modifier of onesCellMofiiers) {
+                        let potentialNewCellNumber:number = currentCellNumber + modifier;
+                        let newRow:number = Math.floor(potentialNewCellNumber / width);
+                        if (newRow !== currentFrontierCell[0])  continue;
+                        neighbours.push(potentialNewCellNumber);
+                    }
+
+                    if (neighbours.length < 4)  foundEdge = true;
+                    for (const neigh of neighbours)  {
+                        if (!visited.has(neigh))
+                            frontier.push(neigh)
                         }
                     }
-                }
-                if (!foundEdge) {
-                    islandCount++;
-                }
+            }
+
+            if (!foundEdge) {
+                // console.log(`found island`)
+                islandCount++;
             }
         }
 
-        currentCell++;
+        outerLoopCellNumber++;
     }
 
     return islandCount;
@@ -76,6 +96,25 @@ function mainClosedIsland():void {
     let grid:number[][];
     let result:number;
     let doQuitIfAssertFails:boolean = true;
+
+    grid = [
+        [0,0,1,0,1,0,0,0,1,1,0,0,0,1,1,0,1,1,0,1],
+        [0,1,1,0,0,0,0,1,0,1,0,1,1,1,1,1,1,1,0,0],
+        [1,1,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,1,1,0],
+        [0,1,0,1,0,0,0,1,1,1,0,0,0,0,0,0,1,1,0,1],
+        [1,1,1,0,0,0,1,1,0,0,1,0,1,1,1,0,0,1,0,0],
+        [0,1,1,1,0,1,0,0,0,1,1,1,1,1,0,1,0,0,1,1],
+        [1,0,0,0,1,1,1,1,0,1,1,0,1,0,0,0,1,0,0,0],
+        [0,1,1,0,1,1,0,0,1,1,1,0,1,1,1,0,1,0,1,0],
+        [0,0,1,1,0,1,0,0,0,0,0,0,1,0,1,1,0,0,1,1],
+        [0,0,1,0,0,0,0,1,0,1,1,1,1,0,1,1,1,0,1,1],
+        [0,0,0,1,0,1,0,0,0,1,1,0,0,0,0,0,1,1,1,1],
+        [0,0,0,0,1,1,0,0,0,0,0,0,1,0,1,1,0,1,0,0],
+        [1,0,0,0,0,0,1,1,1,0,0,1,0,0,0,1,0,0,1,1],
+        [0,1,1,0,1,1,1,0,1,0,0,1,0,0,0,0,1,0,0,0]];
+    result = closedIsland(grid);
+    console.log(`Final result ${result}`);
+    myAssert(result === 5, doQuitIfAssertFails);
     
     grid = [[1,1,1,1,1,1,1,0],[1,0,0,0,0,1,1,0],[1,0,1,0,1,1,1,0],[1,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,0]]
     result = closedIsland(grid);
