@@ -2,23 +2,19 @@ import myAssert from "../march2023/Trie";
 
 function isValid(s: string): boolean {
     let openStack:string[] = [];
-    let forwardBracketMapping:Map<string,string> = new Map();
-    forwardBracketMapping.set('(', ')');
-    forwardBracketMapping.set('[', ']');
-    forwardBracketMapping.set('{', '}');
+    let bracketMapping:Map<string,string> = new Map();
+    bracketMapping.set('(', ')');
+    bracketMapping.set('[', ']');
+    bracketMapping.set('{', '}');
 
-    let backwardBracketMapping:Map<string,string> = new Map();
-    backwardBracketMapping.set(')', '(');
-    backwardBracketMapping.set(']', '[');
-    backwardBracketMapping.set('}', '{');
+    let backwardsSet:Set<string> = new Set(bracketMapping.values());
 
     for (const letter of s) {
-        if (forwardBracketMapping.has(letter)) {
+        if (bracketMapping.has(letter)) {
             openStack.push(letter);
-        } else if (backwardBracketMapping.has(letter)) {
+        } else if (backwardsSet.has(letter)) {
             if (openStack.length === 0)  return false;
-            if (openStack[openStack.length - 1] !== backwardBracketMapping.get(letter))  return false;
-            openStack.pop();
+            if (letter !== bracketMapping.get(openStack.pop()!))  return false;
         }
     }
 
