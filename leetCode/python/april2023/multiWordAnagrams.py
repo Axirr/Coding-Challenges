@@ -175,6 +175,15 @@ Better dict for anagrams
     Map is natural way to do letter count
     But hard to search in constant time
     If keep letter count of words to single digit, could do it by 26 digit string
+
+Generate subarrays and efficiently get remaining letters in full array
+    Subarrays can be generated with itertools
+    If we generate a letter count for the subarray, then subtracting from the whole gets us the remaining letter counts
+Can we generate permutations from letter counts directly
+    Goal: only deal with string as a lettercount, never as a string
+    Unlikely to be possible with itertools
+    Doing it manually:
+        Increasing window size
 */
 
 /*
