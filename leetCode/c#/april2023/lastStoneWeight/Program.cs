@@ -24,29 +24,25 @@ class Program {
 
 public class Solution {
     public int LastStoneWeight(int[] stones) {
-        Array.Sort(stones);
+        PriorityQueue<int, int> myHeap = new PriorityQueue<int, int>();
 
-        int endIndex = stones.Length - 1;
-
-        while (endIndex > 0) {
-            int heavyStone = stones[endIndex];
-            int lightStone = stones[endIndex - 1];
-            Console.WriteLine("heavyStone {0}", heavyStone);
-            Console.WriteLine("lightStone {0}", lightStone);
-
-            if (heavyStone == lightStone)  {
-                endIndex -= 2;
-            } else {
-                endIndex -= 1;
-                stones[endIndex] = heavyStone - lightStone;
-            }
-
-            Array.Sort(stones);
+        foreach (int element in stones) {
+            myHeap.Enqueue(-element, -element);
         }
 
-        if (endIndex < 0) return 0;
+        while (myHeap.Count > 1) {
+            int heavyStone = myHeap.Dequeue();
+            int lightStone = myHeap.Dequeue();
 
-        return stones[0];
+            if (heavyStone != lightStone) {
+                int newWeight = heavyStone - lightStone;
+                myHeap.Enqueue(newWeight, newWeight);
+            }
+        }
+
+        if (myHeap.Count <= 0) return 0;
+
+        return -1 * myHeap.Peek();
     }
 
 }
