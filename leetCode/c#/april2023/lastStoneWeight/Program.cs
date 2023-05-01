@@ -72,7 +72,9 @@ Naive:
 */
 
 /*
-Completion time (minutes):
-Question difficulty:
-How did it go (0 - 6):
+Completion time (minutes): 16
+Question difficulty: Easy
+How did it go (0 - 6): 4
+    Naive solution was easy
+    Had a bit of trouble getting a heap structure from C# for a better solution
 */
