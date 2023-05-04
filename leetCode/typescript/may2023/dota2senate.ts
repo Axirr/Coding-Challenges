@@ -2,45 +2,51 @@ import myAssert from '../march2023/Trie';
 
 function predictPartyVictory(senate: string): string {
     let radiantCode:string = "R";
+    let radiantFullName:string = "Radiant";
+    let direFullName:string = "Dire";
+
+    if (senate.length === 1) {
+        if (senate === radiantCode)  return radiantFullName;
+        else  return direFullName;
+    }
+
     let radiantTotal:number = 0;
     let direTotal:number = 0;
+    let allowedIndices:Set<number> = new Set();
 
-    for (const char of senate) {
-        if (char === radiantCode)  radiantTotal++;
+    for (let i = 0; i < senate.length; i++) { 
+        allowedIndices.add(i);
+        if (senate[i] === radiantCode)  radiantTotal++;
         else  direTotal++;
     }
 
-    let bannedIndices:Set<number> = new Set();
     let banNext:number = 0;
+    while (allowedIndices.size > 1) {
+        if (direTotal <= 0)  return radiantFullName;
+        if (radiantTotal <= 0) return direFullName;
 
-
-    while (true) {
-        if (radiantTotal <= 0)  return "Dire";
-        if (direTotal <= 0)  return "Radiant";
-
-        for (let i:number =0; i < senate.length; i++) {
-            if (bannedIndices.has(i))  {
-                continue;
-            }
-
+        for (const i of allowedIndices) {
             let currentSenator:string = senate[i];
             if (currentSenator === radiantCode) {
                 if (banNext < 0) {
                     radiantTotal--;
-                    if (radiantTotal <= 0)  return "Dire";
-                    bannedIndices.add(i);
+                    if (radiantTotal <= 0)  return direFullName;
+                    allowedIndices.delete(i);
                 }
                 banNext++;
             } else {
                 if (banNext > 0) {
                     direTotal--;
-                    if (direTotal <= 0)  return "Radiant";
-                    bannedIndices.add(i);
+                    if (direTotal <= 0)  return radiantFullName;
+                    allowedIndices.delete(i);
                 } 
                 banNext--;
             }
         }
     }
+
+    if (senate === radiantCode)  return radiantFullName;
+    else  return direFullName;
 };
 
 function mainPredictPartyVictory():void {
