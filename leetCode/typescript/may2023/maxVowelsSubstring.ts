@@ -1,29 +1,17 @@
 import myAssert from "../march2023/Trie";
 
 function maxVowels(s: string, k: number): number {
-    let vowelArray:string[] = ['a','e','i','o','u'];
+    let vowelBitArray:number[] = [1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0];
     let vowelRunningSum:number[] = [0];
-
-    for (let i=0; i < s.length; i++) {
-        let didFind:boolean = false;
-        for (const char of vowelArray)  {
-            if (char === s[i]) {
-                didFind = true;
-                break;
-            }
-        }
-
-        if (didFind) {
-            vowelRunningSum.push(vowelRunningSum[vowelRunningSum.length - 1] + 1);
-        } else {
-            vowelRunningSum.push(vowelRunningSum[vowelRunningSum.length - 1]);
-        }
-    }
+    let aCharCode:number = 'a'.charCodeAt(0);
 
     let maxVowels:number = 0;
-    for (let i=k; i < s.length + 1; i++) {
-        maxVowels = Math.max(maxVowels, vowelRunningSum[i] - vowelRunningSum[i - k]);
+    for (let i=0; i < s.length; i++) {
+        vowelRunningSum.push(vowelRunningSum[vowelRunningSum.length - 1] + vowelBitArray[s.charCodeAt(i) - aCharCode]);
+        if (i >= k) maxVowels = Math.max(maxVowels, vowelRunningSum[i] - vowelRunningSum[i - k]);
     }
+
+    maxVowels = Math.max(maxVowels, vowelRunningSum[s.length] - vowelRunningSum[s.length - k])
 
     return maxVowels;
 };
