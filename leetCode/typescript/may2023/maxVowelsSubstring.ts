@@ -1,30 +1,28 @@
 import myAssert from "../march2023/Trie";
 
 function maxVowels(s: string, k: number): number {
-    let vowelCount:number = 0;
+    let vowelArray:string[] = ['a','e','i','o','u'];
+    let vowelRunningSum:number[] = [0];
 
-    let vowelRegExp:RegExp = new RegExp('[aeiou]');
+    for (let i=0; i < s.length; i++) {
+        let didFind:boolean = false;
+        for (const char of vowelArray)  {
+            if (char === s[i]) {
+                didFind = true;
+                break;
+            }
+        }
 
-    for (let i=0; i < k; i++) {
-        if (s[i].match(vowelRegExp)) {
-            vowelCount++;
+        if (didFind) {
+            vowelRunningSum.push(vowelRunningSum[vowelRunningSum.length - 1] + 1);
+        } else {
+            vowelRunningSum.push(vowelRunningSum[vowelRunningSum.length - 1]);
         }
     }
 
-    let maxVowels:number = vowelCount;
-
-    for (let i=k; i < s.length; i++) {
-        let lastLetter:string = s[i - k];
-        let newLetter:string = s[i];
-
-        if (lastLetter.match(vowelRegExp)) {
-            vowelCount--;
-        }
-        if (newLetter.match(vowelRegExp)) {
-            vowelCount++;
-        }
-
-        maxVowels = Math.max(maxVowels, vowelCount);
+    let maxVowels:number = 0;
+    for (let i=k; i < s.length + 1; i++) {
+        maxVowels = Math.max(maxVowels, vowelRunningSum[i] - vowelRunningSum[i - k]);
     }
 
     return maxVowels;
@@ -35,6 +33,12 @@ function mainMaxVowels():void {
     let k:number;
     let result:number;
     let doQuitIfAssertFails:boolean = true;
+
+    s = "weallloveyou";
+    k = 7;
+    result = maxVowels(s, k);
+    console.log(`Final result ${result}`);
+    myAssert(result === 4, doQuitIfAssertFails);
 
     s = "abciiidef";
     k = 3;
@@ -87,10 +91,19 @@ Naive:
     Subtracting removed
     Time complexity:
         O(n)
+
+Solution weirdly slow relative to averages
+Causes:
+    Regular expressions overkill for this?
+    Search each letter twice, possibly avoidable
+Better:
+    Running vowel sum and then just traverse again subtracting s[i - k] from s[i]
 */
 
 /*
-Completion time (minutes):
-Question difficulty:
-How did it go (0 - 6):
+Completion time (minutes): 16
+Question difficulty: Medium
+    Really seemed more like an Easy
+How did it go (0 - 6): 5
+    Quick, only a few bugs
 */
