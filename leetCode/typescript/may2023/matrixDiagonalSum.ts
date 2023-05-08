@@ -7,18 +7,15 @@ function diagonalSum(mat: number[][]): number {
     let dim:number = mat.length;
     let halfIndex:number = Math.floor(dim / 2);
 
-
-    let doCheck:boolean = false;
-    if (dim % 2 !== 0)  doCheck = true;
-
     while (currentX < dim && currentY < dim) {
         totalSum += mat[currentX][currentY];
-        let reverseY:number = dim - 1 - currentY
-        if (!doCheck || currentX !== halfIndex || reverseY !== halfIndex)  totalSum += mat[currentX][reverseY];
+        totalSum += mat[currentX][dim - 1 - currentY];
 
         currentX++;
         currentY++;
     }
+
+    if (dim % 2 !== 0)  totalSum -= mat[halfIndex][halfIndex];
 
     return totalSum;
 };
