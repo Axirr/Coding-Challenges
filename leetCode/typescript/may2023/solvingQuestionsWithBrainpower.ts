@@ -74,7 +74,8 @@ Faster:
 */
 
 /*
-Completion time (minutes):
-Question difficulty:
-How did it go (0 - 6):
+Completion time (minutes): 10
+Question difficulty: Medium
+How did it go (0 - 6): 4
+    Pretty easy question
 */
