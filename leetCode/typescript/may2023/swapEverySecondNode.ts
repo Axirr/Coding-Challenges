@@ -13,10 +13,10 @@ class ListNode {
 function swapPairs(head: ListNode | null): ListNode | null {
     if (head === null || head.next === null)  return head;
 
-    let evenList:ListNode[] = [head];
+    let evenList:ListNode[] = [];
     let oddList:ListNode[] = [];
-    let currentNode:ListNode | null = head.next;
-    let count = 1;
+    let currentNode:ListNode | null = head;
+    let count = 0;
 
     while (currentNode !== null) {
         if (count % 2 === 1)  oddList.push(currentNode);
@@ -26,33 +26,35 @@ function swapPairs(head: ListNode | null): ListNode | null {
         count++;
     }
 
-    let takeOdd:boolean = false;
     let resultList:ListNode = oddList[0];
     let currentResultNode:ListNode = resultList;
     let oddIndex:number = 1;
     let evenIndex:number = 0;
-    let nodeToAdd:ListNode;
-
 
     while (true) {
-        if (oddIndex <= evenIndex && oddIndex < oddList.length) {
-            nodeToAdd = oddList[oddIndex];
+        if (oddIndex <= evenIndex) {
+            currentResultNode.next = oddList[oddIndex];
             oddIndex++;
         } else {
-            nodeToAdd = evenList[evenIndex];
+            currentResultNode.next = evenList[evenIndex];
             evenIndex++;
         }
 
-        currentResultNode.next = nodeToAdd;
-
-        if (oddIndex === oddList.length && evenIndex === evenList.length) {
-            currentResultNode.next.next = null;
-            break;
-        }
+        if (oddIndex === oddList.length)  break;
 
         currentResultNode = currentResultNode.next;
-        takeOdd = !takeOdd;
     }
+
+    // Add any remaining even list nodes
+    while (evenIndex < evenList.length) {
+        currentResultNode.next!.next = evenList[evenIndex];
+
+        evenIndex++;
+        currentResultNode = currentResultNode.next!;
+    }
+
+    // Null out the next on the new final node
+    currentResultNode.next!.next = null;
 
     return resultList;
 };
@@ -63,6 +65,13 @@ function mainSwapPairs(): void {
     let doQuitIfAssertFails:boolean = true;
     let listResult:number[];
     let correctList:number[];
+
+    head = linkedListFromList([1,2,3,4, 5]);
+    resultHead = swapPairs(head);
+    listResult = listFromLinkedList(resultHead);
+    console.log(listResult);
+    correctList = [2,1,4,3,5];
+    myAssert(listEquality(listResult, correctList), doQuitIfAssertFails);
 
     head = linkedListFromList([1,2,3,4]);
     resultHead = swapPairs(head);
