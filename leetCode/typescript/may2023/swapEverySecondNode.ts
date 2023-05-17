@@ -129,7 +129,16 @@ function listEquality(list1:number[], list2:number[]) {
     return true;
 }
 
-mainSwapPairs();
+//mainSwapPairs();
+
+const funcs = {
+    listEquality,
+    listFromLinkedList,
+    linkedListFromList
+}
+
+// export default {listEquality, listFromLinkedList, linkedListFromList} as linkedListUtils;
+export default funcs;
 
 /*
 Data range/assumptions:
