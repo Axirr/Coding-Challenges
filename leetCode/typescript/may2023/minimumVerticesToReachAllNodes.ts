@@ -2,40 +2,16 @@ import myAssert from '../march2023/Trie';
 import funcs from './swapEverySecondNode';
 
 function findSmallestSetOfVertices(n: number, edges: number[][]): number[] {
-    let resultVertices:Set<number> = new Set();
-    let notVisited:Set<number> = new Set();
-    for (let i = 0; i < n; i++)  notVisited.add(i);
-    let adjacencyList:Map<number,number[]> = new Map();
-    for (const vertNum of notVisited) {
-        adjacencyList.set(vertNum, []);
-    }
+    let parentlessSet:Set<number> = new Set()
     for (const currEdge of edges) {
-        adjacencyList.get(currEdge[0])!.push(currEdge[1])
+        parentlessSet.add(currEdge[0]);
     }
 
-    let setIterator:IterableIterator<number> = notVisited[Symbol.iterator]();
-    while (notVisited.size > 0) {
-        let currentVert:number = setIterator.next().value;
-        notVisited.delete(currentVert);
-        resultVertices.add(currentVert);
-
-        let frontier:number[] = [currentVert];
-        while (frontier.length > 0) {
-            let traverseVert:number = frontier.pop()!;
-            // console.log(`Traverse vert ${traverseVert}`)
-            let neighbours:number[] = adjacencyList.get(traverseVert)!;
-            for (const neigh of neighbours)  {
-                // console.log(`neigh ${neigh}`)
-                if (resultVertices.has(neigh))  resultVertices.delete(neigh)
-                if (notVisited.has(neigh)) {
-                    frontier.push(neigh);
-                }
-                notVisited.delete(neigh);
-            }
-        }
+    for (const currEdge of edges) {
+        parentlessSet.delete(currEdge[1]);
     }
 
-    return Array.from(resultVertices);
+    return Array.from(parentlessSet);
 };
 
 function mainFindSmallestSetOfVertices():void {
@@ -104,10 +80,30 @@ Problem: order of choice of traversal vertices
         If that is chosen first, it won't connect to the backwards ones
     Treating as an undirected list would solve this problem
     Maybe create more
+
+Better solution than removing from result list?
+    Doing most neighbours first might help but unlikely a guarantee
+Double adjacency list, with backwards nodes as negative
+    Because are connected to those nodes by a single indirection
+        If more than one, can't use this?
+    But what about a simple linear structure
+        E.g. 1 -> 2 -> 3
+        Broken by that rule
+    For negatives, get their full non-negative neighbours
+        If this covers non-negative neighbours of parent, don't add that old parent
+    Seems ugly
+
+Nodes without parents must be included?
+    I.e. if no incoming edges
+    Do all those first?
+    Will fully cover I think
 */
 
 /*
-Completion time (minutes):
-Question difficulty:
-How did it go (1 - 6):
+Completion time (minutes): 31
+Question difficulty: Medium
+How did it go (1 - 6): 3
+    Took me a fair amount of time
+    Initial strategy flawed
+    Some bugs
 */
