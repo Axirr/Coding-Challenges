@@ -1,82 +1,48 @@
 import myAssert from "../march2023/Trie";
 
 function isBipartite(graph: number[][]): boolean {
-    // Traverse, recording visited
     let n:number = graph.length;
     
-    let potentialStarts:Set<number> = new Set();
-    for (let i = 0; i < n; i++)  potentialStarts.add(i)
-
-    let disjointStarts:number[] = []
-
-    // Get a starting node for each disjoint part of the graph
-    for (const firstNode of potentialStarts) {
-        potentialStarts.delete(firstNode);
+    let visitedSet:Set<number> = new Set();
+    for (let firstNode = 0; firstNode < n; firstNode++) {
         if (graph[firstNode].length === 0) continue;
-        disjointStarts.push(firstNode);
-        let visitedSet:Set<number> = new Set();
+
+        // Initialize two partitions and put starting node in one of them
+        let set1:Set<number> = new Set();
+        let set2:Set<number> = new Set();
+        set1.add(firstNode);
         let frontier:number[] = [firstNode];
+
         while (frontier.length > 0) {
             let currentNode:number = frontier.pop()!;
             visitedSet.add(currentNode);
             for (let i = 0; i < graph[currentNode].length; i++) {
                 const neigh = graph[currentNode][i];
-                potentialStarts.delete(neigh)
-                if (!visitedSet.has(neigh))  frontier.push(neigh);
+
+                // Add any unvisited neighbours to the search frontier
+                if (!visitedSet.has(neigh))  {
+                    visitedSet.add(neigh);
+                    frontier.push(neigh);
+                }
+            }
+
+            // Determine which set the currentNode is in
+            let selfSet:Set<number> = set1;
+            let setForNeighs:Set<number> = set2;
+            if (!set1.has(currentNode))  {
+                selfSet = set2;
+                setForNeighs = set1;
+            }
+
+            for (const neigh of graph[currentNode]) {
+                if (selfSet.has(neigh))  return false;
+                setForNeighs.add(neigh);
+                if (!visitedSet.has(neigh))  frontier.push(neigh)
             }
         }
     }
-
-    // Get valid bipartition for each disjoint part of the graph, or return false if no valid partition exists
-    // let setPairs:[Set<number>, Set<number>][] = [];
-    for (const startNode of disjointStarts) {
-        let newSet = setsForStartingNode(startNode, graph);
-        if (newSet === null)  return false;
-        // setPairs.push(newSet);
-    }
     return true;
 };
-
-    // // Determine partitions for disjoints that could conflict because have shared nodes
-    // let tempSetPairs:Set<[Set<number>, Set<number>]> = new Set();
-    // for (let i = 0; i < setPairs.length; i++) {
-    //     for (let j = i + 1; j < setPairs.length; j++) {
-    //         let firstSetPair = setPairs[i];
-    //         let firstOther:Set<number> = new Set();
-    //         for (const element of firstSetPair[0])  firstOther.add(element);
-    //         for (const element of firstSetPair[1])  firstOther.add(element);
-    //         let secondSetPair = setPairs[j];
-    //         let secondOther = [...secondSetPair[0], ...secondSetPair[1]]
-    //         for (const element of secondOther) {
-    //             if (firstOther.has(element)) {
-    //                 tempSetPairs.add(firstSetPair);
-    //                 tempSetPairs.add(secondSetPair);
-    //                 break;
-    //             }
-    //         }
-    //     }
-    // }
-    // setPairs = [...tempSetPairs];
-
-    // // Recursively permutate possibly inconsistent sets until none left (indicating failure) or count has reached the necessary "window size"
-    // let currentSetPairs = setPairs;
-    // let count:number = 0;
-    // let futureSetPairs:[Set<number>, Set<number>][] = [];
-    // while (currentSetPairs.length > 0 && count < setPairs.length) {
-    //     futureSetPairs = [];
-    //     for (let i = 0; i < currentSetPairs.length; i++) {
-    //         for (let j = i + 1; j < currentSetPairs.length; j++) {
-    //             let setPair1 = currentSetPairs[i];
-    //             let setPair2 = currentSetPairs[j];
-    //             let newSetPairList = combineSet(setPair1, setPair2);
-    //             for (const element of newSetPairList)  futureSetPairs.push(element);
-    //         }
-    //     }
-    //     currentSetPairs = futureSetPairs;
-    //     count++;
-    // }
-
-    // return count === setPairs.length;
 
 function setsForStartingNode(firstNode:number, graph:number[][]):[Set<number>, Set<number>] | null {
     let set1:Set<number> = new Set();
