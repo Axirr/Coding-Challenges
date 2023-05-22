@@ -2,47 +2,76 @@ import myAssert from "../march2023/Trie";
 
 function isBipartite(graph: number[][]): boolean {
     let n:number = graph.length;
+    let colors:Array<boolean | null> = [];
+    for (let i = 0; i < n; i++) {
+        colors.push(null);
+    }
     
+    let haveSwapped:boolean = false;
+    for (let currentNode = 0; currentNode < n; currentNode++) {
+        console.log
+        if (graph[currentNode].length === 0) continue;
+
+        let trueCount:number = 0;
+        let falseCount:number = 0;
+        for (const neigh of graph[currentNode]) {
+            if (colors[neigh] !== null) {
+                if (colors[neigh])  trueCount++;
+                else  falseCount++;
+            }
+        }
+
+        if (trueCount > 0 && falseCount > 0)  {
+            if (haveSwapped) return false;
+            else colors = swapOutwards(currentNode, graph, colors);
+            if (trueCount > 0)  colors[currentNode] = true;
+            else colors[currentNode] = false;
+        } else {
+            if (trueCount > 0)  colors[currentNode] = false;
+            else colors[currentNode] = true;
+        }
+    }
+
+    console.log(colors)
+    return true;
+};
+
+function swapOutwards(startNode:number, graph:number[][], colors:Array<boolean | null>) {
     let visitedSet:Set<number> = new Set();
-    for (let firstNode = 0; firstNode < n; firstNode++) {
-        if (graph[firstNode].length === 0) continue;
-
-        // Initialize two partitions and put starting node in one of them
-        let set1:Set<number> = new Set();
-        let set2:Set<number> = new Set();
-        set1.add(firstNode);
-        let frontier:number[] = [firstNode];
-
-        while (frontier.length > 0) {
-            let currentNode:number = frontier.pop()!;
-            visitedSet.add(currentNode);
-            for (let i = 0; i < graph[currentNode].length; i++) {
-                const neigh = graph[currentNode][i];
-
-                // Add any unvisited neighbours to the search frontier
-                if (!visitedSet.has(neigh))  {
-                    visitedSet.add(neigh);
+    let frontier:number[] = [startNode];
+    while (frontier.length > 0) {
+        let currentNode:number = frontier.pop()!;
+        visitedSet.add(currentNode);
+        let adjList:number[] = graph[currentNode];
+        for (let i = 0; i < adjList.length; i++) {
+            let neigh:number = adjList[i];
+            if (!visitedSet.has(neigh) && colors[neigh] !== null) {
+                visitedSet.add(neigh);
+                if (colors[neigh] === colors[currentNode])  {
+                    console.log(colors)
+                    colors[neigh] = !colors[neigh];
                     frontier.push(neigh);
+                    console.log()
+                    console.log(colors)
+                    console.log()
                 }
-            }
-
-            // Determine which set the currentNode is in
-            let selfSet:Set<number> = set1;
-            let setForNeighs:Set<number> = set2;
-            if (!set1.has(currentNode))  {
-                selfSet = set2;
-                setForNeighs = set1;
-            }
-
-            for (const neigh of graph[currentNode]) {
-                if (selfSet.has(neigh))  return false;
-                setForNeighs.add(neigh);
-                if (!visitedSet.has(neigh))  frontier.push(neigh)
             }
         }
     }
-    return true;
-};
+    return colors;
+}
+
+function swapColors(colors:Array<boolean | null>, n:number):Array<boolean | null> {
+    console.log(`old colors`)
+    for (const element of colors)  console.log(element)
+    for (let i = 0; i < n; i++) {
+        if (colors[i] !== null)  colors[i] = !colors[i];
+    }
+    console.log()
+    console.log('new colors')
+    for (const element of colors)  console.log(element)
+    return colors;
+}
 
 function setsForStartingNode(firstNode:number, graph:number[][]):[Set<number>, Set<number>] | null {
     let set1:Set<number> = new Set();
@@ -100,6 +129,16 @@ function mainIsBipartite():void {
     let result:boolean;
     let doQuitIfAssertFails:boolean = true;
 
+    graph = [[1],[0,3],[3],[1,2]];
+    result = isBipartite(graph);
+    console.log(`Final result ${result}`);
+    myAssert(result, doQuitIfAssertFails);
+
+    graph = [[1,3],[0,2],[1,3],[0,2]];
+    result = isBipartite(graph);
+    console.log(`Final result ${result}`);
+    myAssert(result, doQuitIfAssertFails);
+
     graph = [[1,2],[0],[0],[4],[3],[],[8],[],[6],[10,11],[9],[9],[14],[],[12],[16,17],[15],[15],[19,20],[18],[18],[22,23],[21],[21],[26],[],[24],[28,29],[27],[27]];
     result = isBipartite(graph);
     console.log(`Final result ${result}`);
@@ -126,10 +165,6 @@ function mainIsBipartite():void {
     console.log(`Final result ${result}`);
     myAssert(!result, doQuitIfAssertFails);
 
-    graph = [[1,3],[0,2],[1,3],[0,2]];
-    result = isBipartite(graph);
-    console.log(`Final result ${result}`);
-    myAssert(result, doQuitIfAssertFails);
 }
 
 mainIsBipartite();
