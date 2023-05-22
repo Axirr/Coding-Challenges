@@ -1,127 +1,129 @@
 import myAssert from '../march2023/Trie';
 import funcs from './swapEverySecondNode';
 
+class DoublyLinkedList {
+    value:String | number;
+    parents:DoublyLinkedList[];
+    children:DoublyLinkedList[];
+
+    constructor(value:String | number) {
+        this.value = value;
+        this.parents = [];
+        this.children = [];
+    }
+
+    addParent(node:DoublyLinkedList, isFirst = true) {
+        this.parents.push(node);
+        if (isFirst)  node.addChild(this, false);
+    }
+
+    addChild(node:DoublyLinkedList, isFirst = true) {
+        this.children.push(node);
+        if (isFirst) node.addParent(this, false);
+    }
+
+    childrenPrettyPrint() {
+        console.log(this.value);
+        for (const child of this.children) {
+            console.log(`child ${child.value}`);
+        }
+        for (const child of this.children) {
+            child.childrenPrettyPrint();
+        }
+    }
+
+    parentPrettyPrint() {
+        console.log(this.value);
+        for (const parent of this.parents) {
+            console.log(`parent ${parent.value}`);
+        }
+        for (const parent of this.parents) {
+            parent.parentPrettyPrint();
+        }
+    }
+}
+
 function calcEquation(equations: string[][], values: number[], queries: string[][]): number[] {
-    // Convert equations to strings so they are set searchable/hashable?
-    let allVariables:Set<string> = new Set();
-    for (const eqn of equations) {
-        allVariables.add(eqn[0]);
-        allVariables.add(eqn[1]);
-    }
-    // for (const myVar of allVariables)  console.log(`var ${myVar}`)
-    let pairRelationMap:Map<string, Set<string>> = new Map();
-    for (const myVar of allVariables)  pairRelationMap.set(myVar, new Set());
-    for (const myEqn of equations)  {
-        pairRelationMap.get(myEqn[0])!.add(myEqn[1]);
-        pairRelationMap.get(myEqn[1])!.add(myEqn[0]);
-    }
-    for (const pair of pairRelationMap)  console.log(`key ${pair[0]} valye ${pair[1]}`);
+    // Make a graph connection numerator to answer and answer to denominator
+    let nodeMap:Map<string, DoublyLinkedList> = new Map();
 
-    let solvedVariables:Map<string, number> = new Map();
-    // solvedVariables.set("a", 6)
-    let index = 0;
+    for (let i = 0; i < equations.length; i++) {
+        const currEquation = equations[i];
+        const currValue = values[i];
+        let firstVar:string = currEquation[0];
+        let secondVar:string = currEquation[1];
 
-    while (index < equations.length) {
-        let currentEquation:string[] = equations[index];
-        // Check if either variable is solved
-        let firstVar:string = currentEquation[0];
-        let secondVar:string = currentEquation[1];
-        if (solvedVariables.has(firstVar) && solvedVariables.has(secondVar)) {
-            index++;
+        if (!nodeMap.has(firstVar))  nodeMap.set(firstVar, new DoublyLinkedList(firstVar));
+        if (!nodeMap.has(secondVar))  nodeMap.set(secondVar, new DoublyLinkedList(secondVar));
+
+        let valueNode:DoublyLinkedList = new DoublyLinkedList(currValue);
+        valueNode.addParent(nodeMap.get(firstVar)!);
+        valueNode.addChild(nodeMap.get(secondVar)!);
+    }
+
+    let result:number[] = []
+    for (let i = 0; i < queries.length; i++) {
+        const currQuery = queries[i];
+        if (!nodeMap.has(currQuery[0]) || !nodeMap.has(currQuery[1]))  {
+            result.push(-1.0);  
             continue;
         }
 
-        // If so, equation can be solved on its own
-        if (solvedVariables.has(firstVar) || solvedVariables.has(secondVar)) {
-            let currSolVar:string = solvedVariables.has(firstVar) ? firstVar : secondVar;
-            let currUnsolved:string = solvedVariables.has(firstVar) ? secondVar : firstVar;
-            let solvedVarResult:number = currSolVar === secondVar ? values[index] / solvedVariables.get(currSolVar)! : solvedVariables.get(currSolVar)! / values[index];
-            solvedVariables.set(currUnsolved, solvedVarResult);
+        let root:DoublyLinkedList = nodeMap.get(currQuery[0])!;
+        let storedValues:number | null = null;
+        let toChildren:boolean = true;
+        while (true) {
+            let visitedNodes:Set<DoublyLinkedList> = new Set();
+            storedValues = depthFirstSearch(root, currQuery[1], toChildren, visitedNodes);
 
-            equations.splice(index, 1);
-            index = 0;
+            if (storedValues !== null)  break
+
+            if (toChildren)  toChildren = false;
+            else break;
+        }
+
+        if (storedValues === null) {
+            result.push(-1.0);
             continue;
-        } 
+        }
+        result.push(storedValues);
+    }
 
-        const stringConst:string = "not found"
-        let solvableVar:string = stringConst;
-        for (const myVar of pairRelationMap[firstVar]) {
-            if (myVar === secondVar)  continue;
-            if (pairRelationMap.get(firstVar)!.has(myVar) && pairRelationMap.get(secondVar)!.has(myVar))  {
-                console.log(`${myVar} is solvable`)
-                solvableVar = myVar;
-                break;
+    return result;
+}
+
+function depthFirstSearch(root:DoublyLinkedList, targetVariable:string, toChildren:boolean, visitedNodes:Set<DoublyLinkedList>):number | null {
+    visitedNodes.add(root);
+    if (root.value === targetVariable)  {
+        if (typeof root.value === "string")  return 1
+        else root.value;
+    }
+
+    let children:DoublyLinkedList[] = toChildren ? root.children : root.parents;
+    let count = 0;
+    while (true) {
+        for (let i = 0; i < children.length; i++) {
+            let currChild:DoublyLinkedList = children[i];
+            if (visitedNodes.has(currChild))  continue;
+            visitedNodes.add(currChild);
+            let tempNodes:number | null = depthFirstSearch(currChild, targetVariable, toChildren, visitedNodes);
+            if (tempNodes !== null)  {
+                let pushValue:number = 1;
+                if (typeof root.value === "number") {
+                    pushValue = root.value;
+                    if (children !== root.children)  pushValue = 1 / pushValue;
+                }
+                return tempNodes * pushValue;
             }
         }
 
-        if (solvableVar === stringConst) {
-            index++;
-            continue;
-        }
-
-        // Create all equations as 2 char string
-        //  20^2 worst case
-
-        // Search equations for either orientation of first, solveable
-
-        // Search equations for either orientation of second, solveable
-
-        // Use one of four (2 with orientation?) different variables to solve for solvable
-
-        // Set solvedVariable[solvable]
-
-        // Remove equation
-
-        // i = 0 and continue
-
-        // // For every other equation with firstVar, check if equation exists with thirdVar and secondVar
-        // let varArray:string[] = [firstVar, secondVar];
-        // for (const currentVar of varArray) {
-        //     for (let j = 0; j < equations.length; j++) {
-        //         if (j === index)  continue
-        //         let otherEqn:string[] = equations[j];
-        //         if (otherEqn[0] === currentVar || otherEqn[1] === currentVar) {
-        //             let thirdVar = otherEqn[0] === currentVar ? otherEqn[1] : otherEqn[0];
-        //             for (let k = 0; k < equations.length; k++) {
-        //                 if (k === j || k === index)  continue
-        //                 let thirdEqn:string[] = equations[k];
-        //                 if (thirdEqn[0] === thirdVar || thirdEqn[1] === thirdVar) {
-        //                     let fourthVar:string = thirdEqn[0] === thirdVar ? thirdEqn[1] : thirdEqn[0];
-        //                     if (fourthVar === currentVar)  {
-        //                         console.log(`Variable ${currentVar} is solvable`);
-        //                         return [1]
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        
-
-        index++;
+        count++;
+        if (count > 1)  break
+        children = toChildren ? root.parents : root.children;
     }
 
-    for (const pair of solvedVariables)  console.log(`key ${pair[0]} value ${pair[1]}`)
-
-    let results:number[] = [];
-
-    for (let i = 0; i < queries.length; i++) {
-        let currentQuery:string[] = queries[i];
-        let firstVar:string = currentQuery[0];
-        let secondVar:string = currentQuery[1];
-        let currentResult:number;
-        if (solvedVariables.has(firstVar) && solvedVariables.has(secondVar)) {
-            currentResult = solvedVariables.get(firstVar)! / solvedVariables.get(secondVar)!;
-        // Any queries with query[0] === query[1]  solvable as 1
-        } else if (firstVar === secondVar)  currentResult = 1.0; 
-        else  currentResult = -1.0;
-        results.push(currentResult);
-    }
-
-
-    return results;
-};
+    return null
+}
 
 function mainCalcEquation():void {
     let equations:string[][];
@@ -131,14 +133,21 @@ function mainCalcEquation():void {
     let correctResult:number[];
     let doQuitIfAssertFail:boolean = true;
 
-    equations = [["a","b"], ["b", "c"], ["a", "c"]]
-    values = [2.0, 1 / 2, 8];
+    equations = [["a","e"],["b","e"]];
+    values = [4.0,3.0];
+    queries = [["a","b"],["e","e"],["x","x"]];
+    result = calcEquation(equations, values, queries);
+    console.log(`final result ${result}`);
+    correctResult = [4 / 3,1.00000,-1.00000];
+    myAssert(funcs.listEquality(result, correctResult), doQuitIfAssertFail);
+
+    equations = [["a","b"], ["b", "c"]]
+    values = [2.0, 1 / 2];
     queries = [["b","a"]];
     result = calcEquation(equations, values, queries);
     console.log(`final result ${result}`);
     correctResult = [ 1 / 2];
     myAssert(funcs.listEquality(result, correctResult), doQuitIfAssertFail);
-    return;
 
     equations = [["a","b"],["b","c"]]
     values = [2.0,3.0];
@@ -147,6 +156,8 @@ function mainCalcEquation():void {
     console.log(`final result ${result}`);
     correctResult = [6.00000,0.50000,-1.00000,1.00000,-1.00000];
     myAssert(funcs.listEquality(result, correctResult), doQuitIfAssertFail);
+
+
 }
 
 mainCalcEquation();
@@ -177,6 +188,11 @@ Then evaluate queries
     If all variables solved, evaluate
     Else, -1
 
+Depth first search, while storing path and depth:
+    Return depth
+        -1 if target not found
+    Push all nodes to a stack
+    If depth > -1, can get values from the stack
 */
 
 /*
