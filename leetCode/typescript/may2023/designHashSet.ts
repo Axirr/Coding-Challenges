@@ -1,20 +1,41 @@
 class MyHashSet {
-    myMap:Set<number>;
+    myArray:Array<number | null>;
 
     constructor() {
-        this.myMap = new Set();
+        this.myArray = Array(64).fill(null);
     }
 
     add(key: number): void {
-        this.myMap.add(key);
+        let hashKey = this.hashFunction(key);
+        if (hashKey > this.myArray.length) {
+            let newLength:number = this.myArray.length;
+            while (newLength < hashKey) {
+                newLength*=2;
+            }
+            newLength = Math.min(newLength, 10**6);
+            let newArray = Array(newLength).fill(null);
+            for (let index = 0; index < this.myArray.length; index++) {
+                newArray[index] = this.myArray[index];
+            }
+            this.myArray = newArray;
+        }
+        this.myArray[this.hashFunction(key)] = key;
     }
 
     remove(key: number): void {
-        this.myMap.delete(key);
+        let hashKey:number = this.hashFunction(key);
+        if (hashKey >= this.myArray.length)  return;
+        this.myArray[this.hashFunction(key)] = null;
     }
 
     contains(key: number): boolean {
-        return this.myMap.has(key);
+        let hashKey:number = this.hashFunction(key);
+        if (hashKey >= this.myArray.length)  return false;
+        return this.myArray[this.hashFunction(key)] !== null;
+    }
+
+    hashFunction(key:number): number {
+        return key;
     }
 }
 
@@ -28,7 +49,15 @@ class MyHashSet {
 
 function mainMyHashSet():void {
     let myHashSet:MyHashSet = new MyHashSet();
+    myHashSet.add(7);
+    console.log(myHashSet.contains(7));
+    console.log(myHashSet.contains(81));
+    myHashSet.add(81);
+    console.log(myHashSet.contains(7));
+    console.log(myHashSet.contains(81));
 }
+
+mainMyHashSet();
 
 /*
 Data range/assumptions:
@@ -53,6 +82,11 @@ Hash set:
     Should have constant time lookup
     The way it is defined in the problem, seems more like just a set
         Don't re-add duplicates
+
+Proper hash set:
+    Hash function enables O(1) lookup because generates index
+    Simple version: use key as direct index
+        Make a list with 10^6 elements will null in them
 */
 
 /*
