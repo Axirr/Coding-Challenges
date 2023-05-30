@@ -62,7 +62,9 @@ Naive:
 */
 
 /*
-Completion time (minutes):
-Question difficulty:
-How did it go (1 - 6):
+Completion time (minutes): 5
+Question difficulty: Easy
+How did it go (1 - 6): 6
+    Easy question
+    No bugs
 */
