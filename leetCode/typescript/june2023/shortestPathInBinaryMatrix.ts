@@ -3,15 +3,18 @@ import myAssert from '../march2023/Trie';
 function shortestPathBinaryMatrix(grid: number[][]): number {
     if (grid[0][0] === 1)  return -1;
     let destXindex:number = grid[0].length - 1;
-    let destYindex:number = grid.length - 1;
-    if (destXindex === 0 && destYindex === 0) return 1;
+    let destgridYindexConstant:number = grid.length - 1;
+    if (destXindex === 0 && destgridYindexConstant === 0) return 1;
 
-    let xIndex:number = 0;
-    let yIndex:number = 1;
-
+    let visitedGrid:number[][] = [];
+    for (let i = 0; i <= destgridYindexConstant; i++) {
+        let newArray:number[] = Array(destXindex + 1).fill(0);
+        visitedGrid.push(newArray);
+    }
+    const gridXindexConstant:number = 0;
+    const gridYindexConstant:number = 1;
 
     let nodeQueue:[number, number][] = [[0, 0]];
-    let visited:Set<string> = new Set();
     let currentDistance:number = 2;
     let directions:[number, number][] = [
         [0,1],
@@ -24,28 +27,21 @@ function shortestPathBinaryMatrix(grid: number[][]): number {
         [-1, -1],
     ]
 
-    function coorValid(tup:[number, number]):boolean {
-        if (tup[xIndex] < 0 || tup[xIndex] > destXindex) return false;
-        if (tup[yIndex] < 0 || tup[yIndex] > destYindex) return false;
-        return true;
-    }
-
     while (nodeQueue.length > 0) {
         let newNodeQueue:[number, number][] = [];
         while (nodeQueue.length > 0) {
             let currentCoor:[number, number] = nodeQueue.pop()!;
             for (let i = 0; i < directions.length; i++) {
                 let currDirection:[number, number] = directions[i];
-                let newCoor:[number, number] = addTup(currentCoor, currDirection);
+                let newCoor:[number, number] = [currentCoor[0] + currDirection[0], currentCoor[1] + currDirection[1]];
 
-                if (!coorValid(newCoor)) continue
-                if (grid[newCoor[xIndex]][newCoor[yIndex]] === 1) continue;
+                if (newCoor[gridXindexConstant] < 0 || newCoor[gridXindexConstant] > destXindex || newCoor[gridYindexConstant] < 0 || newCoor[gridYindexConstant] > destgridYindexConstant)  continue;
+                if (grid[newCoor[gridXindexConstant]][newCoor[gridYindexConstant]] === 1) continue;
 
-                if (newCoor[xIndex] === destXindex && newCoor[yIndex] === destYindex)  return currentDistance;
+                if (newCoor[gridXindexConstant] === destXindex && newCoor[gridYindexConstant] === destgridYindexConstant)  return currentDistance;
 
-                let stringNewCoor:string = newCoor[xIndex].toString() + "," + newCoor[yIndex].toString();
-                if (!visited.has(stringNewCoor)) {
-                    visited.add(stringNewCoor);
+                if (visitedGrid[newCoor[gridXindexConstant]][newCoor[gridYindexConstant]] !== 1) {
+                    visitedGrid[newCoor[gridXindexConstant]][newCoor[gridYindexConstant]] = 1;
                     newNodeQueue.push(newCoor);
                 }
             }
@@ -57,10 +53,6 @@ function shortestPathBinaryMatrix(grid: number[][]): number {
 
     return -1;
 };
-
-function addTup(tup1:[number, number], tup2:[number, number]):[number, number] {
-    return [tup1[0] + tup2[0], tup1[1] + tup2[1]]
-}
 
 function mainShortestPathBinaryMatrix():void {
     let grid:number[][];
@@ -78,6 +70,11 @@ function mainShortestPathBinaryMatrix():void {
     myAssert(result === 4, doQuitIfAssertFails);
 
     grid = [[1,0,0],[1,1,0],[1,1,0]];
+    result = shortestPathBinaryMatrix(grid);
+    console.log(`Final result ${result}`);
+    myAssert(result === -1, doQuitIfAssertFails);
+
+    grid = [[0,0,0],[1,1,0],[1,1,1]];
     result = shortestPathBinaryMatrix(grid);
     console.log(`Final result ${result}`);
     myAssert(result === -1, doQuitIfAssertFails);
