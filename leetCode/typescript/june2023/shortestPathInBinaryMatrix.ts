@@ -1,16 +1,13 @@
 import myAssert from '../march2023/Trie';
 
+// Writes over the grid as search progresses
+// Efficient but causes side effects
 function shortestPathBinaryMatrix(grid: number[][]): number {
     if (grid[0][0] === 1)  return -1;
     let destXindex:number = grid[0].length - 1;
     let destgridYindexConstant:number = grid.length - 1;
     if (destXindex === 0 && destgridYindexConstant === 0) return 1;
 
-    let visitedGrid:number[][] = [];
-    for (let i = 0; i <= destgridYindexConstant; i++) {
-        let newArray:number[] = Array(destXindex + 1).fill(0);
-        visitedGrid.push(newArray);
-    }
     const gridXindexConstant:number = 0;
     const gridYindexConstant:number = 1;
 
@@ -40,8 +37,8 @@ function shortestPathBinaryMatrix(grid: number[][]): number {
 
                 if (newCoor[gridXindexConstant] === destXindex && newCoor[gridYindexConstant] === destgridYindexConstant)  return currentDistance;
 
-                if (visitedGrid[newCoor[gridXindexConstant]][newCoor[gridYindexConstant]] !== 1) {
-                    visitedGrid[newCoor[gridXindexConstant]][newCoor[gridYindexConstant]] = 1;
+                if (grid[newCoor[gridXindexConstant]][newCoor[gridYindexConstant]] !== 1) {
+                    grid[newCoor[gridXindexConstant]][newCoor[gridYindexConstant]] = 1;
                     newNodeQueue.push(newCoor);
                 }
             }
