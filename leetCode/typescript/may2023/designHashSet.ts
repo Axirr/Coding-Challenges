@@ -101,14 +101,24 @@ function mainMyHashSet():void {
     let maxSize:number = 1000000;
     let divisor:number = Math.ceil(maxSize / currentSize);
     let bucketCount:number[] = Array(divisor).fill(0);
-    let attempts:number = 10000000;
+    let attempts:number = 100;
+    let randTotal:number = 0;
+    let hashTotalRand:number = 0;
+    let hashTotalIndex:number = 0;
     for (let i = 0; i < attempts; i++) {
-        let randNum:number = Math.floor(Math.random() * (maxSize - 1));
-        let hashKey:number = myHashSet.hashFunction(randNum);
-        let bucketKey:number = hashKey % divisor;
+        let hashOfIndex:number = myHashSet.hashFunction(i);
+        hashTotalIndex+=hashOfIndex;
+        let bucketKey:number = hashOfIndex % divisor;
         bucketCount[bucketKey] = bucketCount[bucketKey] + 1;
+        let randNum:number = Math.floor(Math.random() * (maxSize - 1));
+        randTotal+= randNum;
+        let hashKey:number = myHashSet.hashFunction(randNum);
+        hashTotalRand += hashKey;
+        console.log(bucketCount);
     }
-    console.log(bucketCount);
+    console.log(`Rand average ${(randTotal / attempts) / maxSize}`);
+    console.log(`Normalized hash average ${(hashTotalRand / attempts) / currentSize}`);
+    console.log(`Non-random hash average ${(hashTotalIndex / attempts) / currentSize}`);
 }
 
 mainMyHashSet();
