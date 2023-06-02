@@ -7,8 +7,6 @@ function maximumDetonation(bombs: number[][]): number {
 
     let maxDetonations:number = 1;
     for (let i = 0; i < n; i++) {
-        if (memo.has(i))  continue;
-
         let stack:number[] = [i];
         let detonated:Set<number> = new Set([i]);
         while (stack.length > 0) {
@@ -29,7 +27,6 @@ function maximumDetonation(bombs: number[][]): number {
                         for (const indirectBombIndex of jBombs) {
                             detonated.add(indirectBombIndex);
                         }
-                        for (const whocares of detonated)  console.log(whocares)
                     } else {
                         detonated.add(j);
                         stack.push(j);
@@ -132,4 +129,5 @@ Completion time (minutes): 118
 Question difficulty: Medium
 How did it go (1 - 6): 2
     Got stuck on a very tricky bug for a long time
+    Think my memoization was assuming commutative when it isn't 
 */
