@@ -21,7 +21,6 @@ function maximumDetonation(bombs: number[][]): number {
                 let myDistance:number = distance([potentialNeighbourBomb[0], potentialNeighbourBomb[1]], [currentBomb[0], currentBomb[1]]) 
                 let temp = currentRadius - myDistance;
                 if (temp >= FLOAT_EPSILON) {
-                    detonated.add(j);
                     if (memo.has(j))  {
                         let jBombs:Set<number> = memo.get(j)!;
                         for (const indirectBombIndex of jBombs) {
