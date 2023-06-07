@@ -3,26 +3,19 @@ import myAssert from "../march2023/Trie";
 function minFlips(a:number, b:number, c:number):number {
     let orAB:number = a | b;
     let andAB:number = a & b;
-    let xorAB = orAB ^ c;
-    let xorCount:number = 0;
-    while (xorAB > 0) {
+
+    let count:number = 0;
+    while (orAB > 0 || c > 0) {
         let cBit:number = c % 2;
-        let orBit:number = xorAB % 2;
-        let andBit:number = andAB % 2;
+        count += cBit ^ (orAB % 2);
+        count += ~cBit & (andAB % 2);
 
-        if (cBit === 0) {
-            if (andBit === 1)  xorCount += 2;
-            else if (orBit === 1) xorCount += 1;
-        } else {
-            xorCount += xorAB % 2;
-        }
-
-        xorAB = xorAB >> 1;
+        orAB = orAB >> 1;
         c = c >> 1;
         andAB = andAB >> 1;
     }
 
-    return xorCount;
+    return count;
 }
 
 function mainMinFlipsMakeEqaul():void {
@@ -30,7 +23,18 @@ function mainMinFlipsMakeEqaul():void {
     let b:number;
     let c:number;
     let result:number;
-    let doQuitIfAssertFails:boolean = false;
+    let doQuitIfAssertFails:boolean = true;
+
+    a = 8;
+    b = 3;
+    c = 5;
+    //      1000
+    //      0011
+    // OR   1011
+    //      0101
+    result = minFlips(a, b, c);
+    console.log(`final result ${result}`);
+    myAssert(result === 3, doQuitIfAssertFails);
 
     a = 2;
     b = 6;
@@ -50,47 +54,6 @@ function mainMinFlipsMakeEqaul():void {
     myAssert(result === 0, doQuitIfAssertFails);
     return
 
-    a = 3;
-    b = 0;
-    c = 1;
-    result = minFlips(a, b, c);
-    console.log(`final result ${result}`);
-    myAssert(result === 1, doQuitIfAssertFails);
-
-    a = 1024;
-    b = 5;
-    c = 5;
-    result = minFlips(a, b, c);
-    console.log(`final result ${result}`);
-    myAssert(result === 0, doQuitIfAssertFails);
-
-    a = 9;
-    b = 9;
-    c = 333;
-    result = minFlips(a, b, c);
-    console.log(`final result ${result}`);
-    myAssert(result === 0, doQuitIfAssertFails);
-
-    a = -5;
-    b = 9;
-    c = -5;
-    result = minFlips(a, b, c);
-    console.log(`final result ${result}`);
-    myAssert(result === 0, doQuitIfAssertFails);
-
-    a = 7;
-    b = 0;
-    c = 13456789;
-    result = minFlips(a, b, c);
-    console.log(`final result ${result}`);
-    myAssert(result === 3, doQuitIfAssertFails);
-    
-    a = 15;
-    b = 16;
-    c = 3;
-    result = minFlips(a, b, c);
-    console.log(`final result ${result}`);
-    myAssert(result === 2, doQuitIfAssertFails);
 }
 
 mainMinFlipsMakeEqaul();
@@ -101,13 +64,6 @@ Data range/assumptions:
 
 /*
 Tests:
-0
-Max value
-Negative
-No flips (i.e. two equal)
-    Check for each pair
-All digits need to be flipped
-Large but few flips
 */
 
 /*
