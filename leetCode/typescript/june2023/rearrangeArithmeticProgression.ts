@@ -12,6 +12,7 @@ function canMakeArithmeticProgression(arr: number[]): boolean {
         let diff:number = arr[i+1] - arr[i];
         if (diff !== stepSize) return false;
     }
+
     return true;
 };
 
