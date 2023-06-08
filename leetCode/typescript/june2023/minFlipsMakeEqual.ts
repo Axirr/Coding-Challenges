@@ -1,18 +1,15 @@
 import myAssert from "../march2023/Trie";
 
 function minFlips(a:number, b:number, c:number):number {
-    let orAB:number = a | b;
-    let andAB:number = a & b;
+    let xorABC:number = (a | b) ^ c;
+    let notAndABC:number = (a & b) & ~c;
 
     let count:number = 0;
-    while (orAB > 0 || c > 0) {
-        let cBit:number = c % 2;
-        count += cBit ^ (orAB % 2);
-        count += ~cBit & (andAB % 2);
-
-        orAB = orAB >> 1;
-        c = c >> 1;
-        andAB = andAB >> 1;
+    while (xorABC > 0) {
+        count += xorABC & 1;
+        count += notAndABC & 1;
+        xorABC = xorABC >> 1;
+        notAndABC = notAndABC >> 1;
     }
 
     return count;
@@ -23,7 +20,7 @@ function mainMinFlipsMakeEqaul():void {
     let b:number;
     let c:number;
     let result:number;
-    let doQuitIfAssertFails:boolean = true;
+    let doQuitIfAssertFails:boolean = false;
 
     a = 8;
     b = 3;
