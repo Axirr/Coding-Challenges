@@ -2,29 +2,24 @@ import myAssert from "../march2023/Trie";
 
 function summaryRanges(nums: number[]): string[] {
     if (nums.length === 0)  return [];
+
     let firstNum:number = nums[0];
     let previousNum:number = firstNum;
     let result:string[] = [];
+
     for (let i = 1; i < nums.length; i++) {
         const currentNum:number = nums[i];
         if (currentNum !== previousNum + 1)  {
-            addRange(firstNum, previousNum, result);
+            result.push(firstNum === previousNum ? firstNum.toString() : firstNum.toString() + "->" + previousNum.toString());
             firstNum = currentNum;
         }
         previousNum = currentNum;
     }
-    addRange(firstNum, previousNum, result);
+
+    result.push(firstNum === previousNum ? firstNum.toString() : firstNum.toString() + "->" + previousNum.toString());
 
     return result;
 };
-
-function addRange(firstNum:number, previousNum:number, result:string[]):void {
-    if (firstNum === previousNum) {
-        result.push(firstNum.toString());
-    } else {
-        result.push(firstNum.toString() + "->" + previousNum.toString());
-    }
-}
 
 function mainSummaryRanges():void {
     let nums:number[];
