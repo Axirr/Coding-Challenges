@@ -65,3 +65,5 @@ Completion time (minutes):
 Question difficulty:
 How did it go (1 - 6):
 */
+
+export default TreeNode;
