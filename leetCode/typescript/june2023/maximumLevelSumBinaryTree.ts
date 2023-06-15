@@ -4,12 +4,14 @@ import TreeNode from './minimumAbsoluteDifferentBST'
 function maxLevelSum(root: TreeNode | null): number {
     if (root === null)  return 0;
 
-    let maxLevel:number = 1;
-    let currentLevel:number = 1;
     let maxSumForLevel:number = root.val;
+    let maxLevel:number = 1;
+    
+    let currentLevel:number = 1;
+    let total:number = 0;
     let frontier:TreeNode[] = [root];
     let nextFrontier:TreeNode[] = [];
-    let total:number = 0;
+
     while (frontier.length > 0) {
         while (frontier.length > 0) {
             let currentNode:TreeNode = frontier.pop()!;
@@ -18,12 +20,12 @@ function maxLevelSum(root: TreeNode | null): number {
             if (currentNode.left !== null)  nextFrontier.push(currentNode.left)
 
         }
+
         if (total > maxSumForLevel) {
             maxLevel = currentLevel;
             maxSumForLevel = total;
         }
 
-        maxSumForLevel = Math.max(total, maxSumForLevel);
         currentLevel++;
         total = 0;
         frontier = nextFrontier;
