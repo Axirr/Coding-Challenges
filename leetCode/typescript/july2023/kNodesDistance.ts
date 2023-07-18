@@ -13,72 +13,53 @@ class TreeNode {
 
 function distanceK(root: TreeNode | null, target: TreeNode | null, k: number): number[] {
     if (root === null || target === null)  return [];
+
+    // Shortcut when target is guaranteed to be in the tree
     if (k === 0)  return [target.val];
 
     let parentNodes:Map<number, TreeNode> = new Map();
     let targetValue:number = target.val;
-    let frontier:TreeNode[] = [root];
-    let newFrontier:TreeNode[] = [];
     let startingNode:TreeNode | null = null;
-    if (root.val === targetValue) {
-        startingNode = root;
-    }
+    if (root.val === targetValue)  startingNode = root;
 
-    while (frontier.length > 0) {
-        while (frontier.length > 0) {
-            let currentNode:TreeNode = frontier.pop()!;
-            let potentialNodes:Array<TreeNode> = [];
-            if (currentNode.left !== null)  potentialNodes.push(currentNode.left);
-            if (currentNode.right !== null)  potentialNodes.push(currentNode.right);
-            for (const node of potentialNodes) {
-                parentNodes.set(node.val, currentNode);
-                if (node.val === targetValue)  startingNode = node;
-                newFrontier.push(node);
-                newFrontier.push(node);
-            }
+    function breadthFirstSearchNoParent(currentNode:TreeNode, currentHeight:number):void {
+        let potentialNodes:Array<TreeNode> = [];
+        if (currentNode.left !== null)  potentialNodes.push(currentNode.left);
+        if (currentNode.right !== null)  potentialNodes.push(currentNode.right);
+
+        for (const node of potentialNodes) {
+            parentNodes.set(node.val, currentNode);
+            if (node.val === targetValue)  startingNode = node;
+            breadthFirstSearchNoParent(node, currentHeight + 1);
         }
-
-        frontier = newFrontier;
-        newFrontier = [];
     }
 
-    if (startingNode === null)  return [];
-
-    frontier = [startingNode];
-    newFrontier = [];
-    let distance:number = 0;
     let visited:Set<number> = new Set();
-    visited.add(startingNode.val);
-    while (frontier.length > 0) {
-        while (frontier.length > 0) {
-            let currentNode:TreeNode = frontier.pop()!;
-            let potentialNodes:Array<TreeNode | null> = [];
-            let parent:TreeNode | undefined = parentNodes.get(currentNode.val);
-            if (parent !== undefined)  potentialNodes.push(parent);
-            if (currentNode.left !== null)  potentialNodes.push(currentNode.left);
-            if (currentNode.right !== null)  potentialNodes.push(currentNode.right);
-            
-            for (const node of potentialNodes) {
-                if (!visited.has(node!.val)) {
-                    newFrontier.push(node!);
-                    visited.add(node!.val);
-                }
+    let result:number[] = [];
+    function breadthFirstSearchWithParent(currentNode:TreeNode, currentHeight:number):void {
+        let potentialNodes:Array<TreeNode> = [];
+        if (currentHeight === k)  {
+            result.push(currentNode.val);
+            return;
+        }
+        let parent:TreeNode | undefined = parentNodes.get(currentNode.val);
+        if (parent !== undefined)  potentialNodes.push(parent);
+        if (currentNode.left !== null)  potentialNodes.push(currentNode.left);
+        if (currentNode.right !== null)  potentialNodes.push(currentNode.right);
+
+        for (const node of potentialNodes) {
+            if (!visited.has(node.val)) {
+                visited.add(node.val)
+                breadthFirstSearchWithParent(node, currentHeight + 1);
             }
         }
-
-        if (distance === k - 1)  {
-            break;
-        }
-
-        frontier = newFrontier;
-        newFrontier = [];
-        distance += 1;
     }
 
-    let result:number[] = [];
-    for (const node of newFrontier) {
-        result.push(node.val);
-    }
+    breadthFirstSearchNoParent(root, 0);
+
+    if (startingNode === null)  return []
+    visited.add(startingNode.val);
+    breadthFirstSearchWithParent(startingNode, 0);
 
     return result;
 };
