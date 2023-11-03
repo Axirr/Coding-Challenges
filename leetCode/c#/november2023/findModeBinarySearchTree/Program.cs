@@ -1,71 +1,70 @@
 ﻿using System.Diagnostics;
 
-public class TreeNode {
-     public int val;
-     public TreeNode left;
-     public TreeNode right;
-     public TreeNode(int val=0, TreeNode left=null, TreeNode right=null) {
-         this.val = val;
-         this.left = left;
-         this.right = right;
-     }
- }
-
 class Program {
+    public class TreeNode {
+        public int val;
+        public TreeNode? left;
+        public TreeNode? right;
+        public TreeNode(int val=0, TreeNode? left=null, TreeNode? right=null) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
+
     public static void Main(string[] args) {
-        Solution sol = new Solution();
         TreeNode tree;
         int[] result;
 
         tree = new TreeNode(1, null, new TreeNode(2, new TreeNode(2)));
-        result = sol.FindMode(tree);
+        result = Solution.FindMode(tree);
         Debug.Assert(result[0] == 2);
         Console.WriteLine(result[0].ToString());
 
         tree = new TreeNode(1, null, new TreeNode(2));
-        result = sol.FindMode(tree);
+        result = Solution.FindMode(tree);
         Array.Sort(result);
         Console.WriteLine(String.Join(",", result));
         Debug.Assert(result[0] == 1);
         Debug.Assert(result[1] == 2);
     }
 
-}
-
-public class Solution {
-    public int[] FindMode(TreeNode root) {
-        Dictionary<int, int> valueCount = new Dictionary<int, int>();
-        Queue<TreeNode> frontier = new Queue<TreeNode>();
-        frontier.Enqueue(root);
-        while (frontier.Count > 0) {
-            TreeNode currentNode = frontier.Dequeue();
-            if (valueCount.ContainsKey(currentNode.val)) {
-                valueCount[currentNode.val] += 1;
-            } else {
-                valueCount[currentNode.val] = 1;
-            }
-
-            if (currentNode.right != null)  frontier.Enqueue(currentNode.right);
-            if (currentNode.left != null)  frontier.Enqueue(currentNode.left);
-        }
-
-        int maxCount = 0;
-        List<int> result = new List<int>();
-
-        foreach (KeyValuePair<int, int> pair in valueCount) {
-            if (pair.Value >= maxCount) {
-                if (pair.Value > maxCount) {
-                    result = new List<int>();
-                    maxCount = pair.Value;
+    public class Solution {
+        public static int[] FindMode(TreeNode root) {
+            Dictionary<int, int> valueCount = new();
+            Queue<TreeNode> frontier = new();
+            frontier.Enqueue(root);
+            while (frontier.Count > 0) {
+                TreeNode currentNode = frontier.Dequeue();
+                if (valueCount.ContainsKey(currentNode.val)) {
+                    valueCount[currentNode.val] += 1;
+                } else {
+                    valueCount[currentNode.val] = 1;
                 }
 
-                result.Add(pair.Key);
+                if (currentNode.right != null)  frontier.Enqueue(currentNode.right);
+                if (currentNode.left != null)  frontier.Enqueue(currentNode.left);
             }
-        }
 
-        return result.ToArray();
+            int maxCount = 0;
+            List<int> result = new();
+
+            foreach (KeyValuePair<int, int> pair in valueCount) {
+                if (pair.Value >= maxCount) {
+                    if (pair.Value > maxCount) {
+                        result = new List<int>();
+                        maxCount = pair.Value;
+                    }
+
+                    result.Add(pair.Key);
+                }
+            }
+
+            return result.ToArray();
+        }
     }
 }
+
 
 /*
 Data range/assumptions:
@@ -94,7 +93,8 @@ Naive:
 */
 
 /*
-Completion time (minutes): 
-Question difficulty: 
-How did it go (0 - 6): 
+Completion time (minutes): 15
+Question difficulty: Easy
+How did it go (0 - 6): 3
+    Relearning some C# stuff slowed me down
 */
