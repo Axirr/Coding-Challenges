@@ -26,32 +26,34 @@ namespace nodesEqualAverageSubTree {
 
     public class Solution {
         public int AverageOfSubtree(TreeNode root) {
-            int[] globalCount = new int[] {0};
-            RecursiveCount(root, globalCount);
+            int[] result = RecursiveCount(root);
 
 
-            return globalCount[0];
+            return result[2];
         }
-        public int[] RecursiveCount(TreeNode root, int[] globalCount) {
+        public int[] RecursiveCount(TreeNode root) {
             int sum = root.val;
             int count = 1;
+            int equalCount = 0;
             if (root.left != null)  {
-                int[] subtreeResult = RecursiveCount(root.left, globalCount);
+                int[] subtreeResult = RecursiveCount(root.left);
                 sum += subtreeResult[0];
                 count += subtreeResult[1];
+                equalCount += subtreeResult[2];
             }
 
             if (root.right != null)  {
-                int[] subtreeResult = RecursiveCount(root.right, globalCount);
+                int[] subtreeResult = RecursiveCount(root.right);
                 sum += subtreeResult[0];
                 count += subtreeResult[1];
+                equalCount += subtreeResult[2];
             }
 
             if (root.val == sum / count) {
-                globalCount[0] += 1;
+                equalCount += 1;
             }
 
-            return new int[] {sum,count};
+            return new int[] {sum,count, equalCount};
         }
 
     }
