@@ -13,25 +13,31 @@
     }
 }
 public class SeatManager {
-    private PriorityQueue<int,int> heap;
-    private HashSet<int> reservedSeats;
+    private SortedSet<int> heap;
+    private int nextNewSeat;
+
 
     public SeatManager(int n) {
         this.heap = new();
-        for (int i = 1; i <= n; i++)  this.heap.Enqueue(i, i);
-        this.reservedSeats = new();
+        nextNewSeat = 1;
     }
     
     public int Reserve() {
-        int newSeat = this.heap.Dequeue();
-        this.reservedSeats.Add(newSeat);
+        int newSeat;
+        if (this.heap.Count == 0) {
+            newSeat = nextNewSeat;
+            this.nextNewSeat += 1;
+            return newSeat;
+        } else {
+            newSeat = this.heap.Min;
+            this.heap.Remove(newSeat);
+        }
 
         return newSeat;
     }
     
     public void Unreserve(int seatNumber) {
-        this.reservedSeats.Remove(seatNumber);
-        this.heap.Enqueue(seatNumber, seatNumber);
+        this.heap.Add(seatNumber);
     }
 }
 
@@ -65,7 +71,8 @@ How to speed up reserve finding?
 */
 
 /*
-Completion time (minutes): 
-Question difficulty: 
-How did it go (0 - 6): 
+Completion time (minutes): 19
+Question difficulty: Medium
+How did it go (0 - 6): 3
+    Struggled to figure out what C#'s heap data structure was
 */
