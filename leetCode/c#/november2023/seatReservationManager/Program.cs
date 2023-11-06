@@ -13,7 +13,7 @@
     }
 }
 public class SeatManager {
-    private SortedSet<int> heap;
+    private PriorityQueue<int, int> heap;
     private int nextNewSeat;
 
 
@@ -29,15 +29,14 @@ public class SeatManager {
             this.nextNewSeat += 1;
             return newSeat;
         } else {
-            newSeat = this.heap.Min;
-            this.heap.Remove(newSeat);
+            newSeat = this.heap.Dequeue();
         }
 
         return newSeat;
     }
     
     public void Unreserve(int seatNumber) {
-        this.heap.Add(seatNumber);
+        this.heap.Enqueue(seatNumber, seatNumber);
     }
 }
 
